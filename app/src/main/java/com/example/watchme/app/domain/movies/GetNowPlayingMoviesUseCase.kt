@@ -1,4 +1,4 @@
-package com.example.watchme.app.domain
+package com.example.watchme.app.domain.movies
 
 import com.example.watchme.app.data.network.ApiRepository
 import com.example.watchme.app.data.network.responses.MovieResponse

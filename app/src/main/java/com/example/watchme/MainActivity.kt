@@ -9,8 +9,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import com.example.watchme.app.ui.BottomBar
 import com.example.watchme.app.ui.TopBar
 import com.example.watchme.app.ui.screens.HomeScreen
+import com.example.watchme.app.ui.screens.MovieDetailsScreen
 import com.example.watchme.ui.theme.WatchMeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -28,9 +30,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     topBar = {
                         TopBar()
+                    },
+                    bottomBar = {
+                        BottomBar()
                     }
                 ) { innerPadding ->
                     HomeScreen(innerPadding, viewModel)
+//                    MovieDetailsScreen(innerPadding, viewModel)
                 }
             }
         }

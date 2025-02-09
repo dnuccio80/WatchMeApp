@@ -2,6 +2,7 @@ package com.example.watchme.app.data.network
 
 import com.example.watchme.app.data.network.responses.Movie
 import com.example.watchme.app.data.network.responses.MovieResponse
+import com.example.watchme.app.data.network.responses.ProvidersResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
@@ -48,4 +49,16 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
+    suspend fun getProviders(): ProvidersResponse {
+        return withContext(Dispatchers.IO){
+            val response = retrofit.create(ApiClient::class.java).getProviders()
+            val body: ProvidersResponse? = response.body()
+
+            if(response.isSuccessful && body != null){
+                body
+            } else{
+                ProvidersResponse(emptyList())
+            }
+        }
+    }
 }

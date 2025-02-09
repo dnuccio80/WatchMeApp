@@ -43,12 +43,17 @@ import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.app.data.network.responses.Movie
 import com.example.watchme.app.data.network.responses.MovieResponse
+import com.example.watchme.app.data.network.responses.Provider
+import com.example.watchme.app.data.network.responses.ProvidersResponse
+import com.example.watchme.app.ui.PercentageVisualItem
+import com.example.watchme.app.ui.TitleTextItem
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.ui.theme.IntermediateVoteColor
 import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.PositiveVoteColor
 import com.example.watchme.ui.theme.Purple40
+import java.util.Locale
 
 @Composable
 fun HomeScreen(innerPadding: PaddingValues, viewModel: AppViewModel) {
@@ -56,6 +61,7 @@ fun HomeScreen(innerPadding: PaddingValues, viewModel: AppViewModel) {
     val popularMovies by viewModel.popularMovies.collectAsState()
     val nowPlayingMovies by viewModel.nowPlayingMovies.collectAsState()
     val topRatedMovies by viewModel.topRatedMovies.collectAsState()
+    val providers by viewModel.providers.collectAsState()
 
     Box(
         Modifier
@@ -75,19 +81,60 @@ fun HomeScreen(innerPadding: PaddingValues, viewModel: AppViewModel) {
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
+                TitleTextItem("Providers")
+                Spacer(Modifier.size(16.dp))
+                ProvidersLazyRow(providers)
+                Spacer(Modifier.size(32.dp))
+                TitleTextItem("Movies")
+                Spacer(Modifier.size(16.dp))
                 Text("Now Playing", style = MaterialTheme.typography.labelSmall)
                 Spacer(Modifier.size(4.dp))
                 NowPlayingMoviesLazyRow(nowPlayingMovies)
-                Spacer(Modifier.size(48.dp))
+                Spacer(Modifier.size(32.dp))
                 Text("Top Rated", style = MaterialTheme.typography.labelSmall)
                 Spacer(Modifier.size(4.dp))
-                TopRatedMoviesLazyRow(topRatedMovies)
+                TopRatedMoviesLazyRow(topRatedMovies, viewModel)
             }
         }
 
     }
 }
 
+@Composable
+fun ProvidersLazyRow(providers: ProvidersResponse) {
+    LazyRow(
+        Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        items(providers.providers){
+            ProviderCardItem(it)
+        }
+    }
+}
+
+@Composable
+fun ProviderCardItem(provider: Provider) {
+
+    val imageUrl = Constants.BASE_URL + provider.logo
+
+    Card(
+        modifier = Modifier
+            .size(80.dp), colors = CardDefaults.cardColors(
+            containerColor = Color.DarkGray
+        ),
+        elevation = CardDefaults.cardElevation(16.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = "provider image",
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxSize()
+        )
+    }
+}
 
 @Composable
 fun NowPlayingMoviesLazyRow(movies: MovieResponse) {
@@ -175,16 +222,16 @@ fun NowPlayingCardItem(movie: Movie) {
 }
 
 @Composable
-fun TopRatedMoviesLazyRow(movies: MovieResponse) {
+fun TopRatedMoviesLazyRow(movies: MovieResponse, viewModel: AppViewModel) {
     LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         items(movies.result) {
-            TopRatedCardItem(it)
+            TopRatedCardItem(it, viewModel)
         }
     }
 }
 
 @Composable
-fun TopRatedCardItem(movie: Movie) {
+fun TopRatedCardItem(movie: Movie, viewModel: AppViewModel) {
 
     val imageUrl = Constants.BASE_URL + movie.poster
     val votePercentage = (movie.voteAverage * 10).toInt()
@@ -206,49 +253,9 @@ fun TopRatedCardItem(movie: Movie) {
                 modifier = Modifier
                     .fillMaxSize()
             )
-            PercentageVisualItem(votePercentage, Modifier.align(Alignment.TopStart))
+            PercentageVisualItem(votePercentage, Modifier.align(Alignment.TopStart), viewModel.getPercentageColor(votePercentage) )
         }
     }
 }
 
-@Composable
-fun PercentageVisualItem(percentage: Int, modifier: Modifier) {
 
-    Card(
-        modifier = modifier.size(38.dp),
-        shape = CircleShape,
-        colors = CardDefaults.cardColors(
-            containerColor = getPercentageColor(percentage)
-        ),
-        elevation = CardDefaults.cardElevation(16.dp)
-    ) {
-        Card(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(2.dp),
-            shape = CircleShape,
-            colors = CardDefaults.cardColors(
-                containerColor = Color.Black
-            )
-        ) {
-            Column(
-                Modifier.fillMaxSize(),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    Text(percentage.toString(), color = Color.White,fontWeight = FontWeight.Bold)
-                    Text("%", textAlign = TextAlign.Start, color = Color.White, fontSize = 10.sp)
-                }
-            }
-        }
-    }
-}
-
-fun getPercentageColor(voteAverage:Int):Color{
-    return when(voteAverage){
-        in 0..40 -> NegativeVoteColor
-        in 41..69 -> IntermediateVoteColor
-        else -> PositiveVoteColor
-    }
-}

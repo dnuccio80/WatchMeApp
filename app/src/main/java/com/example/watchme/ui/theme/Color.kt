@@ -13,6 +13,8 @@ val Pink40 = Color(0xFF7D5260)
 // App
 
 val AppBackground = Color(0xFF181515)
+val AlphaButtonColor = Color(0x99000000)
+val BottomBarBackground = Color(0xFF171515)
 val TextColor = Color(0xFFB0B0B0)
 val PositiveVoteColor = Color(0xFF25AD03)
 val IntermediateVoteColor = Color(0xFFD2B60A)

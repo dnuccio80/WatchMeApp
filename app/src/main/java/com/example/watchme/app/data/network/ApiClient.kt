@@ -1,6 +1,7 @@
 package com.example.watchme.app.data.network
 
 import com.example.watchme.app.data.network.responses.MovieResponse
+import com.example.watchme.app.data.network.responses.ProvidersResponse
 import com.example.watchme.core.constants.Constants
 import retrofit2.Response
 import retrofit2.http.GET
@@ -19,5 +20,9 @@ interface ApiClient {
     @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
     @GET("movie/top_rated")
     suspend fun getTopRatedMovies(): Response<MovieResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET("watch/providers/movie")
+    suspend fun getProviders(): Response<ProvidersResponse>
 
 }
