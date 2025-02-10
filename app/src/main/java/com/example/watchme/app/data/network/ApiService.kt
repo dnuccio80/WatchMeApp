@@ -1,6 +1,6 @@
 package com.example.watchme.app.data.network
 
-import com.example.watchme.app.data.network.responses.Movie
+import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
 import kotlinx.coroutines.Dispatchers
@@ -58,6 +58,19 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
                 body
             } else{
                 ProvidersResponse(emptyList())
+            }
+        }
+    }
+
+    suspend fun getMovieDetailsById(movieId:Int): DetailsMovieResponse {
+        return withContext(Dispatchers.IO){
+            val response = retrofit.create(ApiClient::class.java).getMovieDetailsById("movie/$movieId")
+            val body: DetailsMovieResponse? = response.body()
+
+            if(response.isSuccessful && body != null){
+                body
+            } else {
+                throw Exception("Failed to fetch movie details: ${response.errorBody()?.string()}")
             }
         }
     }

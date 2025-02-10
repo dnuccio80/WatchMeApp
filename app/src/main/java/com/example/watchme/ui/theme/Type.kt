@@ -49,6 +49,14 @@ val Typography = Typography(
         letterSpacing = 0.sp,
     ),
 
+    bodyMedium = TextStyle(
+        color = Color.White,
+        fontSize = 14.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
+
+
     bodySmall = TextStyle(
         color = Color.White
     )
