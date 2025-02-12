@@ -36,12 +36,10 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
-import com.example.watchme.app.data.network.responses.Movie
-import com.example.watchme.app.data.network.responses.MovieResponse
-import com.example.watchme.app.data.network.responses.Provider
-import com.example.watchme.app.data.network.responses.ProvidersResponse
 import com.example.watchme.app.ui.PercentageVisualItem
 import com.example.watchme.app.ui.TitleTextItem
+import com.example.watchme.app.ui.dataClasses.MovieDataClass
+import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
 
@@ -97,20 +95,20 @@ fun HomeScreen(
 }
 
 @Composable
-fun ProvidersLazyRow(providers: ProvidersResponse) {
+fun ProvidersLazyRow(providers: List<ProvidersDataClass>) {
     LazyRow(
         Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        items(providers.providers) {
+        items(providers) {
             ProviderCardItem(it)
         }
     }
 }
 
 @Composable
-fun ProviderCardItem(provider: Provider) {
+fun ProviderCardItem(provider: ProvidersDataClass) {
 
     val imageUrl = Constants.BASE_URL + provider.logo
 
@@ -133,18 +131,18 @@ fun ProviderCardItem(provider: Provider) {
 }
 
 @Composable
-fun NowPlayingMoviesLazyRow(movies: MovieResponse) {
+fun NowPlayingMoviesLazyRow(movies: List<MovieDataClass>) {
     LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        items(movies.result) {
+        items(movies) {
             NowPlayingCardItem(it)
         }
     }
 }
 
 @Composable
-fun PopularMoviesLazyRow(popularMovies: MovieResponse, onItemClick: (Int) -> Unit) {
+fun PopularMoviesLazyRow(popularMovies: List<MovieDataClass>, onItemClick: (Int) -> Unit) {
 
-    if (popularMovies.result.isEmpty()) return
+    if (popularMovies.isEmpty()) return
 
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = Int.MAX_VALUE / 2)
 
@@ -157,10 +155,10 @@ fun PopularMoviesLazyRow(popularMovies: MovieResponse, onItemClick: (Int) -> Uni
         contentPadding = PaddingValues(horizontal = 50.dp)
     ) {
         items(Int.MAX_VALUE) { index -> //
-            val realIndex = index % popularMovies.result.size
+            val realIndex = index % popularMovies.size
             val isCentered = listState.firstVisibleItemIndex == index
             PopularMovieCardItem(
-                popularMovies.result[realIndex],
+                popularMovies[realIndex],
                 isCentered
             ) { movieId -> onItemClick(movieId) }
         }
@@ -168,7 +166,7 @@ fun PopularMoviesLazyRow(popularMovies: MovieResponse, onItemClick: (Int) -> Uni
 }
 
 @Composable
-fun PopularMovieCardItem(movie: Movie, isCentered: Boolean, onClick: (Int) -> Unit) {
+fun PopularMovieCardItem(movie: MovieDataClass, isCentered: Boolean, onClick: (Int) -> Unit) {
     val imageUrl = Constants.BASE_URL + movie.poster
 
     val cardHeight by animateDpAsState(
@@ -199,7 +197,7 @@ fun PopularMovieCardItem(movie: Movie, isCentered: Boolean, onClick: (Int) -> Un
 }
 
 @Composable
-fun NowPlayingCardItem(movie: Movie) {
+fun NowPlayingCardItem(movie: MovieDataClass) {
     val imageUrl = Constants.BASE_URL + movie.poster
 
     Card(
@@ -222,16 +220,16 @@ fun NowPlayingCardItem(movie: Movie) {
 }
 
 @Composable
-fun TopRatedMoviesLazyRow(movies: MovieResponse, viewModel: AppViewModel) {
+fun TopRatedMoviesLazyRow(movies: List<MovieDataClass>, viewModel: AppViewModel) {
     LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-        items(movies.result) {
+        items(movies) {
             TopRatedCardItem(it, viewModel)
         }
     }
 }
 
 @Composable
-fun TopRatedCardItem(movie: Movie, viewModel: AppViewModel) {
+fun TopRatedCardItem(movie: MovieDataClass, viewModel: AppViewModel) {
 
     val imageUrl = Constants.BASE_URL + movie.poster
     val votePercentage = (movie.voteAverage * 10).toInt()

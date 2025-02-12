@@ -1,13 +1,11 @@
 package com.example.watchme.app.ui
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -17,7 +15,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -37,11 +34,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.watchme.R
-import com.example.watchme.app.data.network.responses.DetailsMovieResponse
+import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaButtonColor
 import com.example.watchme.ui.theme.Pink40
-import com.example.watchme.ui.theme.Purple80
 
 @Composable
 fun TitleTextItem(text: String) {
@@ -84,7 +80,7 @@ fun BodyTextItem(text: String, textAlign: TextAlign = TextAlign.Start) {
 fun BackButton() {
     Card(
         shape = CircleShape,
-        modifier = Modifier.padding(16.dp),
+        modifier = Modifier.size(60.dp).padding(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = AlphaButtonColor,
             contentColor = Color.White
@@ -92,13 +88,14 @@ fun BackButton() {
     ) {
         Icon(
             Icons.AutoMirrored.Rounded.KeyboardArrowLeft,
+            modifier = Modifier.fillMaxSize(),
             contentDescription = "back button icon"
         )
     }
 }
 
 @Composable
-fun BackdropImageItem(movieDetails: State<DetailsMovieResponse?>) {
+fun BackdropImageItem(movieDetails: State<DetailsMovieDataClass?>) {
     Card(
         modifier = Modifier
             .fillMaxSize(),

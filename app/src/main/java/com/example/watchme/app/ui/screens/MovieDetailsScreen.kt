@@ -1,6 +1,5 @@
 package com.example.watchme.app.ui.screens
 
-import androidx.collection.mutableIntSetOf
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -34,7 +33,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -48,10 +46,8 @@ import androidx.compose.ui.unit.max
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
-import com.example.watchme.app.data.network.responses.Collection
 import com.example.watchme.app.data.network.responses.CastCredit
 import com.example.watchme.app.data.network.responses.CrewCredit
-import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.MovieCreditsResponse
 import com.example.watchme.ui.theme.AppBackground
@@ -62,11 +58,12 @@ import com.example.watchme.app.ui.PointSeparatorIcon
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleSubtitleItem
+import com.example.watchme.app.ui.dataClasses.CollectionDataClass
+import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaButtonColor
 import com.example.watchme.ui.theme.CardContainerColor
 import com.example.watchme.ui.theme.PurpleGrey40
-import kotlin.math.sin
 
 @Composable
 fun MovieDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, movieId: Int) {
@@ -200,7 +197,7 @@ fun ImageListItem(movieListImages: State<ImageBackdrop?>) {
 
 @Composable
 private fun OverviewSection(
-    movieDetails: State<DetailsMovieResponse?>,
+    movieDetails: State<DetailsMovieDataClass?>,
     runTime: String,
     viewModel: AppViewModel
 ) {
@@ -334,7 +331,7 @@ fun CrewCreditsItem(credit: CrewCredit) {
 }
 
 @Composable
-fun CollectionItem(collection: Collection?) {
+fun CollectionItem(collection: CollectionDataClass?) {
     if (collection == null) return
 
     val backgroundUrl = Constants.BASE_URL + collection.backdropCollection
@@ -358,7 +355,7 @@ fun CollectionItem(collection: Collection?) {
                 )
                 .padding(16.dp)
         ) {
-            SecondTitleTextItem(collection.nameCollection, TextAlign.Start)
+            SecondTitleTextItem(collection.nameCollection!!, TextAlign.Start)
             Button(
                 onClick = { /* SEARCH COLLECTION BY ID*/ }
             ) {
@@ -371,7 +368,7 @@ fun CollectionItem(collection: Collection?) {
 
 @Composable
 fun HeaderInfo(
-    movieDetails: State<DetailsMovieResponse?>,
+    movieDetails: State<DetailsMovieDataClass?>,
     runtime: String,
     modifier: Modifier = Modifier
 ) {

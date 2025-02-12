@@ -16,6 +16,9 @@ import com.example.watchme.app.domain.movies.GetNowPlayingMoviesUseCase
 import com.example.watchme.app.domain.movies.GetPopularMoviesUseCase
 import com.example.watchme.app.domain.movies.GetTopRatedMoviesUseCase
 import com.example.watchme.app.domain.providers.GetProvidersUseCase
+import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
+import com.example.watchme.app.ui.dataClasses.MovieDataClass
+import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.ui.theme.IntermediateVoteColor
 import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.PositiveVoteColor
@@ -39,24 +42,20 @@ class AppViewModel @Inject constructor(
     private val getMovieImageListByIdUseCase: GetImageListByIdUseCase
 ) : ViewModel() {
 
-    private val _popularMovies: MutableStateFlow<MovieResponse> =
-        MutableStateFlow(MovieResponse(emptyList()))
-    val popularMovies: StateFlow<MovieResponse> = _popularMovies
+    private val _popularMovies: MutableStateFlow<List<MovieDataClass>> = MutableStateFlow(emptyList())
+    val popularMovies: StateFlow<List<MovieDataClass>> = _popularMovies
 
-    private val _nowPlayingMovies: MutableStateFlow<MovieResponse> =
-        MutableStateFlow(MovieResponse(emptyList()))
-    val nowPlayingMovies: StateFlow<MovieResponse> = _nowPlayingMovies
+    private val _nowPlayingMovies: MutableStateFlow<List<MovieDataClass>> = MutableStateFlow(emptyList())
+    val nowPlayingMovies: StateFlow<List<MovieDataClass>> = _nowPlayingMovies
 
-    private val _topRatedMovies: MutableStateFlow<MovieResponse> =
-        MutableStateFlow(MovieResponse(emptyList()))
-    val topRatedMovies: StateFlow<MovieResponse> = _topRatedMovies
+    private val _topRatedMovies: MutableStateFlow<List<MovieDataClass>> = MutableStateFlow(emptyList())
+    val topRatedMovies: StateFlow<List<MovieDataClass>> = _topRatedMovies
 
-    private val _providers: MutableStateFlow<ProvidersResponse> =
-        MutableStateFlow(ProvidersResponse(emptyList()))
-    val providers: StateFlow<ProvidersResponse> = _providers
+    private val _providers: MutableStateFlow<List<ProvidersDataClass>> = MutableStateFlow(emptyList())
+    val providers: StateFlow<List<ProvidersDataClass>> = _providers
 
-    private val _movieDetails = MutableStateFlow<DetailsMovieResponse?>(null)
-    val movieDetails: StateFlow<DetailsMovieResponse?> = _movieDetails
+    private val _movieDetails = MutableStateFlow<DetailsMovieDataClass?>(null)
+    val movieDetails: StateFlow<DetailsMovieDataClass?> = _movieDetails
 
     private val _movieCredits = MutableStateFlow<MovieCreditsResponse?>(null)
     val movieCredits: StateFlow<MovieCreditsResponse?> = _movieCredits

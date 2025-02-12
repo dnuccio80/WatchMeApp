@@ -1,5 +1,10 @@
 package com.example.watchme.app.data.network.responses
 
+import com.example.watchme.app.ui.dataClasses.CollectionDataClass
+import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
+import com.example.watchme.app.ui.dataClasses.GenresDataClass
+import com.example.watchme.app.ui.dataClasses.MovieDataClass
+import com.example.watchme.app.ui.dataClasses.ProductionCompaniesDataClass
 import com.google.gson.annotations.SerializedName
 
 data class MovieResponse(
@@ -18,6 +23,23 @@ data class Movie(
     @SerializedName("vote_count") val voteCount: Int
 )
 
+fun MovieResponse.toMovieDataClass(): List<MovieDataClass> {
+    return result.map {
+        MovieDataClass(
+            id = it.id,
+            genreIds = it.genreIds,
+            releaseDate = it.releaseDate,
+            title = it.title,
+            overview = it.overview,
+            poster = it.poster,
+            backdrop = it.backdrop,
+            voteAverage = it.voteAverage,
+            voteCount = it.voteCount
+        )
+    }
+}
+
+
 data class DetailsMovieResponse(
     @SerializedName("adult") val adult: Boolean,
     @SerializedName("backdrop_path") val backdropImage: String,
@@ -35,6 +57,27 @@ data class DetailsMovieResponse(
     @SerializedName("runtime") val runtime: Int,
 )
 
+fun DetailsMovieResponse.toDetailsMovieDataClass(): DetailsMovieDataClass {
+    return DetailsMovieDataClass(
+        adult = adult,
+        backdropImage = backdropImage,
+        collection = collection?.toCollectionDataClass(),
+        budget = budget,
+        genres = genres.map {
+            it.toGenresDataClass()
+        },
+        homepage = homepage,
+        id = id,
+        overview = overview,
+        productionCompanies = productionCompanies.map { it.toProductionCompaniesDataClass() },
+        releaseDate = releaseDate,
+        revenue = revenue,
+        title = title,
+        voteAverage = voteAverage,
+        runtime = runtime
+    )
+}
+
 data class Collection(
     @SerializedName("id") val idCollection: String,
     @SerializedName("name") val nameCollection: String,
@@ -42,10 +85,27 @@ data class Collection(
     @SerializedName("backdrop_path") val backdropCollection: String,
 )
 
+fun Collection.toCollectionDataClass(): CollectionDataClass? {
+    if(nameCollection.isEmpty()) return null
+
+    return CollectionDataClass(
+        idCollection = idCollection,
+        nameCollection = nameCollection,
+        backdropCollection = backdropCollection
+    )
+}
+
 data class Genres(
     @SerializedName("id") val idGenre: Int,
     @SerializedName("name") val nameGenre: String,
 )
+
+fun Genres.toGenresDataClass(): GenresDataClass {
+    return GenresDataClass(
+        idGenre = idGenre,
+        nameGenre = nameGenre
+    )
+}
 
 data class ProductionCompanies(
     @SerializedName("id") val idProductionCompany: Int,
@@ -53,6 +113,15 @@ data class ProductionCompanies(
     @SerializedName("name") val nameProductionCompany: String,
     @SerializedName("origin_country") val originCountryProductionCompany: String,
 )
+
+fun ProductionCompanies.toProductionCompaniesDataClass() : ProductionCompaniesDataClass {
+    return ProductionCompaniesDataClass(
+        idProductionCompany = idProductionCompany,
+        logoProductionCompany = logoProductionCompany,
+        nameProductionCompany = nameProductionCompany,
+        originCountryProductionCompany = originCountryProductionCompany
+    )
+}
 
 data class MovieCreditsResponse(
     @SerializedName("cast") val cast: List<CastCredit>,
@@ -69,11 +138,11 @@ data class CastCredit(
 
 data class CrewCredit(
     @SerializedName("id") val id: Int,
-    @SerializedName("department") val department:String,
-    @SerializedName("name") val name:String,
+    @SerializedName("department") val department: String,
+    @SerializedName("name") val name: String,
     @SerializedName("gender") val gender: Int,
-    @SerializedName("profile_path") val profilePath:String,
-    @SerializedName("job") val job:String,
+    @SerializedName("profile_path") val profilePath: String,
+    @SerializedName("job") val job: String,
 )
 
 data class ImageBackdrop(
