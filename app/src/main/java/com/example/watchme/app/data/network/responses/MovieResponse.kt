@@ -1,8 +1,12 @@
 package com.example.watchme.app.data.network.responses
 
+import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
+import com.example.watchme.app.ui.dataClasses.CastCreditDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDataClass
+import com.example.watchme.app.ui.dataClasses.CrewCreditDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.GenresDataClass
+import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ProductionCompaniesDataClass
 import com.google.gson.annotations.SerializedName
@@ -128,6 +132,13 @@ data class MovieCreditsResponse(
     @SerializedName("crew") val crew: List<CrewCredit>
 )
 
+fun MovieCreditsResponse.toMovieCreditsDataClass(): MovieCreditsDataClass {
+    return MovieCreditsDataClass(
+        cast = cast.map { it.toCastCreditDataClass() },
+        crew = crew.map { it.toCrewCreditDataClass() }
+    )
+}
+
 data class CastCredit(
     @SerializedName("id") val id: Int,
     @SerializedName("name") val name: String,
@@ -135,6 +146,16 @@ data class CastCredit(
     @SerializedName("profile_path") val profilePath: String,
     @SerializedName("character") val character: String,
 )
+
+fun CastCredit.toCastCreditDataClass(): CastCreditDataClass {
+    return CastCreditDataClass(
+        id = id,
+        name = name,
+        gender = gender,
+        profilePath = profilePath,
+        character = character
+    )
+}
 
 data class CrewCredit(
     @SerializedName("id") val id: Int,
@@ -145,9 +166,27 @@ data class CrewCredit(
     @SerializedName("job") val job: String,
 )
 
+fun CrewCredit.toCrewCreditDataClass(): CrewCreditDataClass {
+    return CrewCreditDataClass(
+        id = id,
+        department = department,
+        name = name,
+        gender = gender,
+        profilePath = profilePath
+    )
+}
+
 data class ImageBackdrop(
     @SerializedName("backdrops") val backdrops: List<Backdrop>
 )
+
+fun ImageBackdrop.toBackdropImageDataClass() : List<BackdropImageDataClass> {
+    return backdrops.map {
+        BackdropImageDataClass(
+            filePath = it.filePath
+        )
+    }
+}
 
 data class Backdrop(
     @SerializedName("file_path") val filePath: String,

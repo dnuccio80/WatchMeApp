@@ -1,6 +1,8 @@
 package com.example.watchme.app.ui.dataClasses
 
+import com.example.watchme.app.data.network.responses.CastCredit
 import com.example.watchme.app.data.network.responses.Collection
+import com.example.watchme.app.data.network.responses.CrewCredit
 import com.example.watchme.app.data.network.responses.Genres
 import com.example.watchme.app.data.network.responses.Movie
 import com.example.watchme.app.data.network.responses.ProductionCompanies
@@ -35,6 +37,27 @@ data class DetailsMovieDataClass(
     val runtime: Int,
 )
 
+data class MovieCreditsDataClass(
+    val cast: List<CastCreditDataClass>,
+    val crew: List<CrewCreditDataClass>
+)
+
+data class CastCreditDataClass(
+    val id: Int,
+    val name: String,
+    val gender: Int,
+    val profilePath: String?,
+    val character: String,
+)
+
+data class CrewCreditDataClass(
+    val id: Int,
+    val department: String,
+    val name: String,
+    val gender: Int,
+    val profilePath: String?,
+)
+
 data class GenresDataClass(
     val idGenre: Int,
     val nameGenre: String,
@@ -51,4 +74,8 @@ data class CollectionDataClass(
     val idCollection: String,
     val nameCollection: String,
     val backdropCollection: String?
+)
+
+data class BackdropImageDataClass(
+    val filePath: String,
 )

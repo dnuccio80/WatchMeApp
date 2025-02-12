@@ -16,7 +16,9 @@ import com.example.watchme.app.domain.movies.GetNowPlayingMoviesUseCase
 import com.example.watchme.app.domain.movies.GetPopularMoviesUseCase
 import com.example.watchme.app.domain.movies.GetTopRatedMoviesUseCase
 import com.example.watchme.app.domain.providers.GetProvidersUseCase
+import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
+import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.ui.theme.IntermediateVoteColor
@@ -57,11 +59,11 @@ class AppViewModel @Inject constructor(
     private val _movieDetails = MutableStateFlow<DetailsMovieDataClass?>(null)
     val movieDetails: StateFlow<DetailsMovieDataClass?> = _movieDetails
 
-    private val _movieCredits = MutableStateFlow<MovieCreditsResponse?>(null)
-    val movieCredits: StateFlow<MovieCreditsResponse?> = _movieCredits
+    private val _movieCredits = MutableStateFlow<MovieCreditsDataClass?>(null)
+    val movieCredits: StateFlow<MovieCreditsDataClass?> = _movieCredits
 
-    private val _movieImageList = MutableStateFlow<ImageBackdrop?>(null)
-    val movieImageList: StateFlow<ImageBackdrop?> = _movieImageList
+    private val _movieImageList = MutableStateFlow<List<BackdropImageDataClass>?>(null)
+    val movieImageList: StateFlow<List<BackdropImageDataClass>?> = _movieImageList
 
     private val _genres = _movieDetails.value?.genres?.map { it.nameGenre }
         ?.let { MutableStateFlow<List<String>>(it) }

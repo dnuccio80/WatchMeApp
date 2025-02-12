@@ -46,10 +46,6 @@ import androidx.compose.ui.unit.max
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
-import com.example.watchme.app.data.network.responses.CastCredit
-import com.example.watchme.app.data.network.responses.CrewCredit
-import com.example.watchme.app.data.network.responses.ImageBackdrop
-import com.example.watchme.app.data.network.responses.MovieCreditsResponse
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
@@ -58,8 +54,12 @@ import com.example.watchme.app.ui.PointSeparatorIcon
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleSubtitleItem
+import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
+import com.example.watchme.app.ui.dataClasses.CastCreditDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDataClass
+import com.example.watchme.app.ui.dataClasses.CrewCreditDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
+import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaButtonColor
 import com.example.watchme.ui.theme.CardContainerColor
@@ -123,14 +123,14 @@ fun MovieDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, mov
 }
 
 @Composable
-fun ImageListItem(movieListImages: State<ImageBackdrop?>) {
+fun ImageListItem(movieListImages: State<List<BackdropImageDataClass>?>) {
     Box(Modifier.fillMaxWidth()) {
 
-        val size = movieListImages.value?.backdrops?.size ?: 0
+        val size = movieListImages.value?.size ?: 0
 
         if(size == 0) return
         var index by rememberSaveable { mutableIntStateOf(0) }
-        val url = Constants.BASE_URL + movieListImages.value?.backdrops?.get(index)?.filePath
+        val url = Constants.BASE_URL + movieListImages.value?.get(index)?.filePath
         AsyncImage(
             model = url,
             contentDescription = "image cast",
@@ -234,7 +234,7 @@ private fun OverviewSection(
 }
 
 @Composable
-fun CreditsSection(movieCredits: State<MovieCreditsResponse?>) {
+fun CreditsSection(movieCredits: State<MovieCreditsDataClass?>) {
     if (movieCredits.value == null) return
 
     SecondTitleTextItem("Cast")
@@ -253,7 +253,7 @@ fun CreditsSection(movieCredits: State<MovieCreditsResponse?>) {
 }
 
 @Composable
-fun CastCreditsItem(credit: CastCredit) {
+fun CastCreditsItem(credit: CastCreditDataClass) {
 
     val url = Constants.BASE_URL + credit.profilePath
 
@@ -292,7 +292,7 @@ fun CastCreditsItem(credit: CastCredit) {
 }
 
 @Composable
-fun CrewCreditsItem(credit: CrewCredit) {
+fun CrewCreditsItem(credit: CrewCreditDataClass) {
 
     val url = Constants.BASE_URL + credit.profilePath
 
