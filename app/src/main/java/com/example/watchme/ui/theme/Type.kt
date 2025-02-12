@@ -43,8 +43,8 @@ val Typography = Typography(
     titleMedium = TextStyle(
         fontFamily = FontFamily.Default,
         color = Color.White,
-        fontWeight = FontWeight.ExtraBold,
-        fontSize = 22.sp,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.sp,
     ),

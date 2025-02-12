@@ -1,6 +1,8 @@
 package com.example.watchme.app.data.network
 
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
+import com.example.watchme.app.data.network.responses.ImageBackdrop
+import com.example.watchme.app.data.network.responses.MovieCreditsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
 import com.example.watchme.core.Routes
@@ -31,5 +33,14 @@ interface ApiClient {
     @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
     @GET
     suspend fun getMovieDetailsById(@Url url:String): Response<DetailsMovieResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET
+    suspend fun getMovieCreditsById(@Url url:String): Response<MovieCreditsResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET
+    suspend fun getImageListById(@Url url:String): Response<ImageBackdrop>
+
 
 }

@@ -19,4 +19,5 @@ val TextColor = Color(0xFFB0B0B0)
 val PositiveVoteColor = Color(0xFF25AD03)
 val IntermediateVoteColor = Color(0xFFD2B60A)
 val NegativeVoteColor = Color(0xFFA40018)
+val CardContainerColor = Color(0xE10A3641)
 

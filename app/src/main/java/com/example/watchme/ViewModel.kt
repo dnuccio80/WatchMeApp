@@ -3,9 +3,14 @@ package com.example.watchme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
+import com.example.watchme.app.data.network.responses.ImageBackdrop
+import com.example.watchme.app.data.network.responses.MovieCreditsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
+import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
+import com.example.watchme.app.domain.movies.GetMovieCreditsByIdUseCase
 import com.example.watchme.app.domain.movies.GetMovieDetailsByIdUseCase
 import com.example.watchme.app.domain.movies.GetNowPlayingMoviesUseCase
 import com.example.watchme.app.domain.movies.GetPopularMoviesUseCase
@@ -29,7 +34,9 @@ class AppViewModel @Inject constructor(
     getNowPlayingMoviesUseCase: GetNowPlayingMoviesUseCase,
     getTopRatedMoviesUseCase: GetTopRatedMoviesUseCase,
     getProvidersUseCase: GetProvidersUseCase,
-    private val getMovieDetailsByIdUseCase: GetMovieDetailsByIdUseCase
+    private val getMovieDetailsByIdUseCase: GetMovieDetailsByIdUseCase,
+    private val getMovieCreditsByIdUseCase: GetMovieCreditsByIdUseCase,
+    private val getMovieImageListByIdUseCase: GetImageListByIdUseCase
 ) : ViewModel() {
 
     private val _popularMovies: MutableStateFlow<MovieResponse> =
@@ -50,6 +57,12 @@ class AppViewModel @Inject constructor(
 
     private val _movieDetails = MutableStateFlow<DetailsMovieResponse?>(null)
     val movieDetails: StateFlow<DetailsMovieResponse?> = _movieDetails
+
+    private val _movieCredits = MutableStateFlow<MovieCreditsResponse?>(null)
+    val movieCredits: StateFlow<MovieCreditsResponse?> = _movieCredits
+
+    private val _movieImageList = MutableStateFlow<ImageBackdrop?>(null)
+    val movieImageList: StateFlow<ImageBackdrop?> = _movieImageList
 
     private val _genres = _movieDetails.value?.genres?.map { it.nameGenre }
         ?.let { MutableStateFlow<List<String>>(it) }
@@ -78,6 +91,18 @@ class AppViewModel @Inject constructor(
         }
     }
 
+    fun getMovieCreditsById(movieId: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            _movieCredits.value = getMovieCreditsByIdUseCase(movieId)
+        }
+    }
+
+    fun getMovieImageListById(movieId: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            _movieImageList.value = getMovieImageListByIdUseCase(movieId)
+        }
+    }
+
     fun getRunTimeInHours(minutes: Int): String {
         val hours = minutes / 60
         val remainingMinutes = minutes % 60
@@ -88,6 +113,8 @@ class AppViewModel @Inject constructor(
         val formatter = NumberFormat.getInstance(Locale("es", "AR"))
         return formatter.format(value)
     }
+
+
 
 }
 

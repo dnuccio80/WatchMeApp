@@ -151,11 +151,10 @@ fun PopularMoviesLazyRow(popularMovies: MovieResponse, onItemClick: (Int) -> Uni
     LazyRow(
         state = listState,
         modifier = Modifier
-            .fillMaxWidth()
             .height(460.dp),
         flingBehavior = rememberSnapFlingBehavior(listState),
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally),
-        contentPadding = PaddingValues(horizontal = 80.dp)
+        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
+        contentPadding = PaddingValues(horizontal = 50.dp)
     ) {
         items(Int.MAX_VALUE) { index -> //
             val realIndex = index % popularMovies.result.size
@@ -178,7 +177,7 @@ fun PopularMovieCardItem(movie: Movie, isCentered: Boolean, onClick: (Int) -> Un
 
     Card(
         Modifier
-            .width(400.dp)
+            .width(380.dp)
             .height(cardHeight)
             .clickable {
                 onClick(movie.id)
@@ -187,7 +186,7 @@ fun PopularMovieCardItem(movie: Movie, isCentered: Boolean, onClick: (Int) -> Un
             containerColor = Color.Black
         ),
         shape = RoundedCornerShape(4.dp),
-        elevation = CardDefaults.cardElevation(15.dp)
+        elevation = CardDefaults.cardElevation(16.dp)
     ) {
         AsyncImage(
             model = imageUrl,

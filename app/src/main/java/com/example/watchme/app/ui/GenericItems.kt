@@ -65,8 +65,19 @@ fun SecondTitleTextItem(text: String, textAlign: TextAlign = TextAlign.Center) {
 }
 
 @Composable
-fun BodyTextItem(text: String) {
-    Text(text, style = MaterialTheme.typography.bodyMedium)
+fun ThirdTitleTextItem(text:String, textAlign: TextAlign = TextAlign.Center){
+    Text(
+        text,
+        modifier = Modifier.fillMaxWidth(),
+        style = MaterialTheme.typography.titleMedium,
+        color = Color.White,
+        textAlign = textAlign
+    )
+}
+
+@Composable
+fun BodyTextItem(text: String, textAlign: TextAlign = TextAlign.Start) {
+    Text(text, style = MaterialTheme.typography.bodyMedium, modifier = if(textAlign != TextAlign.Start) Modifier.fillMaxWidth() else Modifier, textAlign = textAlign)
 }
 
 @Composable
