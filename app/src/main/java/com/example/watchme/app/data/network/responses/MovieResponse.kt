@@ -1,5 +1,6 @@
 package com.example.watchme.app.data.network.responses
 
+import com.example.watchme.app.ui.dataClasses.AuthorDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CastCreditDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDataClass
@@ -9,6 +10,8 @@ import com.example.watchme.app.ui.dataClasses.GenresDataClass
 import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ProductionCompaniesDataClass
+import com.example.watchme.app.ui.dataClasses.ReviewDataClass
+import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.google.gson.annotations.SerializedName
 
 data class MovieResponse(
@@ -90,7 +93,7 @@ data class Collection(
 )
 
 fun Collection.toCollectionDataClass(): CollectionDataClass? {
-    if(nameCollection.isEmpty()) return null
+    if (nameCollection.isEmpty()) return null
 
     return CollectionDataClass(
         idCollection = idCollection,
@@ -118,7 +121,7 @@ data class ProductionCompanies(
     @SerializedName("origin_country") val originCountryProductionCompany: String,
 )
 
-fun ProductionCompanies.toProductionCompaniesDataClass() : ProductionCompaniesDataClass {
+fun ProductionCompanies.toProductionCompaniesDataClass(): ProductionCompaniesDataClass {
     return ProductionCompaniesDataClass(
         idProductionCompany = idProductionCompany,
         logoProductionCompany = logoProductionCompany,
@@ -180,7 +183,7 @@ data class ImageBackdrop(
     @SerializedName("backdrops") val backdrops: List<Backdrop>
 )
 
-fun ImageBackdrop.toBackdropImageDataClass() : List<BackdropImageDataClass> {
+fun ImageBackdrop.toBackdropImageDataClass(): List<BackdropImageDataClass> {
     return backdrops.map {
         BackdropImageDataClass(
             filePath = it.filePath
@@ -192,3 +195,60 @@ data class Backdrop(
     @SerializedName("file_path") val filePath: String,
 )
 
+data class ReviewsResponse(
+    @SerializedName("results") val results: List<Review>
+)
+
+fun ReviewsResponse.toReviewDataClass(): List<ReviewDataClass> {
+    return results.map {
+        ReviewDataClass(
+            author = it.author,
+            authorDetails = it.authorDetails.toAuthorDetailsDataClass(),
+            content = it.content,
+            createdAt = it.createdAt
+        )
+    }
+}
+
+data class Review(
+    @SerializedName("author") val author: String,
+    @SerializedName("author_details") val authorDetails: AuthorDetails,
+    @SerializedName("content") val content: String,
+    @SerializedName("created_at") val createdAt: String,
+)
+
+data class AuthorDetails(
+    @SerializedName("name") val name: String,
+    @SerializedName("username") val username: String,
+    @SerializedName("avatar_path") val avatarPath: String,
+    @SerializedName("rating") val rating: Float,
+)
+
+fun AuthorDetails.toAuthorDetailsDataClass(): AuthorDetailsDataClass {
+    return AuthorDetailsDataClass(
+        name = name,
+        username = username,
+        avatarPath = avatarPath,
+        rating = rating
+    )
+}
+
+data class VideoResponse(
+    @SerializedName("results") val results: List<VideoData>
+)
+
+data class VideoData(
+    @SerializedName("name") val name: String,
+    @SerializedName("key") val key: String,
+    @SerializedName("size") val size: Int,
+)
+
+fun VideoResponse.toVideoDataClass(): List<VideoDataClass> {
+    return results.map {
+        VideoDataClass(
+            name = it.name,
+            key = it.key,
+            size = it.size
+        )
+    }
+}

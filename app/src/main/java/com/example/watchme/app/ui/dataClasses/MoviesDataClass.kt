@@ -14,15 +14,15 @@ data class MovieDataClass(
     val releaseDate: String,
     val title: String,
     val overview: String,
-    val poster: String,
-    val backdrop: String,
+    val poster: String?,
+    val backdrop: String?,
     val voteAverage: Float,
     val voteCount: Int
 )
 
 data class DetailsMovieDataClass(
     val adult: Boolean,
-    val backdropImage: String,
+    val backdropImage: String?,
     val collection: CollectionDataClass?,
     val budget: Long,
     val genres: List<GenresDataClass>,
@@ -64,10 +64,10 @@ data class GenresDataClass(
 )
 
 data class ProductionCompaniesDataClass(
-   val idProductionCompany: Int,
-   val logoProductionCompany: String?,
-   val nameProductionCompany: String,
-   val originCountryProductionCompany: String,
+    val idProductionCompany: Int,
+    val logoProductionCompany: String?,
+    val nameProductionCompany: String,
+    val originCountryProductionCompany: String,
 )
 
 data class CollectionDataClass(
@@ -78,4 +78,24 @@ data class CollectionDataClass(
 
 data class BackdropImageDataClass(
     val filePath: String,
+)
+
+data class ReviewDataClass(
+    val author: String,
+    val authorDetails: AuthorDetailsDataClass,
+    val content: String,
+    val createdAt: String,
+)
+
+data class AuthorDetailsDataClass(
+    val name: String,
+    val username: String,
+    val avatarPath: String?,
+    val rating: Float,
+)
+
+data class VideoDataClass(
+    val name:String,
+    val key:String,
+    val size:Int,
 )

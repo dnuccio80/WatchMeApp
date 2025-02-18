@@ -23,8 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -32,14 +30,19 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
+import com.example.watchme.R
+import com.example.watchme.app.ui.LabelSmallItem
 import com.example.watchme.app.ui.PercentageVisualItem
 import com.example.watchme.app.ui.TitleTextItem
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
+import com.example.watchme.app.ui.dataClasses.SeriesDataClass
+import com.example.watchme.core.Routes
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
 
@@ -53,7 +56,12 @@ fun HomeScreen(
     val popularMovies by viewModel.popularMovies.collectAsState()
     val nowPlayingMovies by viewModel.nowPlayingMovies.collectAsState()
     val topRatedMovies by viewModel.topRatedMovies.collectAsState()
+    val upcomingMovies by viewModel.upcomingMovies.collectAsState()
     val providers by viewModel.providers.collectAsState()
+    val popularSeries by viewModel.popularSeries.collectAsState()
+    val airingSeriesToday by viewModel.airingSeriesToday.collectAsState()
+    val onTheAirSeries by viewModel.onTheAirSeries.collectAsState()
+    val getTopRatedSeries by viewModel.topRatedSeries.collectAsState()
 
     Box(
         Modifier
@@ -67,7 +75,7 @@ fun HomeScreen(
                 .verticalScroll(rememberScrollState())
         ) {
             PopularMoviesLazyRow(popularMovies) {
-                navController.navigate("detailsMovie/$it")
+                navController.navigate(Routes.MovieDetails.createRoute(it))
             }
             Spacer(Modifier.size(16.dp))
             Column(
@@ -75,24 +83,85 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                TitleTextItem("Providers")
+                TitleTextItem(stringResource(R.string.providers))
                 Spacer(Modifier.size(16.dp))
                 ProvidersLazyRow(providers)
                 Spacer(Modifier.size(32.dp))
-                TitleTextItem("Movies")
-                Spacer(Modifier.size(16.dp))
-                Text("Now Playing", style = MaterialTheme.typography.labelSmall)
-                Spacer(Modifier.size(4.dp))
-                NowPlayingMoviesLazyRow(nowPlayingMovies)
+                MoviesSection(
+                    nowPlayingMovies,
+                    viewModel,
+                    topRatedMovies,
+                    upcomingMovies
+                ) { movieId -> navController.navigate(Routes.MovieDetails.createRoute(movieId)) }
                 Spacer(Modifier.size(32.dp))
-                Text("Top Rated", style = MaterialTheme.typography.labelSmall)
-                Spacer(Modifier.size(4.dp))
-                TopRatedMoviesLazyRow(topRatedMovies, viewModel)
+                TvSeriesSection(popularSeries, airingSeriesToday, onTheAirSeries, getTopRatedSeries)
             }
         }
 
     }
 }
+
+@Composable
+fun TvSeriesSection(
+    popularSeries: List<SeriesDataClass>?,
+    airingSeriesToday: List<SeriesDataClass>?,
+    onTheAirSeries: List<SeriesDataClass>?,
+    getTopRatedSeries: List<SeriesDataClass>?
+) {
+    TitleTextItem(stringResource(R.string.tv_series))
+    Spacer(Modifier.size(16.dp))
+    SeriesLazyRow(popularSeries,stringResource(R.string.popular_series))
+    Spacer(Modifier.size(32.dp))
+    SeriesLazyRow(airingSeriesToday, stringResource(R.string.airing_today))
+    Spacer(Modifier.size(32.dp))
+    SeriesLazyRow(onTheAirSeries, stringResource(R.string.on_the_air))
+    Spacer(Modifier.size(32.dp))
+    SeriesLazyRow(getTopRatedSeries, stringResource(R.string.top_rated))
+
+}
+
+@Composable
+fun SeriesLazyRow(seriesList: List<SeriesDataClass>?, label:String) {
+
+    if (seriesList.isNullOrEmpty()) return
+
+    LabelSmallItem(label)
+    Spacer(Modifier.size(4.dp))
+    LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        items(seriesList){
+            DefaultSeriesCardItem(it) { }
+        }
+    }
+}
+
+@Composable
+fun MoviesSection(
+    nowPlayingMovies: List<MovieDataClass>,
+    viewModel: AppViewModel,
+    topRatedMovies: List<MovieDataClass>,
+    upcomingMovies: List<MovieDataClass>,
+    onClick: (Int) -> Unit
+) {
+    TitleTextItem(stringResource(R.string.movies))
+    Spacer(Modifier.size(16.dp))
+    LabelSmallItem(stringResource(R.string.now_playing))
+    Spacer(Modifier.size(4.dp))
+    NowPlayingMoviesLazyRow(nowPlayingMovies) { movieId ->
+        onClick(movieId)
+    }
+    Spacer(Modifier.size(32.dp))
+    LabelSmallItem(stringResource(R.string.top_rated))
+    Spacer(Modifier.size(4.dp))
+    TopRatedMoviesLazyRow(
+        topRatedMovies,
+        viewModel
+    ) { movieId -> onClick(movieId) }
+    Spacer(Modifier.size(32.dp))
+    LabelSmallItem(stringResource(R.string.upcoming))
+    Spacer(Modifier.size(4.dp))
+    UpcomingMoviesLazyRow(upcomingMovies) { movieId -> onClick(movieId) }
+}
+
 
 @Composable
 fun ProvidersLazyRow(providers: List<ProvidersDataClass>) {
@@ -110,7 +179,7 @@ fun ProvidersLazyRow(providers: List<ProvidersDataClass>) {
 @Composable
 fun ProviderCardItem(provider: ProvidersDataClass) {
 
-    val imageUrl = Constants.BASE_URL + provider.logo
+    val imageUrl = Constants.IMAGE_BASE_URL + provider.logo
 
     Card(
         modifier = Modifier
@@ -122,7 +191,7 @@ fun ProviderCardItem(provider: ProvidersDataClass) {
     ) {
         AsyncImage(
             model = imageUrl,
-            contentDescription = "provider image",
+            contentDescription = stringResource(R.string.provider_image),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxSize()
@@ -131,10 +200,10 @@ fun ProviderCardItem(provider: ProvidersDataClass) {
 }
 
 @Composable
-fun NowPlayingMoviesLazyRow(movies: List<MovieDataClass>) {
+fun NowPlayingMoviesLazyRow(movies: List<MovieDataClass>, onClick: (Int) -> Unit) {
     LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         items(movies) {
-            NowPlayingCardItem(it)
+            DefaultMovieCardItem(it) { movieId -> onClick(movieId) }
         }
     }
 }
@@ -167,7 +236,7 @@ fun PopularMoviesLazyRow(popularMovies: List<MovieDataClass>, onItemClick: (Int)
 
 @Composable
 fun PopularMovieCardItem(movie: MovieDataClass, isCentered: Boolean, onClick: (Int) -> Unit) {
-    val imageUrl = Constants.BASE_URL + movie.poster
+    val imageUrl = Constants.IMAGE_BASE_URL + movie.poster
 
     val cardHeight by animateDpAsState(
         targetValue = if (isCentered) 460.dp else 440.dp,
@@ -188,7 +257,7 @@ fun PopularMovieCardItem(movie: MovieDataClass, isCentered: Boolean, onClick: (I
     ) {
         AsyncImage(
             model = imageUrl,
-            contentDescription = "movie image",
+            contentDescription = stringResource(R.string.movie_image),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxSize()
@@ -197,13 +266,16 @@ fun PopularMovieCardItem(movie: MovieDataClass, isCentered: Boolean, onClick: (I
 }
 
 @Composable
-fun NowPlayingCardItem(movie: MovieDataClass) {
-    val imageUrl = Constants.BASE_URL + movie.poster
+fun DefaultMovieCardItem(movie: MovieDataClass, onClick: (Int) -> Unit) {
+    val imageUrl = Constants.IMAGE_BASE_URL + movie.poster
 
     Card(
         modifier = Modifier
             .width(120.dp)
-            .height(160.dp), colors = CardDefaults.cardColors(
+            .height(160.dp)
+            .clickable {
+                onClick(movie.id)
+            }, colors = CardDefaults.cardColors(
             containerColor = Color.Black
         ),
         shape = RoundedCornerShape(4.dp),
@@ -211,7 +283,7 @@ fun NowPlayingCardItem(movie: MovieDataClass) {
     ) {
         AsyncImage(
             model = imageUrl,
-            contentDescription = "movie image",
+            contentDescription = stringResource(R.string.movie_image),
             contentScale = ContentScale.FillBounds,
             modifier = Modifier
                 .fillMaxSize()
@@ -220,24 +292,57 @@ fun NowPlayingCardItem(movie: MovieDataClass) {
 }
 
 @Composable
-fun TopRatedMoviesLazyRow(movies: List<MovieDataClass>, viewModel: AppViewModel) {
+fun DefaultSeriesCardItem(serie: SeriesDataClass, onClick: (Int) -> Unit) {
+    val imageUrl = Constants.IMAGE_BASE_URL + serie.posterPath
+
+    Card(
+        modifier = Modifier
+            .width(120.dp)
+            .height(160.dp)
+            .clickable {
+                onClick(serie.id)
+            }, colors = CardDefaults.cardColors(
+            containerColor = Color.Black
+        ),
+        shape = RoundedCornerShape(4.dp),
+        elevation = CardDefaults.cardElevation(15.dp)
+    ) {
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = stringResource(R.string.movie_image),
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxSize()
+        )
+    }
+}
+
+@Composable
+fun TopRatedMoviesLazyRow(
+    movies: List<MovieDataClass>,
+    viewModel: AppViewModel,
+    onClick: (Int) -> Unit
+) {
     LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
         items(movies) {
-            TopRatedCardItem(it, viewModel)
+            TopRatedCardItem(it, viewModel) { movieId -> onClick(movieId) }
         }
     }
 }
 
 @Composable
-fun TopRatedCardItem(movie: MovieDataClass, viewModel: AppViewModel) {
+fun TopRatedCardItem(movie: MovieDataClass, viewModel: AppViewModel, onClick: (Int) -> Unit) {
 
-    val imageUrl = Constants.BASE_URL + movie.poster
+    val imageUrl = Constants.IMAGE_BASE_URL + movie.poster
     val votePercentage = (movie.voteAverage * 10).toInt()
 
     Card(
         modifier = Modifier
             .width(120.dp)
-            .height(160.dp), colors = CardDefaults.cardColors(
+            .height(160.dp)
+            .clickable {
+                onClick(movie.id)
+            }, colors = CardDefaults.cardColors(
             containerColor = Color.Black
         ),
         shape = RoundedCornerShape(4.dp),
@@ -246,7 +351,7 @@ fun TopRatedCardItem(movie: MovieDataClass, viewModel: AppViewModel) {
         Box(Modifier.fillMaxSize()) {
             AsyncImage(
                 model = imageUrl,
-                contentDescription = "movie image",
+                contentDescription = stringResource(R.string.movie_image),
                 contentScale = ContentScale.FillBounds,
                 modifier = Modifier
                     .fillMaxSize()
@@ -256,6 +361,18 @@ fun TopRatedCardItem(movie: MovieDataClass, viewModel: AppViewModel) {
                 Modifier.align(Alignment.TopStart),
                 viewModel.getPercentageColor(votePercentage)
             )
+        }
+    }
+}
+
+
+@Composable
+fun UpcomingMoviesLazyRow(upcomingMovies: List<MovieDataClass>, onClick: (Int) -> Unit) {
+    if (upcomingMovies.isEmpty()) return
+
+    LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+        items(upcomingMovies) {
+            DefaultMovieCardItem(it) { movieId -> onClick(movieId) }
         }
     }
 }

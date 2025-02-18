@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.example.watchme.R
 import com.example.watchme.ui.theme.BottomBarBackground
@@ -34,7 +35,7 @@ fun TopBar() {
     ) {
         Image(
             painterResource(R.drawable.ic_logo),
-            contentDescription = "app logo",
+            contentDescription = stringResource(R.string.app_logo),
             Modifier.width(128.dp)
         )
     }
@@ -51,22 +52,22 @@ fun BottomBar() {
         NavigationBarItem(
             selected = false,
             onClick = {},
-            icon = { Icon(Icons.Default.Home, contentDescription = "home") },
+            icon = { Icon(Icons.Default.Home, contentDescription = stringResource(R.string.home)) },
         )
         NavigationBarItem(
             selected = false,
             onClick = {},
-            icon = { Icon(Icons.Default.Search, contentDescription = "search") },
+            icon = { Icon(Icons.Default.Search, contentDescription = stringResource(R.string.search)) },
         )
         NavigationBarItem(
             selected = false,
             onClick = {},
-            icon = { Icon(Icons.Default.KeyboardArrowDown, contentDescription = "Download") },
+            icon = { Icon(Icons.Default.KeyboardArrowDown, contentDescription = stringResource(R.string.download)) },
         )
         NavigationBarItem(
             selected = false,
             onClick = {},
-            icon = { Icon(Icons.Default.AccountCircle, contentDescription = "home") },
+            icon = { Icon(Icons.Default.AccountCircle, contentDescription = stringResource(R.string.home)) },
         )
     }
 }

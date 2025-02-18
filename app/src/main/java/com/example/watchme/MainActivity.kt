@@ -17,6 +17,7 @@ import com.example.watchme.app.ui.BottomBar
 import com.example.watchme.app.ui.TopBar
 import com.example.watchme.app.ui.screens.HomeScreen
 import com.example.watchme.app.ui.screens.MovieDetailsScreen
+import com.example.watchme.app.ui.screens.SeriesDetailsScreen
 import com.example.watchme.core.Routes
 import com.example.watchme.ui.theme.WatchMeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -43,15 +44,16 @@ class MainActivity : ComponentActivity() {
                         BottomBar()
                     }
                 ) { innerPadding ->
-                    NavHost(navController, startDestination = Routes.Home.route) {
-                        composable(Routes.Home.route) { HomeScreen(innerPadding, viewModel, navController) }
-                        composable(
-                            "detailsMovie/{movieId}",
-                            arguments = listOf(navArgument("movieId") {
-                                type = NavType.IntType
-                            })) {backStackEntry -> MovieDetailsScreen(innerPadding, viewModel, backStackEntry.arguments?.getInt("movieId") ?: 0) }
-                    }
+//                    NavHost(navController, startDestination = Routes.Home.route) {
+//                        composable(Routes.Home.route) { HomeScreen(innerPadding, viewModel, navController) }
+//                        composable(
+//                            Routes.MovieDetails.route,
+//                            arguments = listOf(navArgument("movieId") {
+//                                type = NavType.IntType
+//                            })) {backStackEntry -> MovieDetailsScreen(innerPadding, viewModel, backStackEntry.arguments?.getInt("movieId") ?: 0) }
+//                    }
 //                    MovieDetailsScreen(innerPadding, viewModel, 939243)
+                    SeriesDetailsScreen(innerPadding, this.viewModel, 1434)
                 }
             }
         }

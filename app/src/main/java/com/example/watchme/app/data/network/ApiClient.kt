@@ -5,7 +5,11 @@ import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.MovieCreditsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
-import com.example.watchme.core.Routes
+import com.example.watchme.app.data.network.responses.ReviewsResponse
+import com.example.watchme.app.data.network.responses.SeasonDetails
+import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
+import com.example.watchme.app.data.network.responses.SeriesResponse
+import com.example.watchme.app.data.network.responses.VideoResponse
 import com.example.watchme.core.constants.Constants
 import retrofit2.Response
 import retrofit2.http.GET
@@ -13,6 +17,8 @@ import retrofit2.http.Headers
 import retrofit2.http.Url
 
 interface ApiClient {
+
+    // MOVIES
 
     @Headers(Constants.ACCEPT_JSON, Constants.AUTHORIZATION_TOKEN_API)
     @GET("movie/popular")
@@ -27,7 +33,11 @@ interface ApiClient {
     suspend fun getTopRatedMovies(): Response<MovieResponse>
 
     @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
-    @GET("watch/providers/movie")
+    @GET("movie/upcoming")
+    suspend fun getUpcomingMovies(): Response<MovieResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET("watch/providers/movie${Constants.SPANISH_AR}${Constants.AR_REGION}")
     suspend fun getProviders(): Response<ProvidersResponse>
 
     @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
@@ -42,5 +52,42 @@ interface ApiClient {
     @GET
     suspend fun getImageListById(@Url url:String): Response<ImageBackdrop>
 
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET
+    suspend fun getRecommendationsById(@Url url:String): Response<MovieResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET
+    suspend fun getReviewsById(@Url url:String): Response<ReviewsResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET
+    suspend fun getVideosById(@Url url:String): Response<VideoResponse>
+
+    // SERIES
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET("tv/popular")
+    suspend fun getPopularSeries(): Response<SeriesResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET("tv/airing_today")
+    suspend fun getAiringTodaySeries(): Response<SeriesResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET("tv/on_the_air")
+    suspend fun getOnTheAirSeries(): Response<SeriesResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET("tv/top_rated")
+    suspend fun getTopRatedSeries(): Response<SeriesResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET()
+    suspend fun getSeriesDetailsById(@Url url:String): Response<SeriesDetailsResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET()
+    suspend fun getSeasonsDetailsById(@Url url:String): Response<SeasonDetails>
 
 }
