@@ -14,15 +14,21 @@ import com.example.watchme.app.data.network.responses.toMovieCreditsDataClass
 import com.example.watchme.app.data.network.responses.toMovieDataClass
 import com.example.watchme.app.data.network.responses.toProvidersDataClass
 import com.example.watchme.app.data.network.responses.toReviewDataClass
+import com.example.watchme.app.data.network.responses.toSeasonDetailsDataClass
 import com.example.watchme.app.data.network.responses.toSeriesDataClass
+import com.example.watchme.app.data.network.responses.toSeriesDetailsDataClass
 import com.example.watchme.app.data.network.responses.toVideoDataClass
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
+import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.EpisodesDataClass
 import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
+import com.example.watchme.app.ui.dataClasses.SeasonDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
+import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import javax.inject.Inject
 
@@ -92,12 +98,12 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getTopRatedSeries().toSeriesDataClass()
     }
 
-    suspend fun getSeriesDetailsById(seriesId: Int): SeriesDetailsResponse {
-        return apiService.getSeriesDetailsById(seriesId)
+    suspend fun getSeriesDetailsById(seriesId: Int): SeriesDetailsDataClass {
+        return apiService.getSeriesDetailsById(seriesId).toSeriesDetailsDataClass()
     }
 
-    suspend fun getSeasonsDetails(seriesId: Int, seasonNumber: Int): SeasonDetails {
-        return apiService.getSeasonDetailsById(seriesId, seasonNumber)
+    suspend fun getSeasonsDetails(seriesId: Int, seasonNumber: Int): List<EpisodeDetailsDataClass> {
+        return apiService.getSeasonDetailsById(seriesId, seasonNumber).toSeasonDetailsDataClass()
     }
 
 }

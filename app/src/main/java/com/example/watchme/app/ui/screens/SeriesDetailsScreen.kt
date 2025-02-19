@@ -35,14 +35,12 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,9 +55,6 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
-import com.example.watchme.app.data.network.responses.Season
-import com.example.watchme.app.data.network.responses.SeasonDetails
-import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
@@ -67,10 +62,12 @@ import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.LazyRowItemText
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
+import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.SeasonDataClass
+import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.ui.theme.CardContainerColor
-import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun SeriesDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, id: Int) {
@@ -78,6 +75,7 @@ fun SeriesDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, id
 
     val seriesDetails by viewModel.seriesDetails.collectAsState()
     val seasonDetails by viewModel.seasonsDetails.collectAsState()
+
     val verticalScrollState = rememberScrollState()
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
 
@@ -198,15 +196,15 @@ fun LazyHorizontalDividerItem(textWidth: Int, xPos: Float) {
 }
 
 @Composable
-fun SeriesOverviewSection(seriesDetails: SeriesDetailsResponse?) {
+fun SeriesOverviewSection(seriesDetails: SeriesDetailsDataClass?) {
     seriesDetails?.overview?.let { BodyTextItem(it) }
 }
 
 @Composable
 fun EpisodesSection(
     seasonSelected: Int,
-    seasonList: List<Season>,
-    seasonDetails: SeasonDetails?,
+    seasonList: List<SeasonDataClass>,
+    seasonDetails: List<EpisodeDetailsDataClass>?,
     onCurrentSeasonChange: (Int) -> Unit
 ) {
 
@@ -243,11 +241,11 @@ fun EpisodesSection(
 }
 
 @Composable
-fun EpisodesListItem(seasonDetails: SeasonDetails?) {
+fun EpisodesListItem(seasonDetails: List<EpisodeDetailsDataClass>?) {
 
-    if (seasonDetails?.episodes.isNullOrEmpty()) return
+    if (seasonDetails.isNullOrEmpty()) return
 
-    seasonDetails?.episodes?.forEach {
+    seasonDetails.forEach {
         val imageUrl = Constants.IMAGE_BASE_URL + it.imagePath
 
         Card(
@@ -266,7 +264,7 @@ fun EpisodesListItem(seasonDetails: SeasonDetails?) {
                     contentDescription = stringResource(R.string.episode_image),
                     modifier = Modifier.size(140.dp),
                     contentScale = ContentScale.Crop,
-                    error = painterResource(R.drawable.image_not_found)
+                    error = painterResource(R.drawable.image_not_available)
                 )
                 Column(
                     modifier = Modifier
@@ -292,8 +290,8 @@ fun EpisodesListItem(seasonDetails: SeasonDetails?) {
 @Composable
 fun SeasonsDropdownMenuItem(
     show: Boolean,
-    seasonList: List<Season>,
-    onClick: (Season) -> Unit,
+    seasonList: List<SeasonDataClass>,
+    onClick: (SeasonDataClass) -> Unit,
     onDismiss: () -> Unit
 ) {
 

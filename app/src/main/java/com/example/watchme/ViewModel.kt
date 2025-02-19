@@ -24,11 +24,14 @@ import com.example.watchme.app.domain.series.GetSeriesDetailsByIdUseCase
 import com.example.watchme.app.domain.series.GetTopRatedSeriesUseCase
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
+import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.EpisodesDataClass
 import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
+import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.ui.theme.IntermediateVoteColor
 import com.example.watchme.ui.theme.NegativeVoteColor
@@ -121,11 +124,11 @@ class AppViewModel @Inject constructor(
     private val _topRatedSeries = MutableStateFlow<List<SeriesDataClass>?>(null)
     val topRatedSeries : StateFlow<List<SeriesDataClass>?> = _topRatedSeries
 
-    private val _seriesDetails = MutableStateFlow<SeriesDetailsResponse?>(null)
-    val seriesDetails: StateFlow<SeriesDetailsResponse?> = _seriesDetails
+    private val _seriesDetails = MutableStateFlow<SeriesDetailsDataClass?>(null)
+    val seriesDetails: StateFlow<SeriesDetailsDataClass?> = _seriesDetails
 
-    private val _seasonsDetails = MutableStateFlow<SeasonDetails?>(null)
-    val seasonsDetails: StateFlow<SeasonDetails?> = _seasonsDetails
+    private val _seasonsDetails = MutableStateFlow<List<EpisodeDetailsDataClass>?>(null)
+    val seasonsDetails: StateFlow<List<EpisodeDetailsDataClass>?> = _seasonsDetails
 
     init {
         viewModelScope.launch(Dispatchers.IO) {

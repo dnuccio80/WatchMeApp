@@ -1,6 +1,12 @@
 package com.example.watchme.app.data.network.responses
 
+import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.EpisodesDataClass
+import com.example.watchme.app.ui.dataClasses.GenreDataClass
+import com.example.watchme.app.ui.dataClasses.SeasonDataClass
+import com.example.watchme.app.ui.dataClasses.SeriesCreatedByDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
+import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.google.gson.annotations.SerializedName
 
 data class SeriesResponse(
@@ -49,7 +55,6 @@ data class SeriesDetailsResponse(
     @SerializedName("last_episode_to_air") val lastEpisodeToAir: Episode,
     @SerializedName("name") val name: String,
     @SerializedName("next_episode_to_air") val nextEpisodeToAir: Episode,
-    @SerializedName("networks") val networks: List<Episode>,
     @SerializedName("number_of_episodes") val numberOfEpisodes: Int,
     @SerializedName("number_of_seasons") val numberOfSeasons: Int,
     @SerializedName("overview") val overview: String,
@@ -59,6 +64,30 @@ data class SeriesDetailsResponse(
     @SerializedName("type") val type: String,
     @SerializedName("vote_average") val voteAverage: Float,
 )
+
+fun SeriesDetailsResponse.toSeriesDetailsDataClass(): SeriesDetailsDataClass {
+    return SeriesDetailsDataClass(
+        adult = adult,
+        backdropPath = backdropPath,
+        createdBy = createdBy.map { it.toSeriesCreatedByDataClass() },
+        episodeRunTime = episodeRunTime,
+        firstAirDate = firstAirDate,
+        genres = genres.map { it.toGenresDataClass() },
+        homepage = homepage,
+        id = id,
+        lastEpisodeToAir = lastEpisodeToAir.toEpisodesDataClass(),
+        name = name,
+        nextEpisodeToAir = nextEpisodeToAir.toEpisodesDataClass(),
+        numberOfEpisodes = numberOfEpisodes,
+        numberOfSeasons = numberOfSeasons,
+        overview = overview,
+        posterPath = posterPath,
+        productionCompanies = productionCompanies.map { it.toProductionCompaniesDataClass() },
+        seasons = seasons.map { it.toSeasonDataClass() },
+        type = type,
+        voteAverage = voteAverage,
+    )
+}
 
 data class Season(
     @SerializedName("air_date") val airDate: String,
@@ -70,13 +99,42 @@ data class Season(
     @SerializedName("season_number") val seasonNumber: Int,
     @SerializedName("vote_average") val voteAverage: Float,
 
-)
+    )
+
+fun Season.toSeasonDataClass(): SeasonDataClass {
+    return SeasonDataClass(
+        airDate = airDate,
+        episodeCount = episodeCount,
+        id = id,
+        name = name,
+        overview = overview,
+        posterPath = posterPath,
+        seasonNumber = seasonNumber,
+        voteAverage = voteAverage,
+    )
+}
 
 data class SeasonDetails(
-    @SerializedName("episodes") val episodes: List<Episodes>,
+    @SerializedName("episodes") val episodes: List<EpisodeDetails>,
 )
 
-data class Episodes(
+fun SeasonDetails.toSeasonDetailsDataClass(): List<EpisodeDetailsDataClass> {
+    return episodes.map {
+        EpisodeDetailsDataClass(
+            episodeNumber = it.episodeNumber,
+            id = it.id,
+            name = it.name,
+            overview = it.overview,
+            runtime = it.runtime,
+            seasonNumber = it.seasonNumber,
+            imagePath = it.imagePath,
+            crew = it.crew
+        )
+    }
+}
+
+
+data class EpisodeDetails(
     @SerializedName("episode_number") val episodeNumber: Int,
     @SerializedName("id") val id: Int,
     @SerializedName("name") val name: String,
@@ -87,6 +145,19 @@ data class Episodes(
     @SerializedName("crew") val crew: List<CrewCredit>,
 )
 
+fun EpisodeDetails.toEpisodeDataClass(): EpisodeDetailsDataClass {
+    return EpisodeDetailsDataClass(
+        episodeNumber = episodeNumber,
+        id = id,
+        name = name,
+        overview = overview,
+        runtime = runtime,
+        seasonNumber = seasonNumber,
+        imagePath = imagePath,
+        crew = crew
+    )
+}
+
 data class SeriesCreatedBy(
     @SerializedName("id") val id: Int,
     @SerializedName("name") val name: String,
@@ -94,10 +165,26 @@ data class SeriesCreatedBy(
     @SerializedName("profile_path") val profilePath: String,
 )
 
+fun SeriesCreatedBy.toSeriesCreatedByDataClass(): SeriesCreatedByDataClass {
+    return SeriesCreatedByDataClass(
+        id = id,
+        name = name,
+        gender = gender,
+        profilePath = profilePath,
+    )
+}
+
 data class Genre(
     @SerializedName("id") val id: Int,
     @SerializedName("name") val name: String,
 )
+
+fun Genre.toGenresDataClass(): GenreDataClass {
+    return GenreDataClass(
+        id = id,
+        name = name,
+    )
+}
 
 data class Episode(
     @SerializedName("id") val id: Int,
@@ -110,6 +197,21 @@ data class Episode(
     @SerializedName("season_number") val seasonNumber: Int,
     @SerializedName("show_id") val showId: Int,
 )
+
+fun Episode.toEpisodesDataClass(): EpisodesDataClass {
+    return EpisodesDataClass(
+        id = id,
+        name = name,
+        overview = overview,
+        voteAverage = voteAverage,
+        airDate = airDate,
+        episodeNumber = episodeNumber,
+        runtime = runtime,
+        seasonNumber = seasonNumber,
+        showId = showId,
+    )
+}
+
 
 data class Network(
     @SerializedName("id") val id: Int,
