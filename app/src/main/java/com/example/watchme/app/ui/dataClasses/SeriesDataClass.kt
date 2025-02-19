@@ -83,4 +83,8 @@ data class EpisodesDataClass(
     val showId: Int,
 )
 
+//data class SeriesRecommendation(
+//
+//)
+
 

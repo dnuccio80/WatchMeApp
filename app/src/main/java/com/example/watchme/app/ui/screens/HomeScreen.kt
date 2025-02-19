@@ -292,15 +292,15 @@ fun DefaultMovieCardItem(movie: MovieDataClass, onClick: (Int) -> Unit) {
 }
 
 @Composable
-fun DefaultSeriesCardItem(serie: SeriesDataClass, onClick: (Int) -> Unit) {
-    val imageUrl = Constants.IMAGE_BASE_URL + serie.posterPath
+fun DefaultSeriesCardItem(series: SeriesDataClass, onClick: (Int) -> Unit) {
+    val imageUrl = Constants.IMAGE_BASE_URL + series.posterPath
 
     Card(
         modifier = Modifier
             .width(120.dp)
             .height(160.dp)
             .clickable {
-                onClick(serie.id)
+                onClick(series.id)
             }, colors = CardDefaults.cardColors(
             containerColor = Color.Black
         ),

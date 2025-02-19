@@ -7,6 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +22,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -64,6 +70,7 @@ import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.SeasonDataClass
+import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
@@ -75,12 +82,14 @@ fun SeriesDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, id
 
     val seriesDetails by viewModel.seriesDetails.collectAsState()
     val seasonDetails by viewModel.seasonsDetails.collectAsState()
+    val seriesRecommendations by viewModel.seriesRecommendations.collectAsState()
 
     val verticalScrollState = rememberScrollState()
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
 
     viewModel.getSeriesDetailsById(id)
     viewModel.getSeasonDetails(id, seasonSelected)
+    viewModel.getSeriesRecommendationsById(id)
 
     val lazyList = listOf(
         stringResource(R.string.episodes),
@@ -124,6 +133,10 @@ fun SeriesDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, id
                 SeriesOverviewSection(seriesDetails)
                 Spacer(Modifier.size(16.dp))
                 LazyRowItem(lazyList)
+                SeriesRecommendationsSection(seriesRecommendations)
+                /*
+                    LIST OF EPISODES BY SEASONS WITH BUTTON SEASON SELECTOR
+
                 seriesDetails?.seasons?.let { seasons ->
                     EpisodesSection(
                         seasonSelected,
@@ -132,11 +145,53 @@ fun SeriesDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, id
                         onCurrentSeasonChange = { seasonNumber ->
                             seasonSelected = seasonNumber
                         })
-                }
+                }*/
             }
         }
     }
 }
+
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun SeriesRecommendationsSection(seriesRecommendations: List<SeriesDataClass>?) {
+
+    if (seriesRecommendations == null) return
+
+    FlowRow(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
+        seriesRecommendations.forEach {
+            RecommendationCardItem(it) { }
+        }
+    }
+
+}
+
+@Composable
+fun RecommendationCardItem(series: SeriesDataClass, onClick: (Int) -> Unit) {
+    val imageUrl = Constants.IMAGE_BASE_URL + series.posterPath
+
+    Card(
+        modifier = Modifier
+            .width(120.dp)
+            .height(160.dp)
+            .clickable {
+                onClick(series.id)
+            }, colors = CardDefaults.cardColors(
+            containerColor = Color.Black
+        ),
+        shape = RoundedCornerShape(4.dp),
+        elevation = CardDefaults.cardElevation(15.dp)
+    ) {
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = stringResource(R.string.movie_image),
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxSize()
+        )
+    }
+}
+
 
 @Composable
 fun LazyRowItem(lazyList: List<String>) {

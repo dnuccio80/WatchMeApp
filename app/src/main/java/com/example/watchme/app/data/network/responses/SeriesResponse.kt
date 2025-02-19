@@ -212,7 +212,6 @@ fun Episode.toEpisodesDataClass(): EpisodesDataClass {
     )
 }
 
-
 data class Network(
     @SerializedName("id") val id: Int,
     @SerializedName("logo_path") val logoPath: String,

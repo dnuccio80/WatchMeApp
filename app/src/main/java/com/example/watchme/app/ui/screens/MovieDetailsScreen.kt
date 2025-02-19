@@ -7,11 +7,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -59,7 +56,6 @@ import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.ConfirmDeclineDialog
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.NextPreviousButtonsRow
-import com.example.watchme.app.ui.PointSeparatorIcon
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleSubtitleItem
@@ -89,7 +85,7 @@ fun MovieDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, mov
     val movieDetails = viewModel.movieDetails.collectAsState()
     val movieCredits = viewModel.movieCredits.collectAsState()
     val movieListImages = viewModel.movieImageList.collectAsState()
-    val recommendations = viewModel.recommendations.collectAsState()
+    val recommendations = viewModel.movieRecommendations.collectAsState()
     val reviews = viewModel.reviews.collectAsState()
     val videos = viewModel.videos.collectAsState()
 

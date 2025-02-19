@@ -3,8 +3,6 @@ package com.example.watchme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.watchme.app.data.network.responses.SeasonDetails
-import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
 import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
 import com.example.watchme.app.domain.movies.GetMovieCreditsByIdUseCase
 import com.example.watchme.app.domain.movies.GetMovieDetailsByIdUseCase
@@ -21,11 +19,11 @@ import com.example.watchme.app.domain.series.GetOnTheAirSeriesUseCase
 import com.example.watchme.app.domain.series.GetPopularSeriesUseCase
 import com.example.watchme.app.domain.series.GetSeasonDetailsUseCase
 import com.example.watchme.app.domain.series.GetSeriesDetailsByIdUseCase
+import com.example.watchme.app.domain.series.GetSeriesRecommendationsByIdUseCase
 import com.example.watchme.app.domain.series.GetTopRatedSeriesUseCase
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
-import com.example.watchme.app.ui.dataClasses.EpisodesDataClass
 import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
@@ -67,24 +65,30 @@ class AppViewModel @Inject constructor(
     getTopRatedSeriesUseCase: GetTopRatedSeriesUseCase,
     private val getSeriesDetailsByIdUseCase: GetSeriesDetailsByIdUseCase,
     private val getSeasonDetailsUseCase: GetSeasonDetailsUseCase,
+    private val getSeriesRecommendationsByIdUseCase: GetSeriesRecommendationsByIdUseCase
 
 ) : ViewModel() {
 
     // MOVIES
 
-    private val _popularMovies: MutableStateFlow<List<MovieDataClass>> = MutableStateFlow(emptyList())
+    private val _popularMovies: MutableStateFlow<List<MovieDataClass>> =
+        MutableStateFlow(emptyList())
     val popularMovies: StateFlow<List<MovieDataClass>> = _popularMovies
 
-    private val _nowPlayingMovies: MutableStateFlow<List<MovieDataClass>> = MutableStateFlow(emptyList())
+    private val _nowPlayingMovies: MutableStateFlow<List<MovieDataClass>> =
+        MutableStateFlow(emptyList())
     val nowPlayingMovies: StateFlow<List<MovieDataClass>> = _nowPlayingMovies
 
-    private val _topRatedMovies: MutableStateFlow<List<MovieDataClass>> = MutableStateFlow(emptyList())
+    private val _topRatedMovies: MutableStateFlow<List<MovieDataClass>> =
+        MutableStateFlow(emptyList())
     val topRatedMovies: StateFlow<List<MovieDataClass>> = _topRatedMovies
 
-    private val _upcomingMovies: MutableStateFlow<List<MovieDataClass>> = MutableStateFlow(emptyList())
+    private val _upcomingMovies: MutableStateFlow<List<MovieDataClass>> =
+        MutableStateFlow(emptyList())
     val upcomingMovies: StateFlow<List<MovieDataClass>> = _upcomingMovies
 
-    private val _providers: MutableStateFlow<List<ProvidersDataClass>> = MutableStateFlow(emptyList())
+    private val _providers: MutableStateFlow<List<ProvidersDataClass>> =
+        MutableStateFlow(emptyList())
     val providers: StateFlow<List<ProvidersDataClass>> = _providers
 
     private val _movieDetails = MutableStateFlow<DetailsMovieDataClass?>(null)
@@ -101,34 +105,37 @@ class AppViewModel @Inject constructor(
         ?.let { MutableStateFlow<List<String>>(it) }
     val genres: StateFlow<List<String>>? = _genres
 
-    private val _recommendations = MutableStateFlow<List<MovieDataClass>?>(null)
-    val recommendations: StateFlow<List<MovieDataClass>?> = _recommendations
+    private val _movieRecommendations = MutableStateFlow<List<MovieDataClass>?>(null)
+    val movieRecommendations: StateFlow<List<MovieDataClass>?> = _movieRecommendations
 
     private val _reviews = MutableStateFlow<List<ReviewDataClass>?>(null)
-    val reviews : StateFlow<List<ReviewDataClass>?> = _reviews
+    val reviews: StateFlow<List<ReviewDataClass>?> = _reviews
 
     private val _videos = MutableStateFlow<List<VideoDataClass>?>(null)
-    val videos : StateFlow<List<VideoDataClass>?> = _videos
+    val videos: StateFlow<List<VideoDataClass>?> = _videos
 
     // SERIES
 
     private val _popularSeries = MutableStateFlow<List<SeriesDataClass>?>(null)
-    val popularSeries : StateFlow<List<SeriesDataClass>?> = _popularSeries
+    val popularSeries: StateFlow<List<SeriesDataClass>?> = _popularSeries
 
     private val _airingSeriesToday = MutableStateFlow<List<SeriesDataClass>?>(null)
-    val airingSeriesToday : StateFlow<List<SeriesDataClass>?> = _airingSeriesToday
+    val airingSeriesToday: StateFlow<List<SeriesDataClass>?> = _airingSeriesToday
 
     private val _onTheAirSeries = MutableStateFlow<List<SeriesDataClass>?>(null)
-    val onTheAirSeries : StateFlow<List<SeriesDataClass>?> = _onTheAirSeries
+    val onTheAirSeries: StateFlow<List<SeriesDataClass>?> = _onTheAirSeries
 
     private val _topRatedSeries = MutableStateFlow<List<SeriesDataClass>?>(null)
-    val topRatedSeries : StateFlow<List<SeriesDataClass>?> = _topRatedSeries
+    val topRatedSeries: StateFlow<List<SeriesDataClass>?> = _topRatedSeries
 
     private val _seriesDetails = MutableStateFlow<SeriesDetailsDataClass?>(null)
     val seriesDetails: StateFlow<SeriesDetailsDataClass?> = _seriesDetails
 
     private val _seasonsDetails = MutableStateFlow<List<EpisodeDetailsDataClass>?>(null)
     val seasonsDetails: StateFlow<List<EpisodeDetailsDataClass>?> = _seasonsDetails
+
+    private val _seriesRecommendations = MutableStateFlow<List<SeriesDataClass>?>(null)
+    val seriesRecommendations: StateFlow<List<SeriesDataClass>?> = _seriesRecommendations
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -160,31 +167,31 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun getMovieCreditsById(movieId: Int){
+    fun getMovieCreditsById(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _movieCredits.value = getMovieCreditsByIdUseCase(movieId)
         }
     }
 
-    fun getMovieImageListById(movieId: Int){
+    fun getMovieImageListById(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _movieImageList.value = getMovieImageListByIdUseCase(movieId)
         }
     }
 
-    fun getRecommendationsById(movieId: Int){
+    fun getRecommendationsById(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _recommendations.value = getRecommendationsByIdUseCase(movieId)
+            _movieRecommendations.value = getRecommendationsByIdUseCase(movieId)
         }
     }
 
-    fun getReviewsById(movieId: Int){
+    fun getReviewsById(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _reviews.value = getReviewsByIdUseCase(movieId)
         }
     }
 
-    fun getVideosById(movieId: Int){
+    fun getVideosById(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _videos.value = getVideosByIdUseCase(movieId)
         }
@@ -198,9 +205,15 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun getSeasonDetails(seriesId:Int, seasonNumber:Int){
+    fun getSeasonDetails(seriesId: Int, seasonNumber: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _seasonsDetails.value = getSeasonDetailsUseCase(seriesId, seasonNumber)
+        }
+    }
+
+    fun getSeriesRecommendationsById(seriesId: Int) {
+        viewModelScope.launch (Dispatchers.IO){
+            _seriesRecommendations.value = getSeriesRecommendationsByIdUseCase(seriesId)
         }
     }
 

@@ -90,4 +90,9 @@ interface ApiClient {
     @GET()
     suspend fun getSeasonsDetailsById(@Url url:String): Response<SeasonDetails>
 
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET()
+    suspend fun getSeriesRecommendationsById(@Url url:String): Response<SeriesResponse>
+
+
 }

@@ -247,4 +247,17 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
+    suspend fun getSeriesRecommendationsById(seriesId:Int): SeriesResponse {
+        return withContext(Dispatchers.IO){
+            val response = retrofit.create(ApiClient::class.java).getSeriesRecommendationsById("tv/$seriesId/recommendations")
+            val body: SeriesResponse? = response.body()
+
+            if(response.isSuccessful && body != null){
+                body
+            } else {
+                throw Exception("Failed to fetch series details: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
 }
