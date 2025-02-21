@@ -22,10 +22,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.grid.GridCells
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.grid.itemsIndexed
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -58,6 +54,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
@@ -72,12 +69,18 @@ import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.SeasonDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
+import com.example.watchme.core.Routes
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.ui.theme.CardContainerColor
 
 @Composable
-fun SeriesDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, id: Int) {
+fun SeriesDetailsScreen(
+    innerPadding: PaddingValues,
+    viewModel: AppViewModel,
+    navController: NavHostController,
+    seriesId: Int
+) {
 
 
     val seriesDetails by viewModel.seriesDetails.collectAsState()
@@ -87,9 +90,9 @@ fun SeriesDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, id
     val verticalScrollState = rememberScrollState()
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
 
-    viewModel.getSeriesDetailsById(id)
-    viewModel.getSeasonDetails(id, seasonSelected)
-    viewModel.getSeriesRecommendationsById(id)
+    viewModel.getSeriesDetailsById(seriesId)
+    viewModel.getSeasonDetails(seriesId, seasonSelected)
+    viewModel.getSeriesRecommendationsById(seriesId)
 
     val lazyList = listOf(
         stringResource(R.string.episodes),
@@ -133,7 +136,7 @@ fun SeriesDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, id
                 SeriesOverviewSection(seriesDetails)
                 Spacer(Modifier.size(16.dp))
                 LazyRowItem(lazyList)
-                SeriesRecommendationsSection(seriesRecommendations)
+                SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
                 /*
                     LIST OF EPISODES BY SEASONS WITH BUTTON SEASON SELECTOR
 
@@ -154,13 +157,13 @@ fun SeriesDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, id
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SeriesRecommendationsSection(seriesRecommendations: List<SeriesDataClass>?) {
+fun SeriesRecommendationsSection(seriesRecommendations: List<SeriesDataClass>?, onClick: (Int) -> Unit) {
 
     if (seriesRecommendations == null) return
 
     FlowRow(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
         seriesRecommendations.forEach {
-            RecommendationCardItem(it) { }
+            RecommendationCardItem(it) {seriesId -> onClick(seriesId) }
         }
     }
 
@@ -291,7 +294,7 @@ fun EpisodesSection(
     SeasonsDropdownMenuItem(showDialog, seasonList,
         onClick = { season ->
             showDialog = false
-            onCurrentSeasonChange(season.seasonNumber)
+            season.seasonNumber?.let { onCurrentSeasonChange(it) }
         }, onDismiss = { showDialog = false })
 }
 

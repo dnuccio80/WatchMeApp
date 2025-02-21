@@ -8,7 +8,7 @@ data class SeriesDataClass(
     val genreIds: List<Int>,
     val id: Int,
     val overview: String,
-    val posterPath: String,
+    val posterPath: String?,
     val firstAirDate: String,
     val name: String,
     val voteAverage: Float,
@@ -17,7 +17,7 @@ data class SeriesDataClass(
 
 data class SeriesDetailsDataClass(
     val adult: Boolean,
-    val backdropPath: String,
+    val backdropPath: String?,
     val createdBy: List<SeriesCreatedByDataClass>,
     val episodeRunTime: List<Int>,
     val firstAirDate: String,
@@ -29,8 +29,8 @@ data class SeriesDetailsDataClass(
     val nextEpisodeToAir: EpisodesDataClass,
     val numberOfEpisodes: Int,
     val numberOfSeasons: Int,
-    val overview: String,
-    val posterPath: String,
+    val overview: String?,
+    val posterPath: String?,
     val productionCompanies: List<ProductionCompaniesDataClass>,
     val seasons: List<SeasonDataClass>,
     val type: String,
@@ -41,7 +41,7 @@ data class SeriesCreatedByDataClass(
     val id: Int,
     val name: String,
     val gender: Int,
-    val profilePath: String,
+    val profilePath: String?,
 )
 
 data class GenreDataClass(
@@ -61,14 +61,14 @@ data class EpisodeDetailsDataClass(
 )
 
 data class SeasonDataClass(
-    val airDate: String,
-    val episodeCount: Int,
+    val airDate: String?,
+    val episodeCount: Int?,
     val id: Int,
     val name: String,
-    val overview: String,
+    val overview: String?,
     val posterPath: String?,
-    val seasonNumber: Int,
-    val voteAverage: Float
+    val seasonNumber: Int?,
+    val voteAverage: Float?
 )
 
 data class EpisodesDataClass(
@@ -83,8 +83,5 @@ data class EpisodesDataClass(
     val showId: Int,
 )
 
-//data class SeriesRecommendation(
-//
-//)
 
 

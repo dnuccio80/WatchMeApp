@@ -209,6 +209,7 @@ fun BackdropImageItem(imageUrl: String) {
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
             contentDescription = stringResource(R.string.movie_image),
+            error = painterResource(R.drawable.image_not_found)
         )
     }
 }

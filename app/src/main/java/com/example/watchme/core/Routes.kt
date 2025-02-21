@@ -6,6 +6,6 @@ sealed class Routes(val route: String) {
         fun createRoute(movieId: Int) = "detailsMovie/$movieId"
     }
     data object SeriesDetails: Routes("seriesDetails/{seriesId}"){
-        fun createRoute(seriesId: Int) = "detailsMovie/$seriesId"
+        fun createRoute(seriesId: Int) = "seriesDetails/$seriesId"
     }
 }

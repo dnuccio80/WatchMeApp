@@ -44,16 +44,41 @@ class MainActivity : ComponentActivity() {
                         BottomBar()
                     }
                 ) { innerPadding ->
-//                    NavHost(navController, startDestination = Routes.Home.route) {
-//                        composable(Routes.Home.route) { HomeScreen(innerPadding, viewModel, navController) }
-//                        composable(
-//                            Routes.MovieDetails.route,
-//                            arguments = listOf(navArgument("movieId") {
-//                                type = NavType.IntType
-//                            })) {backStackEntry -> MovieDetailsScreen(innerPadding, viewModel, backStackEntry.arguments?.getInt("movieId") ?: 0) }
-//                    }
+                    NavHost(navController, startDestination = Routes.Home.route) {
+                        composable(Routes.Home.route) {
+                            HomeScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(
+                            Routes.MovieDetails.route,
+                            arguments = listOf(navArgument("movieId") {
+                                type = NavType.IntType
+                            })
+                        ) { backStackEntry ->
+                            MovieDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                backStackEntry.arguments?.getInt("movieId") ?: 0
+                            )
+                        }
+                        composable(Routes.SeriesDetails.route,
+                            arguments = listOf(navArgument(("seriesId")) {
+                                type = NavType.IntType
+                            })
+                        ) { backStackEntry ->
+                            SeriesDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("seriesId") ?: 0
+                            )
+                        }
+                    }
 //                    MovieDetailsScreen(innerPadding, viewModel, 939243)
-                    SeriesDetailsScreen(innerPadding, this.viewModel, 1434)
+//                    SeriesDetailsScreen(innerPadding, this.viewModel, 85231)
                 }
             }
         }

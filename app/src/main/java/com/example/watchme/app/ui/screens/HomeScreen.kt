@@ -94,7 +94,7 @@ fun HomeScreen(
                     upcomingMovies
                 ) { movieId -> navController.navigate(Routes.MovieDetails.createRoute(movieId)) }
                 Spacer(Modifier.size(32.dp))
-                TvSeriesSection(popularSeries, airingSeriesToday, onTheAirSeries, getTopRatedSeries)
+                TvSeriesSection(popularSeries, airingSeriesToday, onTheAirSeries, getTopRatedSeries) { seriesId -> navController.navigate(Routes.SeriesDetails.createRoute(seriesId)) }
             }
         }
 
@@ -106,22 +106,23 @@ fun TvSeriesSection(
     popularSeries: List<SeriesDataClass>?,
     airingSeriesToday: List<SeriesDataClass>?,
     onTheAirSeries: List<SeriesDataClass>?,
-    getTopRatedSeries: List<SeriesDataClass>?
+    getTopRatedSeries: List<SeriesDataClass>?,
+    onItemClick: (Int) -> Unit
 ) {
     TitleTextItem(stringResource(R.string.tv_series))
     Spacer(Modifier.size(16.dp))
-    SeriesLazyRow(popularSeries,stringResource(R.string.popular_series))
+    SeriesLazyRow(popularSeries,stringResource(R.string.popular_series)) { onItemClick(it) }
     Spacer(Modifier.size(32.dp))
-    SeriesLazyRow(airingSeriesToday, stringResource(R.string.airing_today))
+    SeriesLazyRow(airingSeriesToday, stringResource(R.string.airing_today)) { onItemClick(it) }
     Spacer(Modifier.size(32.dp))
-    SeriesLazyRow(onTheAirSeries, stringResource(R.string.on_the_air))
+    SeriesLazyRow(onTheAirSeries, stringResource(R.string.on_the_air)) { onItemClick(it) }
     Spacer(Modifier.size(32.dp))
-    SeriesLazyRow(getTopRatedSeries, stringResource(R.string.top_rated))
+    SeriesLazyRow(getTopRatedSeries, stringResource(R.string.top_rated)) { onItemClick(it) }
 
 }
 
 @Composable
-fun SeriesLazyRow(seriesList: List<SeriesDataClass>?, label:String) {
+fun SeriesLazyRow(seriesList: List<SeriesDataClass>?, label:String, onItemClick: (Int) -> Unit ) {
 
     if (seriesList.isNullOrEmpty()) return
 
@@ -129,7 +130,7 @@ fun SeriesLazyRow(seriesList: List<SeriesDataClass>?, label:String) {
     Spacer(Modifier.size(4.dp))
     LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
         items(seriesList){
-            DefaultSeriesCardItem(it) { }
+            DefaultSeriesCardItem(it) { onItemClick(it) }
         }
     }
 }
