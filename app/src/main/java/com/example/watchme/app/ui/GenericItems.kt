@@ -296,6 +296,19 @@ fun TitleSubtitleItem(title: String, subtitle: String, isClickable: Boolean = fa
 }
 
 @Composable
+fun TitleSubtitleItemWithNullability(title: String, subtitle: String?) {
+
+    if(subtitle == null) return
+
+    if (subtitle.contains("null")) {
+        TitleSubtitleItem(title, stringResource(R.string.unknown))
+        return
+    } else {
+        TitleSubtitleItem(title, subtitle)
+    }
+}
+
+@Composable
 fun NextPreviousButtonsRow(
     index: Int,
     size: Int,

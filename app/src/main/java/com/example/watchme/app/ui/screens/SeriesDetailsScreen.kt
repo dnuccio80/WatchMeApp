@@ -1,5 +1,6 @@
 package com.example.watchme.app.ui.screens
 
+import android.util.Log
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -65,11 +66,14 @@ import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.LazyRowItemText
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
+import com.example.watchme.app.ui.TitleSubtitleItem
+import com.example.watchme.app.ui.TitleSubtitleItemWithNullability
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.SeasonDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.core.Routes
+import com.example.watchme.core.SeriesOptions
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.ui.theme.CardContainerColor
@@ -95,10 +99,11 @@ fun SeriesDetailsScreen(
     viewModel.getSeriesRecommendationsById(seriesId)
 
     val lazyList = listOf(
-        stringResource(R.string.episodes),
-        stringResource(R.string.suggested),
-        stringResource(R.string.details),
-        stringResource(R.string.extras),
+        SeriesOptions.Episodes.item,
+        SeriesOptions.Suggested.item,
+        SeriesOptions.Details.item,
+        SeriesOptions.Media.item,
+        SeriesOptions.Credits.item,
     )
 
     Box(
@@ -136,9 +141,17 @@ fun SeriesDetailsScreen(
                 SeriesOverviewSection(seriesDetails)
                 Spacer(Modifier.size(16.dp))
                 LazyRowItem(lazyList)
-                SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
+
+                SeriesDetailsSection(seriesDetails)
+
+
                 /*
-                    LIST OF EPISODES BY SEASONS WITH BUTTON SEASON SELECTOR
+                    SUGGESTION SECTION
+                SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
+                */
+
+                /*
+                    EPISODES SECTION
 
                 seriesDetails?.seasons?.let { seasons ->
                     EpisodesSection(
@@ -154,16 +167,59 @@ fun SeriesDetailsScreen(
     }
 }
 
+@Composable
+fun SeriesDetailsSection(seriesDetails: SeriesDetailsDataClass?) {
+    if (seriesDetails == null) {
+        BodyTextItem(stringResource(R.string.no_results_found))
+        return
+    }
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        ThirdTitleTextItem(text = seriesDetails.name, textAlign = TextAlign.Start)
+        seriesDetails.overview?.let { BodyTextItem(it) }
+        seriesDetails.genres.joinToString(separator = ", ") { it.name }
+            .let { TitleSubtitleItem(stringResource(R.string.genre), it) }
+        TitleSubtitleItem(
+            stringResource(R.string.number_of_seasons),
+            "${seriesDetails.numberOfSeasons} ${stringResource(R.string.seasons)}"
+        )
+        TitleSubtitleItem(
+            stringResource(R.string.number_of_episodes),
+            "${seriesDetails.numberOfEpisodes} ${stringResource(R.string.episodes)}"
+        )
+
+        TitleSubtitleItemWithNullability(
+            stringResource(R.string.first_air_date),
+            seriesDetails.firstAirDate
+        )
+        TitleSubtitleItemWithNullability(
+            stringResource(R.string.last_episode_to_air),
+            "${stringResource(R.string.episode)} ${seriesDetails.lastEpisodeToAir?.episodeNumber} - ${stringResource(R.string.season)} ${seriesDetails.lastEpisodeToAir?.seasonNumber}: ${seriesDetails.lastEpisodeToAir?.name} "
+        )
+        TitleSubtitleItemWithNullability(
+            stringResource(R.string.next_episode_to_air),
+            "${stringResource(R.string.episode)} ${seriesDetails.nextEpisodeToAir?.episodeNumber} - ${stringResource(R.string.season)} ${seriesDetails.nextEpisodeToAir?.seasonNumber}: ${seriesDetails.nextEpisodeToAir?.name} "
+        )
+
+
+    }
+}
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SeriesRecommendationsSection(seriesRecommendations: List<SeriesDataClass>?, onClick: (Int) -> Unit) {
+fun SeriesRecommendationsSection(
+    seriesRecommendations: List<SeriesDataClass>?,
+    onClick: (Int) -> Unit
+) {
 
     if (seriesRecommendations == null) return
 
-    FlowRow(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp), horizontalArrangement = Arrangement.SpaceEvenly) {
+    FlowRow(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
         seriesRecommendations.forEach {
-            RecommendationCardItem(it) {seriesId -> onClick(seriesId) }
+            RecommendationCardItem(it) { seriesId -> onClick(seriesId) }
         }
     }
 

@@ -8,6 +8,7 @@
     <string name="tv_series">TV Series</string>
     <string name="episode_image">episode image</string>
     <string name="episodes">episodes</string>
+    <string name="episode">Episode</string>
     <string name="suggested">Suggested</string>
     <string name="extras">Extras</string>
     <string name="details">Details</string>
@@ -28,6 +29,14 @@
     <string name="budget">Budget:</string>
     <string name="revenue">Revenue:</string>
     <string name="website">Website:</string>
+    <string name="no_results_found">No results found</string>
+    <string name="number_of_episodes">Number of episodes:</string>
+    <string name="number_of_seasons">Number of seasons:</string>
+    <string name="first_air_date">First air date:</string>
+    <string name="last_episode_to_air">Last episode to air:</string>
+    <string name="next_episode_to_air">Next episode to air:</string>
+    <string name="seasons">seasons</string>
+    <string name="season">Season</string>
     <string name="cast">Cast</string>
     <string name="crew">Crew</string>
     <string name="character">Character:</string>
