@@ -61,6 +61,7 @@ class MainActivity : ComponentActivity() {
                             MovieDetailsScreen(
                                 innerPadding,
                                 viewModel,
+                                navController,
                                 backStackEntry.arguments?.getInt("movieId") ?: 0
                             )
                         }

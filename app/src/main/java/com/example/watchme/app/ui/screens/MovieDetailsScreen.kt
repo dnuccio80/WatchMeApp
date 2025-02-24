@@ -46,6 +46,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
@@ -68,12 +69,18 @@ import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
+import com.example.watchme.core.Routes
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.CardContainerColor
 import com.example.watchme.ui.theme.PurpleGrey40
 
 @Composable
-fun MovieDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, movieId: Int) {
+fun MovieDetailsScreen(
+    innerPadding: PaddingValues,
+    viewModel: AppViewModel,
+    navController: NavHostController,
+    movieId: Int
+) {
 
     viewModel.getMovieDetailsById(movieId)
     viewModel.getMovieCreditsById(movieId)
@@ -134,7 +141,7 @@ fun MovieDetailsScreen(innerPadding: PaddingValues, viewModel: AppViewModel, mov
                 OverviewSection(movieDetails, runTime, viewModel)
                 CreditsSection(movieCredits)
                 ImageListItem(movieListImages)
-                RecommendationsSection(recommendations)
+                RecommendationsSection(recommendations) {movieId -> navController.navigate(Routes.MovieDetails.createRoute(movieId)) }
                 ReviewsSection(reviews)
                 VideosSection(videos, movieListImages)
             }
@@ -357,7 +364,7 @@ fun TestTextLazyRow(text: String) {
 }
 
 @Composable
-fun RecommendationsSection(recommendations: State<List<MovieDataClass>?>) {
+fun RecommendationsSection(recommendations: State<List<MovieDataClass>?>, onClick: (Int) -> Unit) {
 
     if (recommendations.value == null) return
 
@@ -365,21 +372,25 @@ fun RecommendationsSection(recommendations: State<List<MovieDataClass>?>) {
         SecondTitleTextItem(stringResource(R.string.recommendations), textAlign = TextAlign.Start)
         LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             items(recommendations.value!!) {
-                RecommendationsCardItem(it)
+                RecommendationsCardItem(it) {movieId -> onClick(movieId) }
             }
         }
     }
 }
 
 @Composable
-fun RecommendationsCardItem(movieDataClass: MovieDataClass) {
+fun RecommendationsCardItem(movieDataClass: MovieDataClass, onClick: (Int) -> Unit) {
 
     val image = Constants.IMAGE_BASE_URL + movieDataClass.backdrop
 
     Card(
         modifier = Modifier
             .width(200.dp)
-            .height(140.dp),
+            .height(140.dp)
+            .clickable {
+                onClick(movieDataClass.id)
+            }
+        ,
         colors = CardDefaults.cardColors(
             containerColor = Color.Cyan
         ),

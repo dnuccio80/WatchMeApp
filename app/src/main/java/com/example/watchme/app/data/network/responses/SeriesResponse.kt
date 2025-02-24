@@ -1,5 +1,6 @@
 package com.example.watchme.app.data.network.responses
 
+import android.util.Log
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesDataClass
 import com.example.watchme.app.ui.dataClasses.GenreDataClass
@@ -52,9 +53,9 @@ data class SeriesDetailsResponse(
     @SerializedName("genres") val genres: List<Genre>,
     @SerializedName("homepage") val homepage: String,
     @SerializedName("id") val id: Int,
-    @SerializedName("last_episode_to_air") val lastEpisodeToAir: Episode,
+    @SerializedName("last_episode_to_air") val lastEpisodeToAir: Episode?,
     @SerializedName("name") val name: String,
-    @SerializedName("next_episode_to_air") val nextEpisodeToAir: Episode,
+    @SerializedName("next_episode_to_air") val nextEpisodeToAir: Episode?,
     @SerializedName("number_of_episodes") val numberOfEpisodes: Int,
     @SerializedName("number_of_seasons") val numberOfSeasons: Int,
     @SerializedName("overview") val overview: String,
@@ -75,9 +76,9 @@ fun SeriesDetailsResponse.toSeriesDetailsDataClass(): SeriesDetailsDataClass {
         genres = genres.map { it.toGenresDataClass() },
         homepage = homepage,
         id = id,
-        lastEpisodeToAir = lastEpisodeToAir.toEpisodesDataClass(),
+        lastEpisodeToAir = lastEpisodeToAir?.toEpisodesDataClass(),
         name = name,
-        nextEpisodeToAir = nextEpisodeToAir.toEpisodesDataClass(),
+        nextEpisodeToAir = nextEpisodeToAir?.toEpisodesDataClass(),
         numberOfEpisodes = numberOfEpisodes,
         numberOfSeasons = numberOfSeasons,
         overview = overview,
