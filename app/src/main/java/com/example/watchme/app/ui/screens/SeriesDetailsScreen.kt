@@ -152,21 +152,11 @@ fun SeriesDetailsScreen(
                 Spacer(Modifier.size(16.dp))
                 LazyRowItem(lazyList)
                 seriesDetails?.seasons?.let {
-                    TestingSection(
+                    EpisodesSection(
                         seasonDetails, it, seasonSelected,
                         onValueChange = { seasonNumber -> seasonSelected = seasonNumber }
                     )
                 }
-//                seriesDetails?.seasons?.let { seasons ->
-//                    EpisodesSection(
-//                        seasonSelected,
-//                        seasons,
-//                        seasonDetails,
-//                        onCurrentSeasonChange = { seasonNumber ->
-//                            seasonSelected = seasonNumber
-//                        })
-//
-//                }
 
                 /*
 
@@ -193,7 +183,7 @@ fun SeriesDetailsScreen(
 }
 
 @Composable
-fun TestingSection(
+fun EpisodesSection(
     seasonDetails: List<EpisodeDetailsDataClass>?,
     seasons: List<SeasonDataClass>,
     seasonSelected: Int,
@@ -446,48 +436,6 @@ fun LazyHorizontalDividerItem(textWidth: Int, xPos: Float) {
 @Composable
 fun SeriesOverviewSection(seriesDetails: SeriesDetailsDataClass?) {
     seriesDetails?.overview?.let { BodyTextItem(it) }
-}
-
-@Composable
-fun EpisodesSection(
-    seasonSelected: Int,
-    seasonList: List<SeasonDataClass>,
-    seasonDetails: List<EpisodeDetailsDataClass>?,
-    onCurrentSeasonChange: (Int) -> Unit
-) {
-
-    if (seasonList.isEmpty() || seasonDetails?.isEmpty() == true) return
-
-    var showDialog by rememberSaveable { mutableStateOf(false) }
-
-    Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
-        Button(
-            onClick = { showDialog = true },
-            colors = ButtonDefaults.buttonColors(
-                containerColor = CardContainerColor
-            ),
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                BodyTextItem(seasonList[seasonSelected].name)
-                Icon(
-                    Icons.Filled.KeyboardArrowDown,
-                    contentDescription = stringResource(R.string.show_season_dialog_menu),
-                    tint = Color.White
-                )
-            }
-        }
-        EpisodesListItem(seasonDetails)
-    }
-
-//    SeasonsDropdownMenuItem(showDialog, seasonList,
-//        onClick = { season ->
-//            showDialog = false
-//            season.seasonNumber?.let { onCurrentSeasonChange(it) }
-//        }, onDismiss = { showDialog = false })
 }
 
 @Composable

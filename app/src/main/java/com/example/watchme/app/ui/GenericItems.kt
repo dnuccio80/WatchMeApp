@@ -109,7 +109,7 @@ fun LazyRowItemText(
     onClick: (String, Int, Float) -> Unit
 ) {
 
-    val isSelectedText = text.uppercase() == selectedText.uppercase()
+    val isSelectedText = text.lowercase() == selectedText.lowercase()
 
     var textWidth by rememberSaveable { mutableStateOf(0) }
     var xPos by rememberSaveable { mutableStateOf(0f) }
