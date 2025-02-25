@@ -1,5 +1,6 @@
 package com.example.watchme.app.ui.screens
 
+import android.util.Log
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -25,6 +26,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
@@ -61,7 +63,6 @@ import com.example.watchme.R
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
-import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.ImageListItem
 import com.example.watchme.app.ui.LazyRowItemText
@@ -101,7 +102,7 @@ fun SeriesDetailsScreen(
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
 
     viewModel.getSeriesDetailsById(seriesId)
-    viewModel.getSeasonDetails(seriesId, seasonSelected)
+    viewModel.getSeasonDetailsById(seriesId, seasonSelected)
     viewModel.getSeriesRecommendationsById(seriesId)
     viewModel.getSeriesImageListById(seriesId)
     viewModel.getSeriesVideosListById(seriesId)
@@ -150,11 +151,26 @@ fun SeriesDetailsScreen(
                 SeriesOverviewSection(seriesDetails)
                 Spacer(Modifier.size(16.dp))
                 LazyRowItem(lazyList)
+                seriesDetails?.seasons?.let {
+                    TestingSection(
+                        seasonDetails, it, seasonSelected,
+                        onValueChange = { seasonNumber -> seasonSelected = seasonNumber }
+                    )
+                }
+//                seriesDetails?.seasons?.let { seasons ->
+//                    EpisodesSection(
+//                        seasonSelected,
+//                        seasons,
+//                        seasonDetails,
+//                        onCurrentSeasonChange = { seasonNumber ->
+//                            seasonSelected = seasonNumber
+//                        })
+//
+//                }
 
                 /*
 
                     CREDITS SECTION
-
                 CreditsSection(seriesCredits)
 
                     MEDIA SECTION
@@ -162,15 +178,6 @@ fun SeriesDetailsScreen(
                 SeriesMediaSection(seriesImageList, seriesVideosList)
 
                     EPISODES SECTION
-
-                seriesDetails?.seasons?.let { seasons ->
-                    EpisodesSection(
-                        seasonSelected,
-                        seasons,
-                        seasonDetails,
-                        onCurrentSeasonChange = { seasonNumber ->
-                            seasonSelected = seasonNumber
-                        })
 
                     SUGGESTION SECTION
                 SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
@@ -183,6 +190,91 @@ fun SeriesDetailsScreen(
             }
         }
     }
+}
+
+@Composable
+fun TestingSection(
+    seasonDetails: List<EpisodeDetailsDataClass>?,
+    seasons: List<SeasonDataClass>,
+    seasonSelected: Int,
+    onValueChange: (Int) -> Unit
+) {
+
+    val seasonName: String = seasons.find {
+        it.seasonNumber == seasonSelected
+    }?.name.toString()
+
+    Log.i("Damian", seasonName)
+
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        Button(
+            onClick = { showDialog = true },
+            shape = CircleShape,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = CardContainerColor
+            ),
+            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
+        ) {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                BodyTextItem(seasonName, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                Icon(
+                    Icons.Filled.KeyboardArrowDown,
+                    contentDescription = "arrown down icon",
+                    tint = Color.White
+                )
+            }
+        }
+        seasonDetails?.forEach {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(
+                    containerColor = CardContainerColor
+                )
+            ) {
+                Column(Modifier.fillMaxWidth()) {
+                    Row(Modifier.fillMaxWidth()) {
+                        AsyncImage(
+                            model = Constants.IMAGE_BASE_URL + it.imagePath,
+                            contentDescription = stringResource(R.string.episode_image),
+                            modifier = Modifier.size(140.dp),
+                            contentScale = ContentScale.Crop,
+                            error = painterResource(R.drawable.image_not_found)
+                        )
+                        Column(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            verticalArrangement = Arrangement.spacedBy(16.dp)
+                        ) {
+                            ThirdTitleTextItem(it.name, textAlign = TextAlign.Start)
+                            BodyTextItem(
+                                it.overview,
+                                textAlign = TextAlign.Start,
+                                maxLines = 4,
+                                overflow = TextOverflow.Ellipsis
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    SeasonsDropdownMenuItem(
+        show = showDialog,
+        seasonList = seasons,
+        onClick = { seasonNumber ->
+            showDialog = false
+            onValueChange(seasonNumber)
+        },
+        onDismiss = { showDialog = false }
+    )
+
 }
 
 @Composable
@@ -364,6 +456,8 @@ fun EpisodesSection(
     onCurrentSeasonChange: (Int) -> Unit
 ) {
 
+    if (seasonList.isEmpty() || seasonDetails?.isEmpty() == true) return
+
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.fillMaxWidth()) {
@@ -389,11 +483,11 @@ fun EpisodesSection(
         EpisodesListItem(seasonDetails)
     }
 
-    SeasonsDropdownMenuItem(showDialog, seasonList,
-        onClick = { season ->
-            showDialog = false
-            season.seasonNumber?.let { onCurrentSeasonChange(it) }
-        }, onDismiss = { showDialog = false })
+//    SeasonsDropdownMenuItem(showDialog, seasonList,
+//        onClick = { season ->
+//            showDialog = false
+//            season.seasonNumber?.let { onCurrentSeasonChange(it) }
+//        }, onDismiss = { showDialog = false })
 }
 
 @Composable
@@ -447,7 +541,7 @@ fun EpisodesListItem(seasonDetails: List<EpisodeDetailsDataClass>?) {
 fun SeasonsDropdownMenuItem(
     show: Boolean,
     seasonList: List<SeasonDataClass>,
-    onClick: (SeasonDataClass) -> Unit,
+    onClick: (Int) -> Unit,
     onDismiss: () -> Unit
 ) {
 
@@ -466,7 +560,7 @@ fun SeasonsDropdownMenuItem(
             ) {
                 items(seasonList) {
                     ThirdTitleTextItem(it.name, modifier = Modifier.clickable {
-                        onClick(it)
+                        onClick(it.seasonNumber ?: 1)
                     })
                 }
             }

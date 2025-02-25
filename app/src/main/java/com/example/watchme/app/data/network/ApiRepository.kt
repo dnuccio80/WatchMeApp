@@ -92,7 +92,7 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getSeriesDetailsById(seriesId).toSeriesDetailsDataClass()
     }
 
-    suspend fun getSeasonsDetails(seriesId: Int, seasonNumber: Int): List<EpisodeDetailsDataClass> {
+    suspend fun getSeasonsDetailsById(seriesId: Int, seasonNumber: Int): List<EpisodeDetailsDataClass> {
         return apiService.getSeasonDetailsById(seriesId, seasonNumber).toSeasonDetailsDataClass()
     }
 

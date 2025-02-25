@@ -220,7 +220,7 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun getSeasonDetails(seriesId: Int, seasonNumber: Int) {
+    fun getSeasonDetailsById(seriesId: Int, seasonNumber: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _seasonsDetails.value = getSeasonDetailsUseCase(seriesId, seasonNumber)
         }
