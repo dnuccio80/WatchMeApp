@@ -1,7 +1,5 @@
 package com.example.watchme.app.ui.screens
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -31,7 +29,6 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -39,7 +36,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -54,13 +50,13 @@ import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
-import com.example.watchme.app.ui.ConfirmDeclineDialog
 import com.example.watchme.app.ui.HeaderInfo
+import com.example.watchme.app.ui.ImageListItem
 import com.example.watchme.app.ui.NextPreviousButtonsRow
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleSubtitleItem
-import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
+import com.example.watchme.app.ui.VideosSection
 import com.example.watchme.app.ui.dataClasses.CastCreditDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDataClass
 import com.example.watchme.app.ui.dataClasses.CrewCreditDataClass
@@ -68,7 +64,6 @@ import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
-import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.core.Routes
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.CardContainerColor
@@ -91,10 +86,10 @@ fun MovieDetailsScreen(
 
     val movieDetails = viewModel.movieDetails.collectAsState()
     val movieCredits = viewModel.movieCredits.collectAsState()
-    val movieListImages = viewModel.movieImageList.collectAsState()
+    val movieListImages by viewModel.movieImageList.collectAsState()
     val recommendations = viewModel.movieRecommendations.collectAsState()
     val reviews = viewModel.reviews.collectAsState()
-    val videos = viewModel.videos.collectAsState()
+    val videos by viewModel.movieVideos.collectAsState()
 
     val runTime = viewModel.getRunTimeInHours(movieDetails.value?.runtime ?: 0)
     val scrollState = rememberScrollState()
@@ -149,33 +144,6 @@ fun MovieDetailsScreen(
     }
 }
 
-
-@Composable
-fun ImageListItem(movieListImages: State<List<BackdropImageDataClass>?>) {
-    Box(Modifier.fillMaxWidth()) {
-
-        val size = movieListImages.value?.size ?: 0
-
-        if (size == 0) return
-        var index by rememberSaveable { mutableIntStateOf(0) }
-        val url = Constants.IMAGE_BASE_URL + movieListImages.value?.get(index)?.filePath
-        AsyncImage(
-            model = url,
-            contentDescription = stringResource(R.string.image_cast),
-            modifier = Modifier
-                .fillMaxSize(),
-            contentScale = ContentScale.FillWidth,
-            placeholder = painterResource(R.drawable.loading_image),
-            error = painterResource(R.drawable.loading_image)
-        )
-        NextPreviousButtonsRow(
-            index = index, size = size, modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp)
-                .align(Alignment.Center)
-        ) { newIndex -> index = newIndex }
-    }
-}
 
 @Composable
 private fun OverviewSection(
@@ -507,80 +475,4 @@ fun ReviewsSection(reviews: State<List<ReviewDataClass>?>) {
     }
 }
 
-@Composable
-fun VideosSection(
-    videos: State<List<VideoDataClass>?>,
-    movieListImages: State<List<BackdropImageDataClass>?>
-) {
-
-    if (videos.value.isNullOrEmpty()) return
-
-    val context = LocalContext.current
-    var index by rememberSaveable { mutableIntStateOf(0) }
-    val size = videos.value?.size ?: 0
-    val videoUrl = Constants.YOUTUBE_BASE_URL + videos.value?.get(index)?.key
-    val imageUrl = Constants.IMAGE_BASE_URL + movieListImages.value?.get(index)?.filePath
-    var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
-
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SecondTitleTextItem(stringResource(R.string.videos))
-
-        Card(
-            modifier = Modifier
-                .fillMaxSize()
-                .clickable {
-                    showConfirmDialog = true
-                },
-            shape = RoundedCornerShape(16.dp),
-            elevation = CardDefaults.cardElevation(16.dp),
-        ) {
-            Box(
-                Modifier
-                    .fillMaxWidth()
-                    .height(250.dp)
-            ) {
-                AsyncImage(
-                    model = imageUrl,
-                    contentDescription = stringResource(R.string.image_cast),
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
-                    placeholder = painterResource(R.drawable.loading_image),
-                    error = painterResource(R.drawable.image_not_found)
-                )
-                NextPreviousButtonsRow(
-                    index = index, size = size, modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.Center)
-                ) { newIndex -> index = newIndex }
-                Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.BottomCenter),
-                    colors = CardDefaults.cardColors(
-                        containerColor = CardContainerColor
-                    ),
-                    shape = RectangleShape
-                ) {
-                    videos.value?.get(index)?.name?.let {
-                        BodyTextItem(
-                            it,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp)
-                        )
-                    }
-                }
-                ConfirmDeclineDialog(
-                    show = showConfirmDialog,
-                    text = stringResource(R.string.open_youtube),
-                    onDismiss = { showConfirmDialog = false },
-                    onConfirm = {
-                        showConfirmDialog = false
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
-                        intent.setPackage("com.google.android.youtube")
-                        context.startActivity(intent)
-                    })
-            }
-        }
-    }
-}
 

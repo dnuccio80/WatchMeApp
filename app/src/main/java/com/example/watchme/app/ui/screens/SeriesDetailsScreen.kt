@@ -1,6 +1,5 @@
 package com.example.watchme.app.ui.screens
 
-import android.util.Log
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
@@ -63,16 +62,19 @@ import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.HeaderInfo
+import com.example.watchme.app.ui.ImageListItem
 import com.example.watchme.app.ui.LazyRowItemText
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleSubtitleItem
 import com.example.watchme.app.ui.TitleSubtitleItemWithNullability
+import com.example.watchme.app.ui.VideosSection
+import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.SeasonDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
-import com.example.watchme.core.Routes
+import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.core.SeriesOptions
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
@@ -90,6 +92,8 @@ fun SeriesDetailsScreen(
     val seriesDetails by viewModel.seriesDetails.collectAsState()
     val seasonDetails by viewModel.seasonsDetails.collectAsState()
     val seriesRecommendations by viewModel.seriesRecommendations.collectAsState()
+    val seriesImageList by viewModel.seriesImageList.collectAsState()
+    val seriesVideosList by viewModel.seriesVideos.collectAsState()
 
     val verticalScrollState = rememberScrollState()
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
@@ -97,6 +101,8 @@ fun SeriesDetailsScreen(
     viewModel.getSeriesDetailsById(seriesId)
     viewModel.getSeasonDetails(seriesId, seasonSelected)
     viewModel.getSeriesRecommendationsById(seriesId)
+    viewModel.getSeriesImageListById(seriesId)
+    viewModel.getSeriesVideosListById(seriesId)
 
     val lazyList = listOf(
         SeriesOptions.Episodes.item,
@@ -142,13 +148,7 @@ fun SeriesDetailsScreen(
                 Spacer(Modifier.size(16.dp))
                 LazyRowItem(lazyList)
 
-                SeriesDetailsSection(seriesDetails)
-
-
-                /*
-                    SUGGESTION SECTION
-                SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
-                */
+                SeriesMediaSection(seriesImageList, seriesVideosList)
 
                 /*
                     EPISODES SECTION
@@ -161,8 +161,32 @@ fun SeriesDetailsScreen(
                         onCurrentSeasonChange = { seasonNumber ->
                             seasonSelected = seasonNumber
                         })
-                }*/
+
+                    SUGGESTION SECTION
+                SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
+
+                    DETAILS SECTION
+                SeriesDetailsSection(seriesDetails)
+                */
+
+
             }
+        }
+    }
+}
+
+@Composable
+fun SeriesMediaSection(
+    seriesImageList: List<BackdropImageDataClass>?,
+    seriesVideosList: List<VideoDataClass>?
+) {
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        ImageListItem(seriesImageList)
+        seriesVideosList?.let {
+            VideosSection(
+                it,
+                imagesList = seriesImageList
+            )
         }
     }
 }
@@ -193,11 +217,19 @@ fun SeriesDetailsSection(seriesDetails: SeriesDetailsDataClass?) {
         )
         TitleSubtitleItemWithNullability(
             stringResource(R.string.last_episode_to_air),
-            "${stringResource(R.string.episode)} ${seriesDetails.lastEpisodeToAir?.episodeNumber} - ${stringResource(R.string.season)} ${seriesDetails.lastEpisodeToAir?.seasonNumber}: ${seriesDetails.lastEpisodeToAir?.name} "
+            "${stringResource(R.string.episode)} ${seriesDetails.lastEpisodeToAir?.episodeNumber} - ${
+                stringResource(
+                    R.string.season
+                )
+            } ${seriesDetails.lastEpisodeToAir?.seasonNumber}: ${seriesDetails.lastEpisodeToAir?.name} "
         )
         TitleSubtitleItemWithNullability(
             stringResource(R.string.next_episode_to_air),
-            "${stringResource(R.string.episode)} ${seriesDetails.nextEpisodeToAir?.episodeNumber} - ${stringResource(R.string.season)} ${seriesDetails.nextEpisodeToAir?.seasonNumber}: ${seriesDetails.nextEpisodeToAir?.name} "
+            "${stringResource(R.string.episode)} ${seriesDetails.nextEpisodeToAir?.episodeNumber} - ${
+                stringResource(
+                    R.string.season
+                )
+            } ${seriesDetails.nextEpisodeToAir?.seasonNumber}: ${seriesDetails.nextEpisodeToAir?.name} "
         )
 
 

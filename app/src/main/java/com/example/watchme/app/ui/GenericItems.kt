@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -28,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -50,8 +53,11 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.watchme.R
+import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
+import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaButtonColor
+import com.example.watchme.ui.theme.CardContainerColor
 import com.example.watchme.ui.theme.DialogContainerColor
 import com.example.watchme.ui.theme.Pink40
 
@@ -422,5 +428,113 @@ fun ConfirmDeclineButtons(onDecline: () -> Unit, onConfirm: () -> Unit) {
         ) {
             BodyTextItem(stringResource(R.string.confirm))
         }
+    }
+}
+
+@Composable
+fun VideosSection(
+    videos: List<VideoDataClass>?,
+    imagesList: List<BackdropImageDataClass>?
+) {
+
+    if (videos.isNullOrEmpty()) return
+
+    val context = LocalContext.current
+    var index by rememberSaveable { mutableIntStateOf(0) }
+    val size = videos.size
+    val videoUrl = Constants.YOUTUBE_BASE_URL + videos[index].key
+    val imageUrl = Constants.IMAGE_BASE_URL + imagesList?.get(index)?.filePath
+    var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
+
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        SecondTitleTextItem(stringResource(R.string.videos))
+
+        Card(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable {
+                    showConfirmDialog = true
+                },
+            shape = RoundedCornerShape(16.dp),
+            elevation = CardDefaults.cardElevation(16.dp),
+        ) {
+            Box(
+                Modifier
+                    .fillMaxWidth()
+                    .height(250.dp)
+            ) {
+                AsyncImage(
+                    model = imageUrl,
+                    contentDescription = stringResource(R.string.image_cast),
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    placeholder = painterResource(R.drawable.loading_image),
+                    error = painterResource(R.drawable.image_not_found)
+                )
+                NextPreviousButtonsRow(
+                    index = index, size = size, modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.Center)
+                ) { newIndex -> index = newIndex }
+                Card(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .align(Alignment.BottomCenter),
+                    colors = CardDefaults.cardColors(
+                        containerColor = CardContainerColor
+                    ),
+                    shape = RectangleShape
+                ) {
+                    BodyTextItem(
+                        videos[index].name,
+                        textAlign = TextAlign.Center,
+                        modifier = Modifier.padding(vertical = 16.dp, horizontal = 8.dp)
+                    )
+                }
+                ConfirmDeclineDialog(
+                    show = showConfirmDialog,
+                    text = stringResource(R.string.open_youtube),
+                    onDismiss = { showConfirmDialog = false },
+                    onConfirm = {
+                        showConfirmDialog = false
+                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(videoUrl))
+                        intent.setPackage("com.google.android.youtube")
+                        context.startActivity(intent)
+                    })
+            }
+        }
+    }
+}
+
+@Composable
+fun ImageListItem(imagesList: List<BackdropImageDataClass>?) {
+    Box(Modifier.fillMaxWidth()) {
+
+        val size = imagesList?.size ?: 0
+
+        if (size == 0) return
+        var index by rememberSaveable { mutableIntStateOf(0) }
+        val url = Constants.IMAGE_BASE_URL + imagesList?.get(index)?.filePath
+        Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            SecondTitleTextItem(stringResource(R.string.images))
+            Box(){
+                AsyncImage(
+                    model = url,
+                    contentDescription = stringResource(R.string.image_cast),
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentScale = ContentScale.FillWidth,
+                    placeholder = painterResource(R.drawable.loading_image),
+                    error = painterResource(R.drawable.loading_image)
+                )
+                NextPreviousButtonsRow(
+                    index = index, size = size, modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                        .align(Alignment.Center)
+                ) { newIndex -> index = newIndex }
+            }
+        }
+
     }
 }

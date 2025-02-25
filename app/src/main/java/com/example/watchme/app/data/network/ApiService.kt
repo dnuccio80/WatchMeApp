@@ -1,9 +1,7 @@
 package com.example.watchme.app.data.network
 
-import android.util.Log
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
-import com.example.watchme.app.data.network.responses.Movie
 import com.example.watchme.app.data.network.responses.MovieCreditsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
@@ -113,7 +111,7 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getImageListById(movieId:Int): ImageBackdrop {
+    suspend fun getMovieImageListById(movieId:Int): ImageBackdrop {
         return withContext(Dispatchers.IO){
             val response = retrofit.create(ApiClient::class.java).getImageListById("movie/$movieId/images")
             val body: ImageBackdrop? = response.body()
@@ -152,7 +150,7 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getVideosById(movieId:Int): VideoResponse {
+    suspend fun getMovieVideosById(movieId:Int): VideoResponse {
         return withContext(Dispatchers.IO){
             val response = retrofit.create(ApiClient::class.java).getVideosById("movie/${movieId}/videos")
             val body: VideoResponse? = response.body()
@@ -259,5 +257,32 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             }
         }
     }
+
+    suspend fun getSeriesImageListById(seriesId:Int): ImageBackdrop {
+        return withContext(Dispatchers.IO){
+            val response = retrofit.create(ApiClient::class.java).getImageListById("tv/${seriesId}/images")
+            val body: ImageBackdrop? = response.body()
+
+            if(response.isSuccessful && body != null){
+                body
+            } else {
+                throw Exception("Failed to fetch image backdrop: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
+    suspend fun getSeriesVideosById(seriesId:Int): VideoResponse {
+        return withContext(Dispatchers.IO){
+            val response = retrofit.create(ApiClient::class.java).getVideosById("tv/${seriesId}/videos")
+            val body: VideoResponse? = response.body()
+
+            if(response.isSuccessful && body != null){
+                body
+            } else {
+                throw Exception("Failed to fetch videos: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+    
 
 }

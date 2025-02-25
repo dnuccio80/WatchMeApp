@@ -48,9 +48,7 @@ interface ApiClient {
     @GET
     suspend fun getMovieCreditsById(@Url url:String): Response<MovieCreditsResponse>
 
-    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
-    @GET
-    suspend fun getImageListById(@Url url:String): Response<ImageBackdrop>
+
 
     @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
     @GET
@@ -60,9 +58,7 @@ interface ApiClient {
     @GET
     suspend fun getReviewsById(@Url url:String): Response<ReviewsResponse>
 
-    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
-    @GET
-    suspend fun getVideosById(@Url url:String): Response<VideoResponse>
+
 
     // SERIES
 
@@ -94,5 +90,14 @@ interface ApiClient {
     @GET()
     suspend fun getSeriesRecommendationsById(@Url url:String): Response<SeriesResponse>
 
+    // BOTH
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET
+    suspend fun getImageListById(@Url url:String): Response<ImageBackdrop>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET
+    suspend fun getVideosById(@Url url:String): Response<VideoResponse>
 
 }

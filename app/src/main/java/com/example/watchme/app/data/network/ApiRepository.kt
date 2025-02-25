@@ -1,13 +1,5 @@
 package com.example.watchme.app.data.network
 
-import com.example.watchme.app.data.network.responses.DetailsMovieResponse
-import com.example.watchme.app.data.network.responses.ImageBackdrop
-import com.example.watchme.app.data.network.responses.MovieCreditsResponse
-import com.example.watchme.app.data.network.responses.MovieResponse
-import com.example.watchme.app.data.network.responses.ProvidersResponse
-import com.example.watchme.app.data.network.responses.SeasonDetails
-import com.example.watchme.app.data.network.responses.Series
-import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
 import com.example.watchme.app.data.network.responses.toDetailsMovieDataClass
 import com.example.watchme.app.data.network.responses.toMovieCreditsDataClass
@@ -21,12 +13,10 @@ import com.example.watchme.app.data.network.responses.toVideoDataClass
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
-import com.example.watchme.app.ui.dataClasses.EpisodesDataClass
 import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
-import com.example.watchme.app.ui.dataClasses.SeasonDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
@@ -64,8 +54,8 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getMovieCreditsById(movieId).toMovieCreditsDataClass()
     }
 
-    suspend fun getImageListById(movieId: Int): List<BackdropImageDataClass> {
-        return apiService.getImageListById(movieId).toBackdropImageDataClass()
+    suspend fun getMovieImageListById(movieId: Int): List<BackdropImageDataClass> {
+        return apiService.getMovieImageListById(movieId).toBackdropImageDataClass()
     }
 
     suspend fun getRecommendationsById(movieId: Int): List<MovieDataClass> {
@@ -76,8 +66,8 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getReviewsById(movieId).toReviewDataClass()
     }
 
-    suspend fun getVideosById(movieId: Int): List<VideoDataClass> {
-        return apiService.getVideosById(movieId).toVideoDataClass()
+    suspend fun getMovieVideosById(movieId: Int): List<VideoDataClass> {
+        return apiService.getMovieVideosById(movieId).toVideoDataClass()
     }
 
     // SERIES
@@ -108,6 +98,14 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun getSeriesRecommendationsById(seriesId: Int) : List<SeriesDataClass> {
         return apiService.getSeriesRecommendationsById(seriesId).toSeriesDataClass()
+    }
+
+    suspend fun getSeriesImageListById(seriesId: Int): List<BackdropImageDataClass> {
+        return apiService.getSeriesImageListById(seriesId).toBackdropImageDataClass()
+    }
+
+    suspend fun getSeriesVideosById(seriesId: Int): List<VideoDataClass> {
+        return apiService.getSeriesVideosById(seriesId).toVideoDataClass()
     }
 
 }

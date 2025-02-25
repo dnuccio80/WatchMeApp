@@ -19,7 +19,9 @@ import com.example.watchme.app.domain.series.GetOnTheAirSeriesUseCase
 import com.example.watchme.app.domain.series.GetPopularSeriesUseCase
 import com.example.watchme.app.domain.series.GetSeasonDetailsUseCase
 import com.example.watchme.app.domain.series.GetSeriesDetailsByIdUseCase
+import com.example.watchme.app.domain.series.GetSeriesImageListByIdUseCase
 import com.example.watchme.app.domain.series.GetSeriesRecommendationsByIdUseCase
+import com.example.watchme.app.domain.series.GetSeriesVideosByIdUseCase
 import com.example.watchme.app.domain.series.GetTopRatedSeriesUseCase
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
@@ -65,9 +67,11 @@ class AppViewModel @Inject constructor(
     getTopRatedSeriesUseCase: GetTopRatedSeriesUseCase,
     private val getSeriesDetailsByIdUseCase: GetSeriesDetailsByIdUseCase,
     private val getSeasonDetailsUseCase: GetSeasonDetailsUseCase,
-    private val getSeriesRecommendationsByIdUseCase: GetSeriesRecommendationsByIdUseCase
+    private val getSeriesRecommendationsByIdUseCase: GetSeriesRecommendationsByIdUseCase,
+    private val getSeriesImageListByIdUseCase: GetSeriesImageListByIdUseCase,
+    private val getSeriesVideosByIdUseCase: GetSeriesVideosByIdUseCase,
 
-) : ViewModel() {
+    ) : ViewModel() {
 
     // MOVIES
 
@@ -111,8 +115,8 @@ class AppViewModel @Inject constructor(
     private val _reviews = MutableStateFlow<List<ReviewDataClass>?>(null)
     val reviews: StateFlow<List<ReviewDataClass>?> = _reviews
 
-    private val _videos = MutableStateFlow<List<VideoDataClass>?>(null)
-    val videos: StateFlow<List<VideoDataClass>?> = _videos
+    private val _movieVideos = MutableStateFlow<List<VideoDataClass>?>(null)
+    val movieVideos: StateFlow<List<VideoDataClass>?> = _movieVideos
 
     // SERIES
 
@@ -136,6 +140,12 @@ class AppViewModel @Inject constructor(
 
     private val _seriesRecommendations = MutableStateFlow<List<SeriesDataClass>?>(null)
     val seriesRecommendations: StateFlow<List<SeriesDataClass>?> = _seriesRecommendations
+
+    private val _seriesImageList = MutableStateFlow<List<BackdropImageDataClass>?>(null)
+    val seriesImageList: StateFlow<List<BackdropImageDataClass>?> = _seriesImageList
+
+    private val _seriesVideos = MutableStateFlow<List<VideoDataClass>?>(null)
+    val seriesVideos: StateFlow<List<VideoDataClass>?> = _seriesVideos
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -193,7 +203,7 @@ class AppViewModel @Inject constructor(
 
     fun getVideosById(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _videos.value = getVideosByIdUseCase(movieId)
+            _movieVideos.value = getVideosByIdUseCase(movieId)
         }
     }
 
@@ -214,6 +224,18 @@ class AppViewModel @Inject constructor(
     fun getSeriesRecommendationsById(seriesId: Int) {
         viewModelScope.launch (Dispatchers.IO){
             _seriesRecommendations.value = getSeriesRecommendationsByIdUseCase(seriesId)
+        }
+    }
+
+    fun getSeriesImageListById(seriesId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _seriesImageList.value = getSeriesImageListByIdUseCase(seriesId)
+        }
+    }
+
+    fun getSeriesVideosListById(seriesId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _seriesVideos.value = getSeriesVideosByIdUseCase(seriesId)
         }
     }
 
