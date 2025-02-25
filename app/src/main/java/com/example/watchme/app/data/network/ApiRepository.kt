@@ -2,7 +2,7 @@ package com.example.watchme.app.data.network
 
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
 import com.example.watchme.app.data.network.responses.toDetailsMovieDataClass
-import com.example.watchme.app.data.network.responses.toMovieCreditsDataClass
+import com.example.watchme.app.data.network.responses.toCreditsDataClass
 import com.example.watchme.app.data.network.responses.toMovieDataClass
 import com.example.watchme.app.data.network.responses.toProvidersDataClass
 import com.example.watchme.app.data.network.responses.toReviewDataClass
@@ -13,7 +13,7 @@ import com.example.watchme.app.data.network.responses.toVideoDataClass
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
-import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
+import com.example.watchme.app.ui.dataClasses.CreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
@@ -50,8 +50,8 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getMovieDetailsById(movieId).toDetailsMovieDataClass()
     }
 
-    suspend fun getMovieCreditsById(movieId: Int): MovieCreditsDataClass {
-        return apiService.getMovieCreditsById(movieId).toMovieCreditsDataClass()
+    suspend fun getMovieCreditsById(movieId: Int): CreditsDataClass {
+        return apiService.getMovieCreditsById(movieId).toCreditsDataClass()
     }
 
     suspend fun getMovieImageListById(movieId: Int): List<BackdropImageDataClass> {
@@ -106,6 +106,10 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun getSeriesVideosById(seriesId: Int): List<VideoDataClass> {
         return apiService.getSeriesVideosById(seriesId).toVideoDataClass()
+    }
+
+    suspend fun getSeriesCreditsById(seriesId: Int): CreditsDataClass {
+        return apiService.getSeriesCreditsById(seriesId).toCreditsDataClass()
     }
 
 }

@@ -2,7 +2,7 @@ package com.example.watchme.app.data.network
 
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
-import com.example.watchme.app.data.network.responses.MovieCreditsResponse
+import com.example.watchme.app.data.network.responses.CreditsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
 import com.example.watchme.app.data.network.responses.ReviewsResponse
@@ -98,10 +98,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getMovieCreditsById(movieId:Int): MovieCreditsResponse {
+    suspend fun getMovieCreditsById(movieId:Int): CreditsResponse {
         return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getMovieCreditsById("movie/${movieId}/credits${Constants.SPANISH_AR}")
-            val body: MovieCreditsResponse? = response.body()
+            val response = retrofit.create(ApiClient::class.java).getCreditsById("movie/${movieId}/credits${Constants.SPANISH_AR}")
+            val body: CreditsResponse? = response.body()
 
             if(response.isSuccessful && body != null){
                 body
@@ -280,6 +280,19 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
                 body
             } else {
                 throw Exception("Failed to fetch videos: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
+    suspend fun getSeriesCreditsById(seriesId:Int): CreditsResponse {
+        return withContext(Dispatchers.IO){
+            val response = retrofit.create(ApiClient::class.java).getCreditsById("tv/${seriesId}/credits${Constants.SPANISH_AR}")
+            val body: CreditsResponse? = response.body()
+
+            if(response.isSuccessful && body != null){
+                body
+            } else {
+                throw Exception("Failed to fetch movie credits: ${response.errorBody()?.string()}")
             }
         }
     }

@@ -16,6 +16,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -54,7 +56,10 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.watchme.R
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
+import com.example.watchme.app.ui.dataClasses.CreditsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
+import com.example.watchme.app.ui.screens.CastCreditsItem
+import com.example.watchme.app.ui.screens.CrewCreditsItem
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaButtonColor
 import com.example.watchme.ui.theme.CardContainerColor
@@ -536,5 +541,34 @@ fun ImageListItem(imagesList: List<BackdropImageDataClass>?) {
             }
         }
 
+    }
+}
+
+@Composable
+fun CreditsSection(credits: CreditsDataClass?) {
+    if (credits == null) return
+
+    if(credits.cast.isEmpty() && credits.crew.isEmpty()){
+        BodyTextItem(stringResource(R.string.no_results_found))
+        return
+    }
+
+    if(credits.cast.isNotEmpty()){
+        SecondTitleTextItem(stringResource(R.string.cast))
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            items(credits.cast){
+                CastCreditsItem(it)
+
+            }
+        }
+    }
+
+    if(credits.crew.isNotEmpty()){
+        SecondTitleTextItem(stringResource(R.string.crew))
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            items(credits.crew) {
+                CrewCreditsItem(it)
+            }
+        }
     }
 }

@@ -7,7 +7,7 @@ import com.example.watchme.app.ui.dataClasses.CollectionDataClass
 import com.example.watchme.app.ui.dataClasses.CrewCreditDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.GenresDataClass
-import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
+import com.example.watchme.app.ui.dataClasses.CreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ProductionCompaniesDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
@@ -130,13 +130,13 @@ fun ProductionCompanies.toProductionCompaniesDataClass(): ProductionCompaniesDat
     )
 }
 
-data class MovieCreditsResponse(
+data class CreditsResponse(
     @SerializedName("cast") val cast: List<CastCredit>,
     @SerializedName("crew") val crew: List<CrewCredit>
 )
 
-fun MovieCreditsResponse.toMovieCreditsDataClass(): MovieCreditsDataClass {
-    return MovieCreditsDataClass(
+fun CreditsResponse.toCreditsDataClass(): CreditsDataClass {
+    return CreditsDataClass(
         cast = cast.map { it.toCastCreditDataClass() },
         crew = crew.map { it.toCrewCreditDataClass() }
     )

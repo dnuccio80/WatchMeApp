@@ -61,6 +61,7 @@ import com.example.watchme.R
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.ImageListItem
 import com.example.watchme.app.ui.LazyRowItemText
@@ -94,6 +95,7 @@ fun SeriesDetailsScreen(
     val seriesRecommendations by viewModel.seriesRecommendations.collectAsState()
     val seriesImageList by viewModel.seriesImageList.collectAsState()
     val seriesVideosList by viewModel.seriesVideos.collectAsState()
+    val seriesCredits by viewModel.seriesCredits.collectAsState()
 
     val verticalScrollState = rememberScrollState()
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
@@ -103,6 +105,7 @@ fun SeriesDetailsScreen(
     viewModel.getSeriesRecommendationsById(seriesId)
     viewModel.getSeriesImageListById(seriesId)
     viewModel.getSeriesVideosListById(seriesId)
+    viewModel.getSeriesCreditsById(seriesId)
 
     val lazyList = listOf(
         SeriesOptions.Episodes.item,
@@ -148,9 +151,16 @@ fun SeriesDetailsScreen(
                 Spacer(Modifier.size(16.dp))
                 LazyRowItem(lazyList)
 
+                /*
+
+                    CREDITS SECTION
+
+                CreditsSection(seriesCredits)
+
+                    MEDIA SECTION
+
                 SeriesMediaSection(seriesImageList, seriesVideosList)
 
-                /*
                     EPISODES SECTION
 
                 seriesDetails?.seasons?.let { seasons ->

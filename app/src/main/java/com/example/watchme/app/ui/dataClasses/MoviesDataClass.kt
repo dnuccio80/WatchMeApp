@@ -1,13 +1,5 @@
 package com.example.watchme.app.ui.dataClasses
 
-import com.example.watchme.app.data.network.responses.CastCredit
-import com.example.watchme.app.data.network.responses.Collection
-import com.example.watchme.app.data.network.responses.CrewCredit
-import com.example.watchme.app.data.network.responses.Genres
-import com.example.watchme.app.data.network.responses.Movie
-import com.example.watchme.app.data.network.responses.ProductionCompanies
-import com.google.gson.annotations.SerializedName
-
 data class MovieDataClass(
     val id: Int,
     val genreIds: List<Int>,
@@ -37,7 +29,7 @@ data class DetailsMovieDataClass(
     val runtime: Int,
 )
 
-data class MovieCreditsDataClass(
+data class CreditsDataClass(
     val cast: List<CastCreditDataClass>,
     val crew: List<CrewCreditDataClass>
 )

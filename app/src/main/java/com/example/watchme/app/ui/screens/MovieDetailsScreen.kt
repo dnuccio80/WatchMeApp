@@ -25,7 +25,6 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -50,6 +49,7 @@ import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.ImageListItem
 import com.example.watchme.app.ui.NextPreviousButtonsRow
@@ -61,7 +61,6 @@ import com.example.watchme.app.ui.dataClasses.CastCreditDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDataClass
 import com.example.watchme.app.ui.dataClasses.CrewCreditDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
-import com.example.watchme.app.ui.dataClasses.MovieCreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.core.Routes
@@ -84,14 +83,14 @@ fun MovieDetailsScreen(
     viewModel.getReviewsById(movieId)
     viewModel.getVideosById(movieId)
 
-    val movieDetails = viewModel.movieDetails.collectAsState()
-    val movieCredits = viewModel.movieCredits.collectAsState()
+    val movieDetails by viewModel.movieDetails.collectAsState()
+    val movieCredits by viewModel.movieCredits.collectAsState()
     val movieListImages by viewModel.movieImageList.collectAsState()
-    val recommendations = viewModel.movieRecommendations.collectAsState()
-    val reviews = viewModel.reviews.collectAsState()
+    val recommendations by viewModel.movieRecommendations.collectAsState()
+    val reviews by viewModel.reviews.collectAsState()
     val videos by viewModel.movieVideos.collectAsState()
 
-    val runTime = viewModel.getRunTimeInHours(movieDetails.value?.runtime ?: 0)
+    val runTime = viewModel.getRunTimeInHours(movieDetails?.runtime ?: 0)
     val scrollState = rememberScrollState()
 
     Box(
@@ -111,7 +110,7 @@ fun MovieDetailsScreen(
                     .fillMaxWidth()
                     .height(300.dp)
             ) {
-                movieDetails.value?.backdropImage?.let { BackdropImageItem(it) }
+                movieDetails?.backdropImage?.let { BackdropImageItem(it) }
                 BackButton()
             }
             Column(
@@ -121,11 +120,11 @@ fun MovieDetailsScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 HeaderInfo(
-                    movieDetails.value?.genres?.map { it.nameGenre }.orEmpty(),
+                    movieDetails?.genres?.map { it.nameGenre }.orEmpty(),
                     runTime,
                     Modifier.align(Alignment.CenterHorizontally)
                 )
-                movieDetails.value?.let { SecondTitleTextItem(it.title) }
+                movieDetails?.let { SecondTitleTextItem(it.title) }
                 // ESTO ES DE PRUEBA TODAVIA
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
                     items(10) {
@@ -147,38 +146,38 @@ fun MovieDetailsScreen(
 
 @Composable
 private fun OverviewSection(
-    movieDetails: State<DetailsMovieDataClass?>,
+    movieDetails: DetailsMovieDataClass?,
     runTime: String,
     viewModel: AppViewModel
 ) {
-    SecondTitleTextItem(movieDetails.value?.title.toString(), TextAlign.Start)
-    movieDetails.value?.let { BodyTextItem(it.overview) }
-    CollectionItem(movieDetails.value?.collection)
-    movieDetails.value?.releaseDate?.let {
+    SecondTitleTextItem(movieDetails?.title.toString(), TextAlign.Start)
+    movieDetails?.let { BodyTextItem(it.overview) }
+    CollectionItem(movieDetails?.collection)
+    movieDetails?.releaseDate?.let {
         TitleSubtitleItem(
             stringResource(R.string.release_date),
             it
         )
     }
-    movieDetails.value?.genres?.map { it.nameGenre }?.let {
+    movieDetails?.genres?.map { it.nameGenre }?.let {
         TitleSubtitleItem(
             stringResource(R.string.genre),
             it.joinToString(separator = ", ")
         )
     }
     TitleSubtitleItem("Runtime", runTime)
-    movieDetails.value?.budget?.let { viewModel.formatPrice(it) }?.let {
+    movieDetails?.budget?.let { viewModel.formatPrice(it) }?.let {
         val budget = if (it == "0") stringResource(R.string.unknown) else "$$it"
         TitleSubtitleItem(
             stringResource(R.string.budget),
             budget
         )
     }
-    movieDetails.value?.revenue?.let { viewModel.formatPrice(it) }?.let {
+    movieDetails?.revenue?.let { viewModel.formatPrice(it) }?.let {
         val revenue = if (it == "0") stringResource(R.string.unknown) else "$$it"
         TitleSubtitleItem(stringResource(R.string.revenue), revenue)
     }
-    movieDetails.value?.homepage?.let {
+    movieDetails?.homepage?.let {
         if (it.isEmpty()) return
         TitleSubtitleItem(
             stringResource(R.string.website),
@@ -188,24 +187,7 @@ private fun OverviewSection(
     }
 }
 
-@Composable
-fun CreditsSection(movieCredits: State<MovieCreditsDataClass?>) {
-    if (movieCredits.value == null) return
 
-    SecondTitleTextItem(stringResource(R.string.cast))
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        items(movieCredits.value!!.cast) {
-            CastCreditsItem(it)
-        }
-    }
-    SecondTitleTextItem(stringResource(R.string.crew))
-    LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-        items(movieCredits.value!!.crew) {
-            CrewCreditsItem(it)
-        }
-    }
-
-}
 
 @Composable
 fun CastCreditsItem(credit: CastCreditDataClass) {
@@ -332,15 +314,16 @@ fun TestTextLazyRow(text: String) {
 }
 
 @Composable
-fun RecommendationsSection(recommendations: State<List<MovieDataClass>?>, onClick: (Int) -> Unit) {
+fun RecommendationsSection(recommendations: List<MovieDataClass>?, onClick: (Int) -> Unit) {
 
-    if (recommendations.value == null) return
+    if (recommendations == null) return
 
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         SecondTitleTextItem(stringResource(R.string.recommendations), textAlign = TextAlign.Start)
         LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(recommendations.value!!) {
+            items(recommendations){
                 RecommendationsCardItem(it) {movieId -> onClick(movieId) }
+
             }
         }
     }
@@ -394,13 +377,13 @@ fun RecommendationsCardItem(movieDataClass: MovieDataClass, onClick: (Int) -> Un
 }
 
 @Composable
-fun ReviewsSection(reviews: State<List<ReviewDataClass>?>) {
+fun ReviewsSection(reviews: List<ReviewDataClass>?) {
 
-    val size = reviews.value?.size ?: 0
+    val size = reviews?.size ?: 0
     if (size == 0) return
     var index by rememberSaveable { mutableIntStateOf(0) }
 
-    val avatar = Constants.IMAGE_BASE_URL + reviews.value?.get(index)?.authorDetails?.avatarPath
+    val avatar = Constants.IMAGE_BASE_URL + reviews?.get(index)?.authorDetails?.avatarPath
 
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         SecondTitleTextItem(stringResource(R.string.reviews))
@@ -441,13 +424,13 @@ fun ReviewsSection(reviews: State<List<ReviewDataClass>?>) {
                             )
                         }
                         Column {
-                            reviews.value?.get(index)?.author?.let {
+                            reviews?.get(index)?.author?.let {
                                 SecondTitleTextItem(
                                     it,
                                     textAlign = TextAlign.Start
                                 )
                             }
-                            reviews.value?.get(index)?.createdAt.let {
+                            reviews?.get(index)?.createdAt.let {
                                 BodyTextItem(
                                     "${
                                         stringResource(
@@ -458,7 +441,7 @@ fun ReviewsSection(reviews: State<List<ReviewDataClass>?>) {
                             }
                         }
                     }
-                    reviews.value?.get(index)?.content.let {
+                    reviews?.get(index)?.content.let {
                         BodyTextItem(
                             it.toString(),
                             overflow = TextOverflow.Ellipsis
