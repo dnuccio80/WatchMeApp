@@ -1,7 +1,8 @@
 package com.example.watchme.app.data.network.responses
 
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
-import com.example.watchme.app.ui.dataClasses.PeopleMoviesInterpretationDataClass
+import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
+import com.example.watchme.app.ui.dataClasses.PeopleSeriesInterpretationDataClass
 import com.google.gson.annotations.SerializedName
 
 data class PeopleDetailsResponse(
@@ -30,14 +31,27 @@ fun PeopleDetailsResponse.toPeopleDetailsDataClass(): PeopleDetailsDataClass {
     )
 }
 
-data class PeopleMoviesInterpretationResponse (
+data class PeopleMovieInterpretationResponse (
     @SerializedName("cast") val cast: List<Movie>,
     @SerializedName("crew") val crew: List<Movie>,
 )
 
-fun PeopleMoviesInterpretationResponse.toPeopleMoviesInterpretationDataClass(): PeopleMoviesInterpretationDataClass {
-    return PeopleMoviesInterpretationDataClass(
+fun PeopleMovieInterpretationResponse.toPeopleMoviesInterpretationDataClass(): PeopleMovieInterpretationDataClass {
+    return PeopleMovieInterpretationDataClass(
         cast = cast.map { it.toMovieDataClass() },
         crew = crew.map { it.toMovieDataClass() }
     )
+}
+
+data class PeopleSeriesInterpretationResponse (
+    @SerializedName("cast") val cast: List<Series>,
+    @SerializedName("crew") val crew: List<Series>,
+)
+
+fun PeopleSeriesInterpretationResponse.toPeopleSeriesInterpretationDataClass(): PeopleSeriesInterpretationDataClass {
+    return PeopleSeriesInterpretationDataClass(
+        cast = cast.map { it.toSeriesDataClass() },
+        crew = crew.map { it.toSeriesDataClass() }
+    )
+
 }

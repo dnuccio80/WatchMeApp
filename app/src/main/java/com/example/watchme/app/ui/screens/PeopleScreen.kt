@@ -1,6 +1,5 @@
 package com.example.watchme.app.ui.screens
 
-import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -39,12 +38,14 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
+import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretationResponse
 import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SectionSelectionItem
 import com.example.watchme.app.ui.TitleSubtitleItem
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
-import com.example.watchme.app.ui.dataClasses.PeopleMoviesInterpretationDataClass
+import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
+import com.example.watchme.app.ui.dataClasses.PeopleSeriesInterpretationDataClass
 import com.example.watchme.core.Interpretations
 import com.example.watchme.core.Sections
 import com.example.watchme.core.constants.Constants
@@ -63,9 +64,11 @@ fun PeopleDetailsScreen(
 
     val peopleDetails by viewModel.peopleDetails.collectAsState()
     val movieInterpretations by viewModel.peopleMovieInterpretations.collectAsState()
+    val seriesInterpretations by viewModel.peopleSeriesInterpretations.collectAsState()
 
     viewModel.getPeopleDetailsById(personId)
     viewModel.getPeopleMovieInterpretationsById(personId)
+    viewModel.getPeopleSeriesInterpretationsById(personId)
 
     val sectionList = listOf(
         Sections.Biography.title,
@@ -97,7 +100,8 @@ fun PeopleDetailsScreen(
                     sectionSelected = newSectionSelected
                 }
 //                BiographySection(peopleDetails)
-                MoviesInterpretationsSection(movieInterpretations)
+//                InterpretationsSection(movieInterpretations)
+                    SeriesInterpretationsSection(seriesInterpretations)
             }
 
         }
@@ -105,9 +109,8 @@ fun PeopleDetailsScreen(
 }
 
 @Composable
-fun MoviesInterpretationsSection(movieInterpretations: PeopleMoviesInterpretationDataClass?) {
-
-    if (movieInterpretations == null) {
+fun SeriesInterpretationsSection(interpretations: PeopleSeriesInterpretationDataClass?) {
+    if (interpretations == null) {
         BodyTextItem(stringResource(R.string.no_results_found))
         return
     }
@@ -153,13 +156,66 @@ fun MoviesInterpretationsSection(movieInterpretations: PeopleMoviesInterpretatio
                 })
         }
 
-        FilterInterpretations(movieInterpretations, filterInterpretationText)
+        FilterSeriesInterpretations(interpretations, filterInterpretationText)
+    }
+}
+
+@Composable
+fun MovieInterpretationsSection(interpretations: PeopleMovieInterpretationDataClass?) {
+
+    if (interpretations == null) {
+        BodyTextItem(stringResource(R.string.no_results_found))
+        return
+    }
+
+    var filterInterpretationText by rememberSaveable { mutableStateOf(Interpretations.All.interpretation) }
+    var showDropDownMenu by rememberSaveable { mutableStateOf(false) }
+
+    val interpretationsList = listOf(
+        Interpretations.All.interpretation,
+        Interpretations.Cast.interpretation,
+        Interpretations.Crew.interpretation,
+    )
+
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+
+        Column {
+            Button(
+                onClick = { showDropDownMenu = true },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = CardContainerColor
+                ),
+                contentPadding = PaddingValues(horizontal = 12.dp, vertical = 4.dp)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    BodyTextItem(filterInterpretationText)
+                    Icon(
+                        Icons.Filled.KeyboardArrowDown,
+                        contentDescription = "options button",
+                        tint = Color.White
+                    )
+                }
+            }
+            DropdownMenuByList(
+                showDropDownMenu,
+                interpretationsList,
+                onDismiss = { showDropDownMenu = false },
+                onClick = {
+                    showDropDownMenu = false
+                    filterInterpretationText = it
+                })
+        }
+
+        FilterMovieInterpretations(interpretations, filterInterpretationText)
     }
 
 }
 
 @Composable
-fun FilterInterpretations(movieInterpretations: PeopleMoviesInterpretationDataClass, filter:String) {
+fun FilterMovieInterpretations(movieInterpretations: PeopleMovieInterpretationDataClass, filter:String) {
 
     if(filter != Interpretations.Crew.interpretation) {
         SecondTitleTextItem(stringResource(R.string.cast), textAlign = TextAlign.Start)
@@ -177,6 +233,28 @@ fun FilterInterpretations(movieInterpretations: PeopleMoviesInterpretationDataCl
         BodyTextItem(stringResource(R.string.no_results_found))
     } else {
         MoviesRecommendationsSection(movieInterpretations.crew) { }
+    }
+}
+
+@Composable
+fun FilterSeriesInterpretations(seriesInterpretations: PeopleSeriesInterpretationDataClass, filter:String) {
+
+    if(filter != Interpretations.Crew.interpretation) {
+        SecondTitleTextItem(stringResource(R.string.cast), textAlign = TextAlign.Start)
+        if (seriesInterpretations.cast.isEmpty()) {
+            BodyTextItem(stringResource(R.string.no_results_found))
+        } else {
+            SeriesRecommendationsSection(seriesInterpretations.cast) { }
+        }
+    }
+
+    if(filter == Interpretations.Cast.interpretation) return
+
+    SecondTitleTextItem(stringResource(R.string.crew), textAlign = TextAlign.Start)
+    if (seriesInterpretations.crew.isEmpty()) {
+        BodyTextItem(stringResource(R.string.no_results_found))
+    } else {
+        SeriesRecommendationsSection(seriesInterpretations.crew) { }
     }
 }
 

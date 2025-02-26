@@ -5,7 +5,8 @@ import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
-import com.example.watchme.app.data.network.responses.PeopleMoviesInterpretationResponse
+import com.example.watchme.app.data.network.responses.PeopleMovieInterpretationResponse
+import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretationResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
 import com.example.watchme.app.data.network.responses.ReviewsResponse
 import com.example.watchme.app.data.network.responses.SeasonDetails
@@ -314,10 +315,23 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getPeopleMovieInterpretationsById(personId:Int): PeopleMoviesInterpretationResponse {
+    suspend fun getPeopleMovieInterpretationsById(personId:Int): PeopleMovieInterpretationResponse {
         return withContext(Dispatchers.IO){
             val response = retrofit.create(ApiClient::class.java).getPeopleMovieInterpretationsById("person/$personId/movie_credits")
-            val body: PeopleMoviesInterpretationResponse? = response.body()
+            val body: PeopleMovieInterpretationResponse? = response.body()
+
+            if(response.isSuccessful && body != null){
+                body
+            } else {
+                throw Exception("Failed to fetch movie credits: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
+    suspend fun getPeopleSeriesInterpretationsById(personId:Int): PeopleSeriesInterpretationResponse {
+        return withContext(Dispatchers.IO){
+            val response = retrofit.create(ApiClient::class.java).getPeopleSeriesInterpretationsById("person/$personId/tv_credits")
+            val body: PeopleSeriesInterpretationResponse? = response.body()
 
             if(response.isSuccessful && body != null){
                 body

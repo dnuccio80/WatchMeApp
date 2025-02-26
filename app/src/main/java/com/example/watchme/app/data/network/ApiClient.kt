@@ -5,7 +5,8 @@ import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
-import com.example.watchme.app.data.network.responses.PeopleMoviesInterpretationResponse
+import com.example.watchme.app.data.network.responses.PeopleMovieInterpretationResponse
+import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretationResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
 import com.example.watchme.app.data.network.responses.ReviewsResponse
 import com.example.watchme.app.data.network.responses.SeasonDetails
@@ -107,7 +108,11 @@ interface ApiClient {
 
     @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
     @GET
-    suspend fun getPeopleMovieInterpretationsById(@Url url:String): Response<PeopleMoviesInterpretationResponse>
+    suspend fun getPeopleMovieInterpretationsById(@Url url:String): Response<PeopleMovieInterpretationResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET
+    suspend fun getPeopleSeriesInterpretationsById(@Url url:String): Response<PeopleSeriesInterpretationResponse>
 
 
 }

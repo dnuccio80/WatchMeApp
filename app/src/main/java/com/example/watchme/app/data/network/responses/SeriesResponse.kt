@@ -14,19 +14,6 @@ data class SeriesResponse(
     @SerializedName("results") val results: List<Series>
 )
 
-data class Series(
-    @SerializedName("adult") val adult: Boolean,
-    @SerializedName("backdrop_path") val backdropPath: String,
-    @SerializedName("genre_ids") val genreIds: List<Int>,
-    @SerializedName("id") val id: Int,
-    @SerializedName("overview") val overview: String,
-    @SerializedName("poster_path") val posterPath: String,
-    @SerializedName("first_air_date") val firstAirDate: String,
-    @SerializedName("name") val name: String,
-    @SerializedName("vote_average") val voteAverage: Float,
-    @SerializedName("vote_count") val voteCount: Int,
-)
-
 fun SeriesResponse.toSeriesDataClass(): List<SeriesDataClass> {
     return results.map {
         SeriesDataClass(
@@ -43,6 +30,36 @@ fun SeriesResponse.toSeriesDataClass(): List<SeriesDataClass> {
         )
     }
 }
+
+data class Series(
+    @SerializedName("adult") val adult: Boolean,
+    @SerializedName("backdrop_path") val backdropPath: String,
+    @SerializedName("genre_ids") val genreIds: List<Int>,
+    @SerializedName("id") val id: Int,
+    @SerializedName("overview") val overview: String,
+    @SerializedName("poster_path") val posterPath: String,
+    @SerializedName("first_air_date") val firstAirDate: String,
+    @SerializedName("name") val name: String,
+    @SerializedName("vote_average") val voteAverage: Float,
+    @SerializedName("vote_count") val voteCount: Int,
+)
+
+fun Series.toSeriesDataClass(): SeriesDataClass {
+    return SeriesDataClass(
+        adult = adult,
+        backdropPath = backdropPath,
+        genreIds = genreIds,
+        id = id,
+        overview = overview,
+        posterPath = posterPath,
+        firstAirDate = firstAirDate,
+        name = name,
+        voteAverage = voteAverage,
+        voteCount = voteCount
+    )
+}
+
+
 
 data class SeriesDetailsResponse(
     @SerializedName("adult") val adult: Boolean,

@@ -12,7 +12,12 @@ data class PeopleDetailsDataClass(
     val profilePath:String?,
 )
 
-data class PeopleMoviesInterpretationDataClass(
+data class PeopleMovieInterpretationDataClass(
     val cast: List<MovieDataClass>,
     val crew: List<MovieDataClass>,
+)
+
+data class PeopleSeriesInterpretationDataClass(
+    val cast: List<SeriesDataClass>,
+    val crew: List<SeriesDataClass>,
 )
