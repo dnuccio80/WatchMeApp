@@ -25,6 +25,10 @@
     <string name="show_previous_image">show previous image</string>
     <string name="show_next_image">show next image</string>
     <string name="release_date">Release Date:</string>
+    <string name="known_for_department">Known for department:</string>
+    <string name="birthday">Birthday:</string>
+    <string name="death_day">Death day:</string>
+    <string name="place_of_birth">Place of birth:</string>
     <string name="genre">Genre:</string>
     <string name="unknown">Unknown</string>
     <string name="budget">Budget:</string>

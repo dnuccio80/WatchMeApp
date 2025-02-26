@@ -2,6 +2,8 @@ package com.example.watchme.app.ui
 
 import android.content.Intent
 import android.net.Uri
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,10 +16,13 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -27,6 +32,7 @@ import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -44,6 +50,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -570,5 +577,64 @@ fun CreditsSection(credits: CreditsDataClass?) {
                 CrewCreditsItem(it)
             }
         }
+    }
+}
+
+
+@Composable
+fun SectionSelectionItem(lazyList: List<String>, onItemClicked:(String) -> Unit) {
+
+    var selectedText by rememberSaveable { mutableStateOf(lazyList[0]) }
+    var textWidth by rememberSaveable { mutableStateOf(223) }
+    var xPos by rememberSaveable { mutableStateOf(0f) }
+
+    val lazyListState = rememberLazyListState()
+
+    Column {
+        LazyRow(horizontalArrangement = Arrangement.spacedBy(32.dp), state = lazyListState) {
+            items(lazyList) {
+                LazyRowItemText(
+                    it.uppercase(),
+                    selectedText,
+                ) { clickedText, newTextWidth, newXPos ->
+                    onItemClicked(clickedText)
+                    selectedText = clickedText.lowercase()
+                    textWidth = newTextWidth
+                    xPos = newXPos
+                }
+            }
+        }
+
+        Spacer(Modifier.size(4.dp))
+        LazyHorizontalDividerItem(textWidth, xPos)
+    }
+}
+
+@Composable
+fun LazyHorizontalDividerItem(textWidth: Int, xPos: Float) {
+
+    val cardWidth by animateDpAsState(
+        targetValue = with(LocalDensity.current) { textWidth.toDp() },
+        animationSpec = TweenSpec(200),
+        label = "card width"
+    )
+
+    val xOffset by animateDpAsState(
+        targetValue = with(LocalDensity.current) { xPos.toDp() },
+        animationSpec = TweenSpec(durationMillis = 200),
+        label = "x offset"
+    )
+
+    Column(Modifier.fillMaxWidth()) {
+        Card(
+            modifier = Modifier
+                .height(6.dp)
+                .width(cardWidth)
+                .offset(x = xOffset),
+            colors = CardDefaults.cardColors(
+                containerColor = Color.White
+            )
+        ) { }
+        HorizontalDivider(Modifier.fillMaxWidth(), color = Color.White, thickness = 1.dp)
     }
 }

@@ -5,6 +5,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,6 +30,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -45,6 +48,7 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
+import com.example.watchme.app.data.network.responses.Movie
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
@@ -54,6 +58,7 @@ import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.ImageListItem
 import com.example.watchme.app.ui.NextPreviousButtonsRow
 import com.example.watchme.app.ui.SecondTitleTextItem
+import com.example.watchme.app.ui.SectionSelectionItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleSubtitleItem
 import com.example.watchme.app.ui.VideosSection
@@ -63,7 +68,9 @@ import com.example.watchme.app.ui.dataClasses.CrewCreditDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
+import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.core.Routes
+import com.example.watchme.core.Sections
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.CardContainerColor
 import com.example.watchme.ui.theme.PurpleGrey40
@@ -92,6 +99,14 @@ fun MovieDetailsScreen(
 
     val runTime = viewModel.getRunTimeInHours(movieDetails?.runtime ?: 0)
     val scrollState = rememberScrollState()
+    var sectionSelected by rememberSaveable { mutableStateOf(Sections.Suggested.title) }
+
+    val sectionList = listOf(
+        Sections.Details.title,
+        Sections.Suggested.title,
+        Sections.Media.title,
+        Sections.Credits.title,
+    )
 
     Box(
         Modifier
@@ -125,19 +140,14 @@ fun MovieDetailsScreen(
                     Modifier.align(Alignment.CenterHorizontally)
                 )
                 movieDetails?.let { SecondTitleTextItem(it.title) }
-                // ESTO ES DE PRUEBA TODAVIA
-                LazyRow(horizontalArrangement = Arrangement.spacedBy(24.dp)) {
-                    items(10) {
-                        TestTextLazyRow("Testing")
-                    }
+                SectionSelectionItem(sectionList) { newSectionSelected -> sectionSelected = newSectionSelected }
+                when(sectionSelected.lowercase()){
+                    Sections.Details.title -> OverviewSection(movieDetails, runTime, viewModel)
+                    Sections.Suggested.title -> MoviesRecommendationsSection(recommendations) {  }
+                    Sections.Media.title -> MediaSection(movieListImages, videos)
+                    Sections.Credits.title -> CreditsSection(movieCredits)
                 }
-                HorizontalDivider(Modifier.fillMaxWidth())
-                OverviewSection(movieDetails, runTime, viewModel)
-                CreditsSection(movieCredits)
-                ImageListItem(movieListImages)
-                RecommendationsSection(recommendations) {movieId -> navController.navigate(Routes.MovieDetails.createRoute(movieId)) }
-                ReviewsSection(reviews)
-                VideosSection(videos, movieListImages)
+
             }
         }
     }
@@ -308,73 +318,116 @@ fun CollectionItem(collection: CollectionDataClass?) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun TestTextLazyRow(text: String) {
-    Text(text, color = Color.White)
-}
+fun MoviesRecommendationsSection(
+    moviesRecommendations: List<MovieDataClass>?,
+    onClick: (Int) -> Unit
+) {
 
-@Composable
-fun RecommendationsSection(recommendations: List<MovieDataClass>?, onClick: (Int) -> Unit) {
+    if (moviesRecommendations == null) return
 
-    if (recommendations == null) return
-
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        SecondTitleTextItem(stringResource(R.string.recommendations), textAlign = TextAlign.Start)
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(recommendations){
-                RecommendationsCardItem(it) {movieId -> onClick(movieId) }
-
-            }
+    FlowRow(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        moviesRecommendations.forEach {
+            RecommendationCardItem(it) { seriesId -> onClick(seriesId) }
         }
     }
+
 }
 
 @Composable
-fun RecommendationsCardItem(movieDataClass: MovieDataClass, onClick: (Int) -> Unit) {
-
-    val image = Constants.IMAGE_BASE_URL + movieDataClass.backdrop
+fun RecommendationCardItem(movies: MovieDataClass, onClick: (Int) -> Unit) {
+    val imageUrl = Constants.IMAGE_BASE_URL + movies.poster
 
     Card(
         modifier = Modifier
-            .width(200.dp)
-            .height(140.dp)
+            .width(120.dp)
+            .height(160.dp)
             .clickable {
-                onClick(movieDataClass.id)
-            }
-        ,
-        colors = CardDefaults.cardColors(
-            containerColor = Color.Cyan
+                onClick(movies.id)
+            }, colors = CardDefaults.cardColors(
+            containerColor = Color.Black
         ),
-        shape = RoundedCornerShape(16.dp),
-        elevation = CardDefaults.cardElevation(16.dp)
+        shape = RoundedCornerShape(4.dp),
+        elevation = CardDefaults.cardElevation(15.dp)
     ) {
-        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-            AsyncImage(
-                model = image,
-                contentDescription = stringResource(R.string.image_cast),
-                modifier = Modifier.fillMaxSize(),
-                contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.loading_image),
-                error = painterResource(R.drawable.image_not_found)
-            )
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape = RectangleShape,
-                colors = CardDefaults.cardColors(
-                    containerColor = CardContainerColor
-                )
-            ) {
-                BodyTextItem(
-                    movieDataClass.title,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .fillMaxWidth(),
-                    textAlign = TextAlign.Center
-                )
-            }
-        }
+        AsyncImage(
+            model = imageUrl,
+            contentDescription = stringResource(R.string.movie_image),
+            contentScale = ContentScale.FillBounds,
+            modifier = Modifier
+                .fillMaxSize()
+        )
     }
 }
+
+
+//@Composable
+//fun RecommendationsSection(recommendations: List<MovieDataClass>?, onClick: (Int) -> Unit) {
+//
+//    if (recommendations == null) return
+//
+//    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+//        SecondTitleTextItem(stringResource(R.string.recommendations), textAlign = TextAlign.Start)
+//        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+//            items(recommendations){
+//                RecommendationsCardItem(it) {movieId -> onClick(movieId) }
+//
+//            }
+//        }
+//    }
+//}
+//
+//@Composable
+//fun RecommendationsCardItem(movieDataClass: MovieDataClass, onClick: (Int) -> Unit) {
+//
+//    val image = Constants.IMAGE_BASE_URL + movieDataClass.backdrop
+//
+//    Card(
+//        modifier = Modifier
+//            .width(200.dp)
+//            .height(140.dp)
+//            .clickable {
+//                onClick(movieDataClass.id)
+//            }
+//        ,
+//        colors = CardDefaults.cardColors(
+//            containerColor = Color.Cyan
+//        ),
+//        shape = RoundedCornerShape(16.dp),
+//        elevation = CardDefaults.cardElevation(16.dp)
+//    ) {
+//        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
+//            AsyncImage(
+//                model = image,
+//                contentDescription = stringResource(R.string.image_cast),
+//                modifier = Modifier.fillMaxSize(),
+//                contentScale = ContentScale.Crop,
+//                placeholder = painterResource(R.drawable.loading_image),
+//                error = painterResource(R.drawable.image_not_found)
+//            )
+//            Card(
+//                modifier = Modifier.fillMaxWidth(),
+//                shape = RectangleShape,
+//                colors = CardDefaults.cardColors(
+//                    containerColor = CardContainerColor
+//                )
+//            ) {
+//                BodyTextItem(
+//                    movieDataClass.title,
+//                    modifier = Modifier
+//                        .padding(vertical = 8.dp)
+//                        .fillMaxWidth(),
+//                    textAlign = TextAlign.Center
+//                )
+//            }
+//        }
+//    }
+//}
 
 @Composable
 fun ReviewsSection(reviews: List<ReviewDataClass>?) {

@@ -1,8 +1,5 @@
 package com.example.watchme.app.ui.screens
 
-import android.util.Log
-import androidx.compose.animation.core.TweenSpec
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,14 +14,11 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -36,7 +30,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -49,7 +42,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -66,8 +58,8 @@ import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.ImageListItem
-import com.example.watchme.app.ui.LazyRowItemText
 import com.example.watchme.app.ui.SecondTitleTextItem
+import com.example.watchme.app.ui.SectionSelectionItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleSubtitleItem
 import com.example.watchme.app.ui.TitleSubtitleItemWithNullability
@@ -79,7 +71,7 @@ import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.core.Routes
-import com.example.watchme.core.SeriesOptions
+import com.example.watchme.core.Sections
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.ui.theme.CardContainerColor
@@ -102,7 +94,7 @@ fun SeriesDetailsScreen(
 
     val verticalScrollState = rememberScrollState()
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
-    var sectionSelected by rememberSaveable { mutableStateOf(SeriesOptions.Episodes.item) }
+    var sectionSelected by rememberSaveable { mutableStateOf(Sections.Episodes.title) }
 
     viewModel.getSeriesDetailsById(seriesId)
     viewModel.getSeasonDetailsById(seriesId, seasonSelected)
@@ -111,12 +103,12 @@ fun SeriesDetailsScreen(
     viewModel.getSeriesVideosListById(seriesId)
     viewModel.getSeriesCreditsById(seriesId)
 
-    val lazyList = listOf(
-        SeriesOptions.Episodes.item,
-        SeriesOptions.Suggested.item,
-        SeriesOptions.Details.item,
-        SeriesOptions.Media.item,
-        SeriesOptions.Credits.item,
+    val sectionList = listOf(
+        Sections.Episodes.title,
+        Sections.Suggested.title,
+        Sections.Details.title,
+        Sections.Media.title,
+        Sections.Credits.title,
     )
 
     Box(
@@ -153,39 +145,19 @@ fun SeriesDetailsScreen(
                 seriesDetails?.name?.let { SecondTitleTextItem(it) }
                 SeriesOverviewSection(seriesDetails)
                 Spacer(Modifier.size(16.dp))
-                LazyRowItem(lazyList) { newSectionSelected -> sectionSelected = newSectionSelected }
+                SectionSelectionItem(sectionList) { newSectionSelected -> sectionSelected = newSectionSelected }
                 when(sectionSelected.lowercase()){
-                    SeriesOptions.Episodes.item -> seriesDetails?.seasons?.let {
+                    Sections.Episodes.title -> seriesDetails?.seasons?.let {
                         EpisodesSection(
                             seasonDetails, it, seasonSelected,
                             onValueChange = { seasonNumber -> seasonSelected = seasonNumber }
                         )
                     }
-                    SeriesOptions.Suggested.item -> SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
-                    SeriesOptions.Details.item -> SeriesDetailsSection(seriesDetails)
-                    SeriesOptions.Media.item ->  SeriesMediaSection(seriesImageList, seriesVideosList)
-                    SeriesOptions.Credits.item -> CreditsSection(seriesCredits)
+                    Sections.Suggested.title -> SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
+                    Sections.Details.title -> SeriesDetailsSection(seriesDetails)
+                    Sections.Media.title ->  MediaSection(seriesImageList, seriesVideosList)
+                    Sections.Credits.title -> CreditsSection(seriesCredits)
                 }
-
-                /*
-
-                    CREDITS SECTION
-                CreditsSection(seriesCredits)
-
-                    MEDIA SECTION
-
-                SeriesMediaSection(seriesImageList, seriesVideosList)
-
-                    EPISODES SECTION
-
-                    SUGGESTION SECTION
-                SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
-
-                    DETAILS SECTION
-                SeriesDetailsSection(seriesDetails)
-                */
-
-
             }
         }
     }
@@ -202,8 +174,6 @@ fun EpisodesSection(
     val seasonName: String = seasons.find {
         it.seasonNumber == seasonSelected
     }?.name.toString()
-
-    Log.i("Damian", seasonName)
 
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -277,16 +247,16 @@ fun EpisodesSection(
 }
 
 @Composable
-fun SeriesMediaSection(
-    seriesImageList: List<BackdropImageDataClass>?,
+fun MediaSection(
+    imagesList: List<BackdropImageDataClass>?,
     seriesVideosList: List<VideoDataClass>?
 ) {
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        ImageListItem(seriesImageList)
+        ImageListItem(imagesList)
         seriesVideosList?.let {
             VideosSection(
                 it,
-                imagesList = seriesImageList
+                imagesList = imagesList
             )
         }
     }
@@ -385,63 +355,6 @@ fun RecommendationCardItem(series: SeriesDataClass, onClick: (Int) -> Unit) {
 }
 
 
-@Composable
-fun LazyRowItem(lazyList: List<String>, onItemClicked:(String) -> Unit) {
-
-    var selectedText by rememberSaveable { mutableStateOf(lazyList[0]) }
-    var textWidth by rememberSaveable { mutableStateOf(223) }
-    var xPos by rememberSaveable { mutableStateOf(0f) }
-
-    val lazyListState = rememberLazyListState()
-
-    Column {
-        LazyRow(horizontalArrangement = Arrangement.spacedBy(32.dp), state = lazyListState) {
-            items(lazyList) {
-                LazyRowItemText(
-                    it.uppercase(),
-                    selectedText,
-                ) { clickedText, newTextWidth, newXPos ->
-                    onItemClicked(clickedText)
-                    selectedText = clickedText.lowercase()
-                    textWidth = newTextWidth
-                    xPos = newXPos
-                }
-            }
-        }
-
-        Spacer(Modifier.size(4.dp))
-        LazyHorizontalDividerItem(textWidth, xPos)
-    }
-}
-
-@Composable
-fun LazyHorizontalDividerItem(textWidth: Int, xPos: Float) {
-
-    val cardWidth by animateDpAsState(
-        targetValue = with(LocalDensity.current) { textWidth.toDp() },
-        animationSpec = TweenSpec(200),
-        label = "card width"
-    )
-
-    val xOffset by animateDpAsState(
-        targetValue = with(LocalDensity.current) { xPos.toDp() },
-        animationSpec = TweenSpec(durationMillis = 200),
-        label = "x offset"
-    )
-
-    Column(Modifier.fillMaxWidth()) {
-        Card(
-            modifier = Modifier
-                .height(6.dp)
-                .width(cardWidth)
-                .offset(x = xOffset),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White
-            )
-        ) { }
-        HorizontalDivider(Modifier.fillMaxWidth(), color = Color.White, thickness = 1.dp)
-    }
-}
 
 @Composable
 fun SeriesOverviewSection(seriesDetails: SeriesDetailsDataClass?) {

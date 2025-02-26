@@ -4,6 +4,7 @@ import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
+import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
 import com.example.watchme.app.data.network.responses.ReviewsResponse
 import com.example.watchme.app.data.network.responses.SeasonDetails
@@ -288,6 +289,21 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         return withContext(Dispatchers.IO){
             val response = retrofit.create(ApiClient::class.java).getCreditsById("tv/${seriesId}/credits${Constants.SPANISH_AR}")
             val body: CreditsResponse? = response.body()
+
+            if(response.isSuccessful && body != null){
+                body
+            } else {
+                throw Exception("Failed to fetch movie credits: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
+    // PEOPLE
+
+    suspend fun getPeopleDetails(peopleId:Int): PeopleDetailsResponse {
+        return withContext(Dispatchers.IO){
+            val response = retrofit.create(ApiClient::class.java).getPeopleDetailsById("person/$peopleId")
+            val body: PeopleDetailsResponse? = response.body()
 
             if(response.isSuccessful && body != null){
                 body
