@@ -27,5 +27,8 @@ fun PeopleDetailsResponse.toPeopleDetailsDataClass(): PeopleDetailsDataClass {
         placeOfBirth = placeOfBirth,
         profilePath = profilePath,
     )
-
 }
+
+//data class PeopleMoviesInterpretationResponse (
+//    @SerializedName("cast") val cast:
+//)

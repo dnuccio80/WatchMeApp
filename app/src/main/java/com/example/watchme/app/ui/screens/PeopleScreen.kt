@@ -1,6 +1,5 @@
 package com.example.watchme.app.ui.screens
 
-import android.icu.text.CaseMap.Title
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +17,9 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -27,8 +29,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
+import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.SecondTitleTextItem
+import com.example.watchme.app.ui.SectionSelectionItem
 import com.example.watchme.app.ui.TitleSubtitleItem
+import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
+import com.example.watchme.core.Sections
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.ui.theme.CardContainerColor
@@ -43,8 +49,16 @@ fun PeopleDetailsScreen(
     val scrollState = rememberScrollState()
 
     val peopleDetails by viewModel.peopleDetails.collectAsState()
+    var sectionSelected by rememberSaveable { mutableStateOf(Sections.Biography.title) }
 
     viewModel.getPeopleDetailsById(peopleId)
+
+    val sectionList = listOf(
+        Sections.Biography.title,
+        Sections.Movies.title,
+        Sections.Series.title,
+        Sections.Media.title,
+    )
 
     Box(
         Modifier
@@ -58,49 +72,79 @@ fun PeopleDetailsScreen(
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Row(
+            PeopleHeader(peopleDetails)
+            Column(
                 Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+                verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                Card(
-                    modifier = Modifier.weight(1f),
-                    elevation = CardDefaults.cardElevation(16.dp),
-                    border = BorderStroke(4.dp, CardContainerColor)
-                ) {
-                    AsyncImage(
-                        modifier = Modifier.fillMaxSize(),
-                        model = Constants.IMAGE_BASE_URL + peopleDetails?.profilePath,
-                        contentDescription = "people image",
-                        error = painterResource(R.drawable.unknown_male),
-                        contentScale = ContentScale.Crop
-                    )
+                SectionSelectionItem(sectionList) { newSectionSelected ->
+                    sectionSelected = newSectionSelected
                 }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    peopleDetails?.name?.let {
-                        SecondTitleTextItem(it, textAlign = TextAlign.Start)
-                    }
-                    peopleDetails?.knownForDepartment?.let {
-                        TitleSubtitleItem(stringResource(R.string.known_for_department), it)
-                    }
-                    peopleDetails?.birthday?.let {
-                        TitleSubtitleItem(stringResource(R.string.birthday), it)
-                    }
-                    peopleDetails?.deathDay?.let {
-                        TitleSubtitleItem(stringResource(R.string.death_day), it )
-                    }
+//                BiographySection(peopleDetails)
+//                MoviesRecommendationsSection() { }
+            }
 
-                    peopleDetails?.placeOfBirth?.let {
-                        TitleSubtitleItem(stringResource(R.string.place_of_birth), it)
-                    }
+        }
+    }
+}
 
-                }
+@Composable
+fun PeopleHeader(peopleDetails: PeopleDetailsDataClass?) {
+    Row(
+        Modifier
+            .fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Card(
+            modifier = Modifier.weight(1f),
+            elevation = CardDefaults.cardElevation(16.dp),
+            border = BorderStroke(4.dp, CardContainerColor)
+        ) {
+            AsyncImage(
+                modifier = Modifier.fillMaxSize(),
+                model = Constants.IMAGE_BASE_URL + peopleDetails?.profilePath,
+                contentDescription = "people image",
+                error = painterResource(R.drawable.unknown_male),
+                contentScale = ContentScale.Crop
+            )
+        }
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            peopleDetails?.name?.let {
+                SecondTitleTextItem(it, textAlign = TextAlign.Start)
+            }
+            peopleDetails?.knownForDepartment?.let {
+                TitleSubtitleItem(stringResource(R.string.known_for_department), it)
+            }
+            peopleDetails?.birthday?.let {
+                TitleSubtitleItem(stringResource(R.string.birthday), it)
+            }
+            peopleDetails?.deathDay?.let {
+                TitleSubtitleItem(stringResource(R.string.death_day), it)
+            }
 
+            peopleDetails?.placeOfBirth?.let {
+                TitleSubtitleItem(stringResource(R.string.place_of_birth), it)
             }
         }
+    }
+}
+
+@Composable
+fun BiographySection(peopleDetails: PeopleDetailsDataClass?) {
+
+    if (peopleDetails?.biography == null) return
+
+    Column(
+        Modifier
+            .fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        SecondTitleTextItem(stringResource(R.string.biography))
+        BodyTextItem(peopleDetails.biography)
     }
 }

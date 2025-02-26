@@ -83,7 +83,7 @@ class MainActivity : ComponentActivity() {
                     PeopleDetailsScreen(
                         innerPadding = innerPadding,
                         viewModel = viewModel,
-                        peopleId = 1
+                        peopleId = 3
                     )
                 }
             }
