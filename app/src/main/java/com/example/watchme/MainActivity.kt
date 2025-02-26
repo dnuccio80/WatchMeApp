@@ -8,19 +8,10 @@ import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.watchme.app.ui.BottomBar
 import com.example.watchme.app.ui.TopBar
-import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
-import com.example.watchme.app.ui.screens.HomeScreen
-import com.example.watchme.app.ui.screens.MovieDetailsScreen
 import com.example.watchme.app.ui.screens.PeopleDetailsScreen
-import com.example.watchme.app.ui.screens.SeriesDetailsScreen
-import com.example.watchme.core.Routes
 import com.example.watchme.ui.theme.WatchMeTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -83,7 +74,7 @@ class MainActivity : ComponentActivity() {
                     PeopleDetailsScreen(
                         innerPadding = innerPadding,
                         viewModel = viewModel,
-                        peopleId = 3
+                        personId = 3
                     )
                 }
             }

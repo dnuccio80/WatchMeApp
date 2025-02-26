@@ -18,18 +18,6 @@ data class MovieResponse(
     @SerializedName("results") val result: List<Movie>
 )
 
-data class Movie(
-    @SerializedName("id") val id: Int,
-    @SerializedName("genre_ids") val genreIds: List<Int>,
-    @SerializedName("title") val title: String,
-    @SerializedName("release_date") val releaseDate: String,
-    @SerializedName("overview") val overview: String,
-    @SerializedName("poster_path") val poster: String,
-    @SerializedName("backdrop_path") val backdrop: String,
-    @SerializedName("vote_average") val voteAverage: Float,
-    @SerializedName("vote_count") val voteCount: Int
-)
-
 fun MovieResponse.toMovieDataClass(): List<MovieDataClass> {
     return result.map {
         MovieDataClass(
@@ -46,6 +34,31 @@ fun MovieResponse.toMovieDataClass(): List<MovieDataClass> {
     }
 }
 
+data class Movie(
+    @SerializedName("id") val id: Int,
+    @SerializedName("genre_ids") val genreIds: List<Int>,
+    @SerializedName("title") val title: String,
+    @SerializedName("release_date") val releaseDate: String,
+    @SerializedName("overview") val overview: String,
+    @SerializedName("poster_path") val poster: String,
+    @SerializedName("backdrop_path") val backdrop: String,
+    @SerializedName("vote_average") val voteAverage: Float,
+    @SerializedName("vote_count") val voteCount: Int
+)
+
+fun Movie.toMovieDataClass() : MovieDataClass{
+    return MovieDataClass(
+        id = id,
+        genreIds = genreIds,
+        releaseDate = releaseDate,
+        title = title,
+        overview = overview,
+        poster = poster,
+        backdrop = backdrop,
+        voteAverage = voteAverage,
+        voteCount = voteCount
+    )
+}
 
 data class DetailsMovieResponse(
     @SerializedName("adult") val adult: Boolean,

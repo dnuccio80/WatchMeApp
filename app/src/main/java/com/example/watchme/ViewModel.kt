@@ -3,7 +3,6 @@ package com.example.watchme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
 import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
 import com.example.watchme.app.domain.movies.GetMovieCreditsByIdUseCase
 import com.example.watchme.app.domain.movies.GetMovieDetailsByIdUseCase
@@ -15,6 +14,7 @@ import com.example.watchme.app.domain.movies.GetTopRatedMoviesUseCase
 import com.example.watchme.app.domain.movies.GetUpcomingMoviesUseCase
 import com.example.watchme.app.domain.movies.GetVideosByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleDetailsByIdUseCase
+import com.example.watchme.app.domain.people.GetPeopleMovieInterpretationsByIdUseCase
 import com.example.watchme.app.domain.providers.GetProvidersUseCase
 import com.example.watchme.app.domain.series.GetAiringSeriesTodayUseCase
 import com.example.watchme.app.domain.series.GetOnTheAirSeriesUseCase
@@ -32,6 +32,7 @@ import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.PeopleMoviesInterpretationDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
@@ -79,6 +80,7 @@ class AppViewModel @Inject constructor(
     // PEOPLE
 
     private val getPeopleDetailsByIdUseCase: GetPeopleDetailsByIdUseCase,
+    private val getPeopleMovieInterpretationsByIdUseCase: GetPeopleMovieInterpretationsByIdUseCase,
 
     ) : ViewModel() {
 
@@ -163,6 +165,9 @@ class AppViewModel @Inject constructor(
 
     private val _peopleDetails = MutableStateFlow<PeopleDetailsDataClass?>(null)
     val peopleDetails: StateFlow<PeopleDetailsDataClass?> = _peopleDetails
+
+    private val _peopleMovieInterpretations = MutableStateFlow<PeopleMoviesInterpretationDataClass?>(null)
+    val peopleMovieInterpretations: StateFlow<PeopleMoviesInterpretationDataClass?> = _peopleMovieInterpretations
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -264,11 +269,18 @@ class AppViewModel @Inject constructor(
 
     // PEOPLE
 
-    fun getPeopleDetailsById(peopleId:Int){
+    fun getPeopleDetailsById(personId:Int){
         viewModelScope.launch(Dispatchers.IO) {
-            _peopleDetails.value = getPeopleDetailsByIdUseCase(peopleId)
+            _peopleDetails.value = getPeopleDetailsByIdUseCase(personId)
         }
     }
+
+    fun getPeopleMovieInterpretationsById(personId:Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            _peopleMovieInterpretations.value = getPeopleMovieInterpretationsByIdUseCase(personId)
+        }
+    }
+
 
     fun getRunTimeInHours(minutes: Int): String {
         val hours = minutes / 60

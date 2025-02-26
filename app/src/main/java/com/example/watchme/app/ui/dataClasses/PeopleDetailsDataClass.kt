@@ -11,3 +11,8 @@ data class PeopleDetailsDataClass(
     val placeOfBirth:String?,
     val profilePath:String?,
 )
+
+data class PeopleMoviesInterpretationDataClass(
+    val cast: List<MovieDataClass>,
+    val crew: List<MovieDataClass>,
+)
