@@ -63,6 +63,7 @@ import com.example.watchme.R
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.ImageListItem
 import com.example.watchme.app.ui.LazyRowItemText
@@ -77,6 +78,7 @@ import com.example.watchme.app.ui.dataClasses.SeasonDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
+import com.example.watchme.core.Routes
 import com.example.watchme.core.SeriesOptions
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
@@ -100,6 +102,7 @@ fun SeriesDetailsScreen(
 
     val verticalScrollState = rememberScrollState()
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
+    var sectionSelected by rememberSaveable { mutableStateOf(SeriesOptions.Episodes.item) }
 
     viewModel.getSeriesDetailsById(seriesId)
     viewModel.getSeasonDetailsById(seriesId, seasonSelected)
@@ -150,12 +153,18 @@ fun SeriesDetailsScreen(
                 seriesDetails?.name?.let { SecondTitleTextItem(it) }
                 SeriesOverviewSection(seriesDetails)
                 Spacer(Modifier.size(16.dp))
-                LazyRowItem(lazyList)
-                seriesDetails?.seasons?.let {
-                    EpisodesSection(
-                        seasonDetails, it, seasonSelected,
-                        onValueChange = { seasonNumber -> seasonSelected = seasonNumber }
-                    )
+                LazyRowItem(lazyList) { newSectionSelected -> sectionSelected = newSectionSelected }
+                when(sectionSelected.lowercase()){
+                    SeriesOptions.Episodes.item -> seriesDetails?.seasons?.let {
+                        EpisodesSection(
+                            seasonDetails, it, seasonSelected,
+                            onValueChange = { seasonNumber -> seasonSelected = seasonNumber }
+                        )
+                    }
+                    SeriesOptions.Suggested.item -> SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
+                    SeriesOptions.Details.item -> SeriesDetailsSection(seriesDetails)
+                    SeriesOptions.Media.item ->  SeriesMediaSection(seriesImageList, seriesVideosList)
+                    SeriesOptions.Credits.item -> CreditsSection(seriesCredits)
                 }
 
                 /*
@@ -377,7 +386,7 @@ fun RecommendationCardItem(series: SeriesDataClass, onClick: (Int) -> Unit) {
 
 
 @Composable
-fun LazyRowItem(lazyList: List<String>) {
+fun LazyRowItem(lazyList: List<String>, onItemClicked:(String) -> Unit) {
 
     var selectedText by rememberSaveable { mutableStateOf(lazyList[0]) }
     var textWidth by rememberSaveable { mutableStateOf(223) }
@@ -392,7 +401,8 @@ fun LazyRowItem(lazyList: List<String>) {
                     it.uppercase(),
                     selectedText,
                 ) { clickedText, newTextWidth, newXPos ->
-                    selectedText = clickedText
+                    onItemClicked(clickedText)
+                    selectedText = clickedText.lowercase()
                     textWidth = newTextWidth
                     xPos = newXPos
                 }
