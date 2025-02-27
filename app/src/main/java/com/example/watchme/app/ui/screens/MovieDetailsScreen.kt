@@ -143,7 +143,7 @@ fun MovieDetailsScreen(
                 SectionSelectionItem(sectionList) { newSectionSelected -> sectionSelected = newSectionSelected }
                 when(sectionSelected.lowercase()){
                     Sections.Details.title -> OverviewSection(movieDetails, runTime, viewModel)
-                    Sections.Suggested.title -> MoviesRecommendationsSection(recommendations) {  }
+                    Sections.Suggested.title -> MoviesRecommendationsSection(recommendations) { movieId -> navController.navigate(Routes.MovieDetails.createRoute(movieId)) }
                     Sections.Media.title -> MediaSection(movieListImages, videos)
                     Sections.Credits.title -> CreditsSection(movieCredits) { personId -> navController.navigate(Routes.PeopleDetails.createRoute(personId)) }
                 }
@@ -341,7 +341,7 @@ fun MoviesRecommendationsSection(
         horizontalArrangement = Arrangement.SpaceEvenly
     ) {
         moviesRecommendations.forEach {
-            RecommendationCardItem(it) { seriesId -> onClick(seriesId) }
+            RecommendationCardItem(it) { movieId -> onClick(movieId) }
         }
     }
 

@@ -3,6 +3,7 @@ package com.example.watchme.app.data.network
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
+import com.example.watchme.app.data.network.responses.EpisodeResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
@@ -371,6 +372,24 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
                 body
             } else {
                 throw Exception("Failed to fetch movie credits: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
+    suspend fun getEpisodesDetailsById(
+        seriesId: Int,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): EpisodeResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getEpisodesDetailsById("tv/$seriesId/season/$seasonNumber/episode/$episodeNumber")
+            val body: EpisodeResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception("Failed to fetch episode details: ${response.errorBody()?.string()}")
             }
         }
     }

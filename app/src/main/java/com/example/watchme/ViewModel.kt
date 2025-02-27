@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.watchme.app.data.network.responses.toPeopleSeriesInterpretationDataClass
+import com.example.watchme.app.domain.episodes.GetEpisodeDetailsByIdUseCase
 import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
 import com.example.watchme.app.domain.movies.GetMovieCreditsByIdUseCase
 import com.example.watchme.app.domain.movies.GetMovieDetailsByIdUseCase
@@ -33,6 +34,7 @@ import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
+import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
@@ -80,6 +82,10 @@ class AppViewModel @Inject constructor(
     private val getSeriesImageListByIdUseCase: GetSeriesImageListByIdUseCase,
     private val getSeriesVideosByIdUseCase: GetSeriesVideosByIdUseCase,
     private val getSeriesCreditsByIdUseCase: GetSeriesCreditsByIdUseCase,
+
+    // EPISODES
+
+    private val getEpisodeDetailsByIdUseCase: GetEpisodeDetailsByIdUseCase,
 
     // PEOPLE
 
@@ -166,6 +172,11 @@ class AppViewModel @Inject constructor(
 
     private val _seriesCredits = MutableStateFlow<CreditsDataClass?>(null)
     val seriesCredits: StateFlow<CreditsDataClass?> = _seriesCredits
+
+    // EPISODES
+
+    private val _episodeDetails = MutableStateFlow<EpisodesDetailsDataClass?>(null)
+    val episodeDetails: StateFlow<EpisodesDetailsDataClass?> = _episodeDetails
 
     // PEOPLE
 
@@ -282,6 +293,14 @@ class AppViewModel @Inject constructor(
         }
     }
 
+    // EPISODES
+
+    fun getEpisodeDetailsById(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _episodeDetails.value = getEpisodeDetailsByIdUseCase(seriesId, seasonNumber, episodeNumber)
+        }
+    }
+
     // PEOPLE
 
     fun getPeopleDetailsById(personId: Int) {
@@ -312,7 +331,8 @@ class AppViewModel @Inject constructor(
     fun getRunTimeInHours(minutes: Int): String {
         val hours = minutes / 60
         val remainingMinutes = minutes % 60
-        return "${hours}h ${remainingMinutes}m"
+        if(hours != 0) return "${hours}h ${remainingMinutes}m"
+        else return "${remainingMinutes}m"
     }
 
     fun formatPrice(value: Long): String {

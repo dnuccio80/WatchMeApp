@@ -7,6 +7,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
+import androidx.compose.runtime.internal.composableLambda
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.watchme.app.ui.BottomBar
 import com.example.watchme.app.ui.TopBar
+import com.example.watchme.app.ui.screens.EpisodesDetailsScreen
 import com.example.watchme.app.ui.screens.HomeScreen
 import com.example.watchme.app.ui.screens.MovieDetailsScreen
 import com.example.watchme.app.ui.screens.PeopleDetailsScreen
@@ -66,7 +68,8 @@ class MainActivity : ComponentActivity() {
                                 backStackEntry.arguments?.getInt("movieId") ?: 0
                             )
                         }
-                        composable(Routes.SeriesDetails.route,
+                        composable(
+                            Routes.SeriesDetails.route,
                             arguments = listOf(navArgument("seriesId") {
                                 type = NavType.IntType
                             })
@@ -79,7 +82,8 @@ class MainActivity : ComponentActivity() {
                             )
                         }
 
-                        composable(Routes.PeopleDetails.route,
+                        composable(
+                            Routes.PeopleDetails.route,
                             arguments = listOf(navArgument("personId") {
                                 type = NavType.IntType
                             })
@@ -89,6 +93,23 @@ class MainActivity : ComponentActivity() {
                                 viewModel,
                                 navController,
                                 backStackEntry.arguments?.getInt("personId") ?: 0
+                            )
+                        }
+
+                        composable(
+                            Routes.EpisodeDetails.route,
+                            arguments = listOf(
+                                navArgument("seriesId") { type = NavType.IntType },
+                                navArgument("episodeId") { type = NavType.IntType },
+                                navArgument("seasonNumber") { type = NavType.IntType })
+                        ) { backStackEntry ->
+                            EpisodesDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("seriesId") ?: 0,
+                                backStackEntry.arguments?.getInt("episodeId") ?: 0,
+                                backStackEntry.arguments?.getInt("seasonNumber") ?: 0
                             )
                         }
                     }

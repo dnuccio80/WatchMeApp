@@ -150,7 +150,10 @@ fun SeriesDetailsScreen(
                     Sections.Episodes.title -> seriesDetails?.seasons?.let {
                         EpisodesSection(
                             seasonDetails, it, seasonSelected,
-                            onValueChange = { seasonNumber -> seasonSelected = seasonNumber }
+                            onValueChange = { seasonNumber -> seasonSelected = seasonNumber },
+                            onEpisodeClicked = { episodeId, seasonNumber ->
+                                navController.navigate(Routes.EpisodeDetails.createRoute(seriesId, episodeId, seasonNumber))
+                            }
                         )
                     }
                     Sections.Suggested.title -> SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
@@ -168,7 +171,8 @@ fun EpisodesSection(
     seasonDetails: List<EpisodeDetailsDataClass>?,
     seasons: List<SeasonDataClass>,
     seasonSelected: Int,
-    onValueChange: (Int) -> Unit
+    onValueChange: (Int) -> Unit,
+    onEpisodeClicked:(Int, Int) -> Unit
 ) {
 
     val seasonName: String = seasons.find {
@@ -200,7 +204,11 @@ fun EpisodesSection(
         }
         seasonDetails?.forEach {
             Card(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
+                    .clickable {
+                        onEpisodeClicked(it.episodeNumber, it.seasonNumber)
+                    }
+                ,
                 colors = CardDefaults.cardColors(
                     containerColor = CardContainerColor
                 )

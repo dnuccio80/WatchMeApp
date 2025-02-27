@@ -4,6 +4,7 @@ import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretation
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
 import com.example.watchme.app.data.network.responses.toDetailsMovieDataClass
 import com.example.watchme.app.data.network.responses.toCreditsDataClass
+import com.example.watchme.app.data.network.responses.toEpisodesDetailsDataClass
 import com.example.watchme.app.data.network.responses.toMovieDataClass
 import com.example.watchme.app.data.network.responses.toPeopleDetailsDataClass
 import com.example.watchme.app.data.network.responses.toPeopleMoviesInterpretationDataClass
@@ -18,6 +19,7 @@ import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
+import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
@@ -140,6 +142,14 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun getPeopleMediaById(personId: Int): List<BackdropImageDataClass> {
         return apiService.getPeopleMediaById(personId).toBackdropImageDataClass()
+    }
+
+    suspend fun getEpisodesDetailsById(
+        seriesId: Int,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): EpisodesDetailsDataClass {
+        return apiService.getEpisodesDetailsById(seriesId, seasonNumber, episodeNumber).toEpisodesDetailsDataClass()
     }
 
 }

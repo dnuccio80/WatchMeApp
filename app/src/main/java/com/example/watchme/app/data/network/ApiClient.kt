@@ -3,6 +3,7 @@ package com.example.watchme.app.data.network
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
+import com.example.watchme.app.data.network.responses.EpisodeResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
@@ -86,6 +87,12 @@ interface ApiClient {
     @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
     @GET()
     suspend fun getSeriesRecommendationsById(@Url url:String): Response<SeriesResponse>
+
+    // EPISODES
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET()
+    suspend fun getEpisodesDetailsById(@Url url:String): Response<EpisodeResponse>
 
     // SERIES & MOVIES
 
