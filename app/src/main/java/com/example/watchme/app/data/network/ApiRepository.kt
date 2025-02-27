@@ -1,7 +1,7 @@
 package com.example.watchme.app.data.network
 
-import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretationResponse
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
+import com.example.watchme.app.data.network.responses.toCollectionDataClass
 import com.example.watchme.app.data.network.responses.toDetailsMovieDataClass
 import com.example.watchme.app.data.network.responses.toCreditsDataClass
 import com.example.watchme.app.data.network.responses.toEpisodesDetailsDataClass
@@ -16,6 +16,7 @@ import com.example.watchme.app.data.network.responses.toSeriesDataClass
 import com.example.watchme.app.data.network.responses.toSeriesDetailsDataClass
 import com.example.watchme.app.data.network.responses.toVideoDataClass
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
+import com.example.watchme.app.ui.dataClasses.CollectionDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
@@ -78,6 +79,13 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
     suspend fun getMovieVideosById(movieId: Int): List<VideoDataClass> {
         return apiService.getMovieVideosById(movieId).toVideoDataClass()
     }
+
+    // COLLECTIONS
+
+    suspend fun getCollectionDetailsById(collectionId: Int): CollectionDetailsDataClass {
+        return apiService.getCollectionDetailsById(collectionId).toCollectionDataClass()
+    }
+
 
     // SERIES
 

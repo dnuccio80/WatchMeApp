@@ -51,7 +51,7 @@ fun BottomBar() {
     ) {
         NavigationBarItem(
             selected = false,
-            onClick = {},
+            onClick = { },
             icon = { Icon(Icons.Default.Home, contentDescription = stringResource(R.string.home)) },
         )
         NavigationBarItem(

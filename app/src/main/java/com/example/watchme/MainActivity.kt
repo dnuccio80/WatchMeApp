@@ -16,6 +16,7 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.example.watchme.app.ui.BottomBar
 import com.example.watchme.app.ui.TopBar
+import com.example.watchme.app.ui.screens.CollectionDetailsScreen
 import com.example.watchme.app.ui.screens.EpisodesDetailsScreen
 import com.example.watchme.app.ui.screens.HomeScreen
 import com.example.watchme.app.ui.screens.MovieDetailsScreen
@@ -110,6 +111,20 @@ class MainActivity : ComponentActivity() {
                                 backStackEntry.arguments?.getInt("seriesId") ?: 0,
                                 backStackEntry.arguments?.getInt("episodeId") ?: 0,
                                 backStackEntry.arguments?.getInt("seasonNumber") ?: 0
+                            )
+                        }
+
+                        composable(
+                            Routes.CollectionDetails.route,
+                            arguments = listOf(navArgument("collectionId") {
+                                type = NavType.IntType
+                            })
+                        ) { backStackEntry ->
+                            CollectionDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("collectionId") ?: 0
                             )
                         }
                     }

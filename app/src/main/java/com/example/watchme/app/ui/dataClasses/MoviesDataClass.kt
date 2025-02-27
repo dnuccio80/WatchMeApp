@@ -63,7 +63,7 @@ data class ProductionCompaniesDataClass(
 )
 
 data class CollectionDataClass(
-    val idCollection: String,
+    val idCollection: Int,
     val nameCollection: String,
     val backdropCollection: String?
 )

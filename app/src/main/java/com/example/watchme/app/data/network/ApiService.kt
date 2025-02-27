@@ -1,5 +1,6 @@
 package com.example.watchme.app.data.network
 
+import com.example.watchme.app.data.network.responses.CollectionResponse
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
@@ -174,6 +175,22 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
                 body
             } else {
                 throw Exception("Failed to fetch videos: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
+    // COLLECTIONS
+
+    suspend fun getCollectionDetailsById(collectionId: Int): CollectionResponse {
+        return withContext(Dispatchers.IO) {
+            val response =
+                retrofit.create(ApiClient::class.java).getCollectionDetailsById("collection/$collectionId")
+            val body: CollectionResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception("Failed to fetch collection: ${response.errorBody()?.string()}")
             }
         }
     }

@@ -140,14 +140,28 @@ fun MovieDetailsScreen(
                     Modifier.align(Alignment.CenterHorizontally)
                 )
                 movieDetails?.let { SecondTitleTextItem(it.title) }
-                SectionSelectionItem(sectionList) { newSectionSelected -> sectionSelected = newSectionSelected }
-                when(sectionSelected.lowercase()){
-                    Sections.Details.title -> OverviewSection(movieDetails, runTime, viewModel)
-                    Sections.Suggested.title -> MoviesRecommendationsSection(recommendations) { movieId -> navController.navigate(Routes.MovieDetails.createRoute(movieId)) }
-                    Sections.Media.title -> MediaSection(movieListImages, videos)
-                    Sections.Credits.title -> CreditsSection(movieCredits) { personId -> navController.navigate(Routes.PeopleDetails.createRoute(personId)) }
+                SectionSelectionItem(sectionList) { newSectionSelected ->
+                    sectionSelected = newSectionSelected
                 }
+                when (sectionSelected.lowercase()) {
+                    Sections.Details.title -> OverviewSection(movieDetails, runTime, viewModel) { collectionId ->
+                        navController.navigate(
+                            Routes.CollectionDetails.createRoute(collectionId))
+                    }
 
+                    Sections.Suggested.title -> MoviesRecommendationsSection(recommendations) { movieId ->
+                        navController.navigate(
+                            Routes.MovieDetails.createRoute(movieId)
+                        )
+                    }
+
+                    Sections.Media.title -> MediaSection(movieListImages, videos)
+                    Sections.Credits.title -> CreditsSection(movieCredits) { personId ->
+                        navController.navigate(
+                            Routes.PeopleDetails.createRoute(personId)
+                        )
+                    }
+                }
             }
         }
     }
@@ -158,11 +172,12 @@ fun MovieDetailsScreen(
 private fun OverviewSection(
     movieDetails: DetailsMovieDataClass?,
     runTime: String,
-    viewModel: AppViewModel
+    viewModel: AppViewModel,
+    onCollectionButtonClicked:(Int) -> Unit
 ) {
     SecondTitleTextItem(movieDetails?.title.toString(), TextAlign.Start)
     movieDetails?.let { BodyTextItem(it.overview) }
-    CollectionItem(movieDetails?.collection)
+    CollectionItem(movieDetails?.collection) { collectionId -> onCollectionButtonClicked(collectionId) }
     movieDetails?.releaseDate?.let {
         TitleSubtitleItem(
             stringResource(R.string.release_date),
@@ -198,18 +213,17 @@ private fun OverviewSection(
 }
 
 
-
 @Composable
 fun CastCreditsItem(credit: CastCreditDataClass, onClick: (Int) -> Unit) {
 
     val url = Constants.IMAGE_BASE_URL + credit.profilePath
 
     Card(
-        modifier = Modifier.width(190.dp)
+        modifier = Modifier
+            .width(190.dp)
             .clickable {
                 onClick(credit.id)
-            }
-        ,
+            },
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(
@@ -251,11 +265,11 @@ fun CrewCreditsItem(credit: CrewCreditDataClass, onClick: (Int) -> Unit) {
     val url = Constants.IMAGE_BASE_URL + credit.profilePath
 
     Card(
-        modifier = Modifier.width(190.dp)
+        modifier = Modifier
+            .width(190.dp)
             .clickable {
                 onClick(credit.id)
-            }
-        ,
+            },
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(
@@ -292,7 +306,7 @@ fun CrewCreditsItem(credit: CrewCreditDataClass, onClick: (Int) -> Unit) {
 }
 
 @Composable
-fun CollectionItem(collection: CollectionDataClass?) {
+fun CollectionItem(collection: CollectionDataClass?, onCollectionButtonClick: (Int) -> Unit) {
     if (collection == null) return
 
     val backgroundUrl = Constants.IMAGE_BASE_URL + collection.backdropCollection
@@ -316,11 +330,11 @@ fun CollectionItem(collection: CollectionDataClass?) {
                 )
                 .padding(16.dp)
         ) {
-            SecondTitleTextItem(collection.nameCollection!!, TextAlign.Start)
+            SecondTitleTextItem(collection.nameCollection, TextAlign.Start)
             Button(
-                onClick = { /* SEARCH COLLECTION BY ID*/ }
+                onClick = { onCollectionButtonClick(collection.idCollection) }
             ) {
-                BodyTextItem("VIEW THE COLLECTION")
+                BodyTextItem(stringResource(R.string.view_collection).uppercase())
             }
         }
     }
@@ -348,7 +362,6 @@ fun MoviesRecommendationsSection(
 }
 
 
-
 @Composable
 fun RecommendationCardItem(movies: MovieDataClass, onClick: (Int) -> Unit) {
     val imageUrl = Constants.IMAGE_BASE_URL + movies.poster
@@ -374,70 +387,6 @@ fun RecommendationCardItem(movies: MovieDataClass, onClick: (Int) -> Unit) {
         )
     }
 }
-
-
-//@Composable
-//fun RecommendationsSection(recommendations: List<MovieDataClass>?, onClick: (Int) -> Unit) {
-//
-//    if (recommendations == null) return
-//
-//    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-//        SecondTitleTextItem(stringResource(R.string.recommendations), textAlign = TextAlign.Start)
-//        LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-//            items(recommendations){
-//                RecommendationsCardItem(it) {movieId -> onClick(movieId) }
-//
-//            }
-//        }
-//    }
-//}
-//
-//@Composable
-//fun RecommendationsCardItem(movieDataClass: MovieDataClass, onClick: (Int) -> Unit) {
-//
-//    val image = Constants.IMAGE_BASE_URL + movieDataClass.backdrop
-//
-//    Card(
-//        modifier = Modifier
-//            .width(200.dp)
-//            .height(140.dp)
-//            .clickable {
-//                onClick(movieDataClass.id)
-//            }
-//        ,
-//        colors = CardDefaults.cardColors(
-//            containerColor = Color.Cyan
-//        ),
-//        shape = RoundedCornerShape(16.dp),
-//        elevation = CardDefaults.cardElevation(16.dp)
-//    ) {
-//        Box(Modifier.fillMaxSize(), contentAlignment = Alignment.BottomCenter) {
-//            AsyncImage(
-//                model = image,
-//                contentDescription = stringResource(R.string.image_cast),
-//                modifier = Modifier.fillMaxSize(),
-//                contentScale = ContentScale.Crop,
-//                placeholder = painterResource(R.drawable.loading_image),
-//                error = painterResource(R.drawable.image_not_found)
-//            )
-//            Card(
-//                modifier = Modifier.fillMaxWidth(),
-//                shape = RectangleShape,
-//                colors = CardDefaults.cardColors(
-//                    containerColor = CardContainerColor
-//                )
-//            ) {
-//                BodyTextItem(
-//                    movieDataClass.title,
-//                    modifier = Modifier
-//                        .padding(vertical = 8.dp)
-//                        .fillMaxWidth(),
-//                    textAlign = TextAlign.Center
-//                )
-//            }
-//        }
-//    }
-//}
 
 @Composable
 fun ReviewsSection(reviews: List<ReviewDataClass>?) {

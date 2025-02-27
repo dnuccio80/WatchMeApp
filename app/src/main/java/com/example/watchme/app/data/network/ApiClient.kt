@@ -1,5 +1,6 @@
 package com.example.watchme.app.data.network
 
+import com.example.watchme.app.data.network.responses.CollectionResponse
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
@@ -57,6 +58,12 @@ interface ApiClient {
     @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
     @GET
     suspend fun getReviewsById(@Url url:String): Response<ReviewsResponse>
+
+    // COLLECTIONS
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET
+    suspend fun getCollectionDetailsById(@Url url:String): Response<CollectionResponse>
 
     // SERIES
 

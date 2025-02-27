@@ -4,6 +4,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.watchme.app.data.network.responses.toPeopleSeriesInterpretationDataClass
+import com.example.watchme.app.domain.collections.GetCollectionDetailsByIdUseCase
 import com.example.watchme.app.domain.episodes.GetEpisodeDetailsByIdUseCase
 import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
 import com.example.watchme.app.domain.movies.GetMovieCreditsByIdUseCase
@@ -31,6 +32,7 @@ import com.example.watchme.app.domain.series.GetSeriesRecommendationsByIdUseCase
 import com.example.watchme.app.domain.series.GetSeriesVideosByIdUseCase
 import com.example.watchme.app.domain.series.GetTopRatedSeriesUseCase
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
+import com.example.watchme.app.ui.dataClasses.CollectionDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
@@ -70,6 +72,10 @@ class AppViewModel @Inject constructor(
     private val getRecommendationsByIdUseCase: GetRecommendationsByIdUseCase,
     private val getReviewsByIdUseCase: GetReviewsByIdUseCase,
     private val getVideosByIdUseCase: GetVideosByIdUseCase,
+
+    // COLLECTIONS
+
+    private val getCollectionDetailsByIdUseCase: GetCollectionDetailsByIdUseCase,
 
     // SERIES
     getPopularSeriesUseCase: GetPopularSeriesUseCase,
@@ -140,6 +146,11 @@ class AppViewModel @Inject constructor(
 
     private val _movieVideos = MutableStateFlow<List<VideoDataClass>?>(null)
     val movieVideos: StateFlow<List<VideoDataClass>?> = _movieVideos
+
+    // COLLECTIONS
+
+    private val _collectionDetails = MutableStateFlow<CollectionDetailsDataClass?>(null)
+    val collectionDetails: StateFlow<CollectionDetailsDataClass?> = _collectionDetails
 
     // SERIES
 
@@ -252,6 +263,14 @@ class AppViewModel @Inject constructor(
     fun getVideosById(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _movieVideos.value = getVideosByIdUseCase(movieId)
+        }
+    }
+
+    // COLLECTIONS
+
+    fun getCollectionDetailsById(collectionId:Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _collectionDetails.value = getCollectionDetailsByIdUseCase(collectionId)
         }
     }
 

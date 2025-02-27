@@ -7,6 +7,10 @@ sealed class Routes(val route: String) {
         fun createRoute(movieId: Int) = "detailsMovie/$movieId"
     }
 
+    data object CollectionDetails: Routes("collectionDetails/{collectionId}"){
+        fun createRoute(collectionId:Int) = "collectionDetails/$collectionId"
+    }
+
     data object SeriesDetails: Routes("seriesDetails/{seriesId}"){
         fun createRoute(seriesId: Int) = "seriesDetails/$seriesId"
     }
@@ -18,5 +22,6 @@ sealed class Routes(val route: String) {
     data object EpisodeDetails: Routes("episodeDetails/{seriesId}/{episodeId}/{seasonNumber}"){
         fun createRoute(seriesId:Int, episodeId:Int, seasonNumber:Int) = "episodeDetails/$seriesId/$episodeId/$seasonNumber"
     }
+
 
 }

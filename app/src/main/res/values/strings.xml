@@ -33,6 +33,8 @@
     <string name="unknown">Unknown</string>
     <string name="budget">Budget:</string>
     <string name="revenue">Revenue:</string>
+    <string name="full_collection">Full Collection</string>
+    <string name="view_collection">VIEW THE COLLECTION</string>
     <string name="website">Website:</string>
     <string name="no_results_found">No results found</string>
     <string name="guest_stars">Guest stars</string>
@@ -50,7 +52,6 @@
     <string name="biography">Biography</string>
     <string name="department">Department:</string>
     <string name="collection_image">Collection Image</string>
-    <string name="view_collection">VIEW THE COLLECTION</string>
     <string name="back_button_icon">Back Button Icon</string>
     <string name="point_separator">Point separator</string>
     <string name="app_logo">App logo</string>

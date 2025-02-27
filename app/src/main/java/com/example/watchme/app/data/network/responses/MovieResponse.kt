@@ -99,7 +99,7 @@ fun DetailsMovieResponse.toDetailsMovieDataClass(): DetailsMovieDataClass {
 }
 
 data class Collection(
-    @SerializedName("id") val idCollection: String,
+    @SerializedName("id") val idCollection: Int,
     @SerializedName("name") val nameCollection: String,
     @SerializedName("poster_path") val posterCollection: String,
     @SerializedName("backdrop_path") val backdropCollection: String,
