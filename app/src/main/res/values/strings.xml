@@ -57,6 +57,7 @@
     <string name="app_logo">App logo</string>
     <string name="home">Home</string>
     <string name="search">Search</string>
+    <string name="profile">Profile</string>
     <string name="download">Download</string>
     <string name="recommendations">Recommendations</string>
     <string name="reviews">Reviews</string>

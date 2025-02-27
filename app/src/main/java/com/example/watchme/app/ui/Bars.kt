@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -21,7 +20,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.example.watchme.R
+import com.example.watchme.core.Routes
 import com.example.watchme.ui.theme.BottomBarBackground
 
 @Composable
@@ -42,7 +43,11 @@ fun TopBar() {
 }
 
 @Composable
-fun BottomBar() {
+fun BottomBar(
+    destination: String,
+    onItemClicked: (String) -> Unit
+) {
+
     NavigationBar(
         containerColor = BottomBarBackground,
         tonalElevation = 16.dp,
@@ -50,24 +55,33 @@ fun BottomBar() {
         modifier = Modifier.fillMaxWidth()
     ) {
         NavigationBarItem(
-            selected = false,
-            onClick = { },
+            selected = destination == Routes.Home.route,
+            onClick = {
+                onItemClicked(Routes.Home.route)
+            },
             icon = { Icon(Icons.Default.Home, contentDescription = stringResource(R.string.home)) },
         )
         NavigationBarItem(
-            selected = false,
-            onClick = {},
-            icon = { Icon(Icons.Default.Search, contentDescription = stringResource(R.string.search)) },
+            selected = destination == Routes.Search.route,
+            onClick = {
+                onItemClicked(Routes.Search.route)
+            },
+            icon = {
+                Icon(
+                    Icons.Default.Search,
+                    contentDescription = stringResource(R.string.search)
+                )
+            },
         )
         NavigationBarItem(
-            selected = false,
+            selected = destination == Routes.Profile.route,
             onClick = {},
-            icon = { Icon(Icons.Default.KeyboardArrowDown, contentDescription = stringResource(R.string.download)) },
-        )
-        NavigationBarItem(
-            selected = false,
-            onClick = {},
-            icon = { Icon(Icons.Default.AccountCircle, contentDescription = stringResource(R.string.home)) },
+            icon = {
+                Icon(
+                    Icons.Default.AccountCircle,
+                    contentDescription = stringResource(R.string.profile)
+                )
+            },
         )
     }
 }

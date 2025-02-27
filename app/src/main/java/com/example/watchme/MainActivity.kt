@@ -7,7 +7,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
-import androidx.compose.runtime.internal.composableLambda
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -21,6 +24,7 @@ import com.example.watchme.app.ui.screens.EpisodesDetailsScreen
 import com.example.watchme.app.ui.screens.HomeScreen
 import com.example.watchme.app.ui.screens.MovieDetailsScreen
 import com.example.watchme.app.ui.screens.PeopleDetailsScreen
+import com.example.watchme.app.ui.screens.SearchScreen
 import com.example.watchme.app.ui.screens.SeriesDetailsScreen
 import com.example.watchme.core.Routes
 import com.example.watchme.ui.theme.WatchMeTheme
@@ -38,6 +42,8 @@ class MainActivity : ComponentActivity() {
             WatchMeTheme {
 
                 val navController = rememberNavController()
+                val startDestination = Routes.Home.route
+                var destination by rememberSaveable { mutableStateOf(startDestination) }
 
                 Scaffold(
                     modifier = Modifier.fillMaxSize(),
@@ -45,10 +51,13 @@ class MainActivity : ComponentActivity() {
                         TopBar()
                     },
                     bottomBar = {
-                        BottomBar()
+                        BottomBar(destination) { newDestination ->
+                            destination = newDestination
+                            navController.navigate(newDestination)
+                        }
                     }
                 ) { innerPadding ->
-                    NavHost(navController, startDestination = Routes.Home.route) {
+                    NavHost(navController, startDestination = startDestination) {
                         composable(Routes.Home.route) {
                             HomeScreen(
                                 innerPadding,
@@ -126,6 +135,9 @@ class MainActivity : ComponentActivity() {
                                 navController,
                                 backStackEntry.arguments?.getInt("collectionId") ?: 0
                             )
+                        }
+                        composable(Routes.Search.route) {
+                            SearchScreen(innerPadding)
                         }
                     }
                 }

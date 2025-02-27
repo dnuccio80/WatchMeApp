@@ -23,5 +23,9 @@ sealed class Routes(val route: String) {
         fun createRoute(seriesId:Int, episodeId:Int, seasonNumber:Int) = "episodeDetails/$seriesId/$episodeId/$seasonNumber"
     }
 
+    data object Search: Routes("search")
+
+    data object Profile: Routes("profile")
+
 
 }
