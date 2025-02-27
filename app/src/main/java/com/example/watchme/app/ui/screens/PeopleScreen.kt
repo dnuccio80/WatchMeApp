@@ -1,7 +1,9 @@
 package com.example.watchme.app.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -9,8 +11,13 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -35,18 +42,25 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
-import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretationResponse
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.ImageListItem
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SectionSelectionItem
+import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleSubtitleItem
+import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
+import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleSeriesInterpretationDataClass
+import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.core.Interpretations
+import com.example.watchme.core.Routes
 import com.example.watchme.core.Sections
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
@@ -56,6 +70,7 @@ import com.example.watchme.ui.theme.CardContainerColor
 fun PeopleDetailsScreen(
     innerPadding: PaddingValues,
     viewModel: AppViewModel,
+    navController: NavHostController,
     personId: Int
 ) {
 
@@ -65,15 +80,16 @@ fun PeopleDetailsScreen(
     val peopleDetails by viewModel.peopleDetails.collectAsState()
     val movieInterpretations by viewModel.peopleMovieInterpretations.collectAsState()
     val seriesInterpretations by viewModel.peopleSeriesInterpretations.collectAsState()
+    val personMedia by viewModel.peopleMediaImages.collectAsState()
 
     viewModel.getPeopleDetailsById(personId)
     viewModel.getPeopleMovieInterpretationsById(personId)
     viewModel.getPeopleSeriesInterpretationsById(personId)
+    viewModel.getPeopleMediaById(personId)
 
     val sectionList = listOf(
         Sections.Biography.title,
-        Sections.Movies.title,
-        Sections.Series.title,
+        Sections.Credits.title,
         Sections.Media.title,
     )
 
@@ -99,12 +115,202 @@ fun PeopleDetailsScreen(
                 SectionSelectionItem(sectionList) { newSectionSelected ->
                     sectionSelected = newSectionSelected
                 }
-//                BiographySection(peopleDetails)
-//                InterpretationsSection(movieInterpretations)
-                    SeriesInterpretationsSection(seriesInterpretations)
-            }
+                when (sectionSelected) {
+                    Sections.Biography.title -> BiographySection(peopleDetails)
+                    Sections.Credits.title -> PeopleCreditsSection(
+                        movieInterpretations,
+                        seriesInterpretations,
+                        onSeriesClicked = { seriesId ->
+                            navController.navigate(
+                                Routes.SeriesDetails.createRoute(
+                                    seriesId
+                                )
+                            )
+                        },
+                        onMovieClicked = { movieId ->
+                            navController.navigate(Routes.MovieDetails.createRoute(movieId))
+                        }
+                    )
 
+                    Sections.Media.title -> PeopleMediaSection(personMedia)
+                }
+            }
         }
+    }
+}
+
+@Composable
+fun PeopleCreditsSection(
+    movieInterpretations: PeopleMovieInterpretationDataClass?,
+    seriesInterpretations: PeopleSeriesInterpretationDataClass?,
+    onSeriesClicked: (Int) -> Unit,
+    onMovieClicked: (Int) -> Unit
+) {
+
+    if (movieInterpretations == null && seriesInterpretations == null) {
+        BodyTextItem(stringResource(R.string.no_results_found))
+        return
+    }
+
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        if (movieInterpretations != null) {
+            if (movieInterpretations.cast.isNotEmpty() || movieInterpretations.crew.isNotEmpty()) {
+                SecondTitleTextItem(stringResource(R.string.movies), textAlign = TextAlign.Center)
+                MovieInterpretations(movieInterpretations) { movieId -> onMovieClicked(movieId) }
+            }
+        }
+        if (seriesInterpretations != null) {
+            if (seriesInterpretations.cast.isNotEmpty() || seriesInterpretations.crew.isNotEmpty()) {
+                SecondTitleTextItem(
+                    stringResource(R.string.tv_series),
+                    textAlign = TextAlign.Center
+                )
+                SeriesInterpretations(seriesInterpretations) { seriesId -> onSeriesClicked(seriesId) }
+            }
+        }
+    }
+
+}
+
+@Composable
+fun SeriesInterpretations(
+    seriesInterpretations: PeopleSeriesInterpretationDataClass?,
+    onSeriesClicked: (Int) -> Unit
+) {
+
+    if (seriesInterpretations == null) return
+
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            items(seriesInterpretations.cast) {
+                SeriesInterpretationsCardItem(it) { seriesId -> onSeriesClicked(seriesId) }
+            }
+        }
+
+        LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            items(seriesInterpretations.crew) {
+                SeriesInterpretationsCardItem(it) { seriesId -> onSeriesClicked(seriesId) }
+            }
+        }
+    }
+}
+
+@Composable
+fun MovieInterpretations(
+    movieInterpretations: PeopleMovieInterpretationDataClass?,
+    onMovieClicked: (Int) -> Unit
+) {
+
+    if (movieInterpretations == null) return
+
+
+    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            items(movieInterpretations.cast) {
+                MoviesInterpretationsCardItem(it) { movieId -> onMovieClicked(movieId) }
+            }
+        }
+
+        LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+            items(movieInterpretations.crew) {
+                MoviesInterpretationsCardItem(it) { movieId -> onMovieClicked(movieId) }
+            }
+        }
+    }
+}
+
+@Composable
+fun SeriesInterpretationsCardItem(seriesData: SeriesDataClass, onSeriesClicked: (Int) -> Unit) {
+
+    val url = Constants.IMAGE_BASE_URL + seriesData.posterPath
+
+    Card(
+        modifier = Modifier
+            .width(190.dp)
+            .clickable { onSeriesClicked(seriesData.id) },
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = CardContainerColor
+        ),
+    ) {
+        Box(contentAlignment = Alignment.BottomCenter) {
+            AsyncImage(
+                model = url,
+                contentDescription = stringResource(R.string.image_cast),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(max(200.dp, 250.dp)),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.unknown_male),
+                error = painterResource(R.drawable.image_not_found)
+            )
+            Column(
+                Modifier
+                    .background(CardContainerColor)
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ThirdTitleTextItem(seriesData.name, TextAlign.Center)
+            }
+        }
+    }
+}
+
+@Composable
+fun MoviesInterpretationsCardItem(movieData: MovieDataClass, onMovieClicked: (Int) -> Unit) {
+
+    val url = Constants.IMAGE_BASE_URL + movieData.poster
+
+    Card(
+        modifier = Modifier
+            .width(190.dp)
+            .clickable { onMovieClicked(movieData.id) },
+        shape = RoundedCornerShape(8.dp),
+        elevation = CardDefaults.cardElevation(8.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = CardContainerColor
+        ),
+    ) {
+        Box(contentAlignment = Alignment.BottomCenter) {
+            AsyncImage(
+                model = url,
+                contentDescription = stringResource(R.string.image_cast),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(max(200.dp, 250.dp)),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.unknown_male),
+                error = painterResource(R.drawable.image_not_found)
+            )
+            Column(
+                Modifier
+                    .background(CardContainerColor)
+                    .fillMaxWidth()
+                    .padding(vertical = 16.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                ThirdTitleTextItem(movieData.title, TextAlign.Center)
+            }
+        }
+    }
+}
+
+@Composable
+fun PeopleMediaSection(personMedia: List<BackdropImageDataClass>?) {
+
+    if (personMedia.isNullOrEmpty()) {
+        BodyTextItem(stringResource(R.string.no_results_found))
+        return
+    }
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(600.dp)
+    ) {
+        ImageListItem(personMedia)
     }
 }
 
@@ -215,9 +421,12 @@ fun MovieInterpretationsSection(interpretations: PeopleMovieInterpretationDataCl
 }
 
 @Composable
-fun FilterMovieInterpretations(movieInterpretations: PeopleMovieInterpretationDataClass, filter:String) {
+fun FilterMovieInterpretations(
+    movieInterpretations: PeopleMovieInterpretationDataClass,
+    filter: String
+) {
 
-    if(filter != Interpretations.Crew.interpretation) {
+    if (filter != Interpretations.Crew.interpretation) {
         SecondTitleTextItem(stringResource(R.string.cast), textAlign = TextAlign.Start)
         if (movieInterpretations.cast.isEmpty()) {
             BodyTextItem(stringResource(R.string.no_results_found))
@@ -226,7 +435,7 @@ fun FilterMovieInterpretations(movieInterpretations: PeopleMovieInterpretationDa
         }
     }
 
-    if(filter == Interpretations.Cast.interpretation) return
+    if (filter == Interpretations.Cast.interpretation) return
 
     SecondTitleTextItem(stringResource(R.string.crew), textAlign = TextAlign.Start)
     if (movieInterpretations.crew.isEmpty()) {
@@ -237,9 +446,12 @@ fun FilterMovieInterpretations(movieInterpretations: PeopleMovieInterpretationDa
 }
 
 @Composable
-fun FilterSeriesInterpretations(seriesInterpretations: PeopleSeriesInterpretationDataClass, filter:String) {
+fun FilterSeriesInterpretations(
+    seriesInterpretations: PeopleSeriesInterpretationDataClass,
+    filter: String
+) {
 
-    if(filter != Interpretations.Crew.interpretation) {
+    if (filter != Interpretations.Crew.interpretation) {
         SecondTitleTextItem(stringResource(R.string.cast), textAlign = TextAlign.Start)
         if (seriesInterpretations.cast.isEmpty()) {
             BodyTextItem(stringResource(R.string.no_results_found))
@@ -248,7 +460,7 @@ fun FilterSeriesInterpretations(seriesInterpretations: PeopleSeriesInterpretatio
         }
     }
 
-    if(filter == Interpretations.Cast.interpretation) return
+    if (filter == Interpretations.Cast.interpretation) return
 
     SecondTitleTextItem(stringResource(R.string.crew), textAlign = TextAlign.Start)
     if (seriesInterpretations.crew.isEmpty()) {
@@ -335,6 +547,10 @@ fun BiographySection(peopleDetails: PeopleDetailsDataClass?) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         SecondTitleTextItem(stringResource(R.string.biography))
-        BodyTextItem(peopleDetails.biography)
+        if (peopleDetails.biography.isNotEmpty() && peopleDetails.biography.isNotBlank()) {
+            BodyTextItem(peopleDetails.biography)
+        } else {
+            BodyTextItem(stringResource(R.string.no_results_found))
+        }
     }
 }

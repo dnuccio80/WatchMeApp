@@ -15,6 +15,7 @@ import com.example.watchme.app.domain.movies.GetTopRatedMoviesUseCase
 import com.example.watchme.app.domain.movies.GetUpcomingMoviesUseCase
 import com.example.watchme.app.domain.movies.GetVideosByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleDetailsByIdUseCase
+import com.example.watchme.app.domain.people.GetPeopleMediaByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleMovieInterpretationsByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleSeriesInterpretationsByIdUseCase
 import com.example.watchme.app.domain.providers.GetProvidersUseCase
@@ -85,6 +86,7 @@ class AppViewModel @Inject constructor(
     private val getPeopleDetailsByIdUseCase: GetPeopleDetailsByIdUseCase,
     private val getPeopleMovieInterpretationsByIdUseCase: GetPeopleMovieInterpretationsByIdUseCase,
     private val getPeopleSeriesInterpretationsByIdUseCase: GetPeopleSeriesInterpretationsByIdUseCase,
+    private val getPeopleMediaByIdUseCase: GetPeopleMediaByIdUseCase,
 
     ) : ViewModel() {
 
@@ -170,11 +172,17 @@ class AppViewModel @Inject constructor(
     private val _peopleDetails = MutableStateFlow<PeopleDetailsDataClass?>(null)
     val peopleDetails: StateFlow<PeopleDetailsDataClass?> = _peopleDetails
 
-    private val _peopleMovieInterpretations = MutableStateFlow<PeopleMovieInterpretationDataClass?>(null)
-    val peopleMovieInterpretations: StateFlow<PeopleMovieInterpretationDataClass?> = _peopleMovieInterpretations
+    private val _peopleMovieInterpretations =
+        MutableStateFlow<PeopleMovieInterpretationDataClass?>(null)
+    val peopleMovieInterpretations: StateFlow<PeopleMovieInterpretationDataClass?> =
+        _peopleMovieInterpretations
 
-    private val _peopleSeriesInterpretations = MutableStateFlow<PeopleSeriesInterpretationDataClass?>(null)
+    private val _peopleSeriesInterpretations =
+        MutableStateFlow<PeopleSeriesInterpretationDataClass?>(null)
     val peopleSeriesInterpretations: StateFlow<PeopleSeriesInterpretationDataClass?> = _peopleSeriesInterpretations
+
+    private val _peopleMediaImages = MutableStateFlow<List<BackdropImageDataClass>?>(null)
+    val peopleMediaImages : StateFlow<List<BackdropImageDataClass>?> = _peopleMediaImages
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -251,7 +259,7 @@ class AppViewModel @Inject constructor(
     }
 
     fun getSeriesRecommendationsById(seriesId: Int) {
-        viewModelScope.launch (Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             _seriesRecommendations.value = getSeriesRecommendationsByIdUseCase(seriesId)
         }
     }
@@ -276,21 +284,27 @@ class AppViewModel @Inject constructor(
 
     // PEOPLE
 
-    fun getPeopleDetailsById(personId:Int){
+    fun getPeopleDetailsById(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _peopleDetails.value = getPeopleDetailsByIdUseCase(personId)
         }
     }
 
-    fun getPeopleMovieInterpretationsById(personId:Int){
+    fun getPeopleMovieInterpretationsById(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _peopleMovieInterpretations.value = getPeopleMovieInterpretationsByIdUseCase(personId)
         }
     }
 
-    fun getPeopleSeriesInterpretationsById(personId:Int){
+    fun getPeopleSeriesInterpretationsById(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _peopleSeriesInterpretations.value = getPeopleSeriesInterpretationsByIdUseCase(personId)
+        }
+    }
+
+    fun getPeopleMediaById(personId: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            _peopleMediaImages.value = getPeopleMediaByIdUseCase(personId)
         }
     }
 

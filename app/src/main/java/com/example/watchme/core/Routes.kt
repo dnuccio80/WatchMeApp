@@ -8,4 +8,7 @@ sealed class Routes(val route: String) {
     data object SeriesDetails: Routes("seriesDetails/{seriesId}"){
         fun createRoute(seriesId: Int) = "seriesDetails/$seriesId"
     }
+    data object PeopleDetails: Routes("peopleDetails/{personId}"){
+        fun createRoute(personId:Int) = "peopleDetails/$personId"
+    }
 }

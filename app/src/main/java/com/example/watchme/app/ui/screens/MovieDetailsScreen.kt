@@ -145,7 +145,7 @@ fun MovieDetailsScreen(
                     Sections.Details.title -> OverviewSection(movieDetails, runTime, viewModel)
                     Sections.Suggested.title -> MoviesRecommendationsSection(recommendations) {  }
                     Sections.Media.title -> MediaSection(movieListImages, videos)
-                    Sections.Credits.title -> CreditsSection(movieCredits)
+                    Sections.Credits.title -> CreditsSection(movieCredits) { personId -> navController.navigate(Routes.PeopleDetails.createRoute(personId)) }
                 }
 
             }
@@ -200,12 +200,16 @@ private fun OverviewSection(
 
 
 @Composable
-fun CastCreditsItem(credit: CastCreditDataClass) {
+fun CastCreditsItem(credit: CastCreditDataClass, onClick: (Int) -> Unit) {
 
     val url = Constants.IMAGE_BASE_URL + credit.profilePath
 
     Card(
-        modifier = Modifier.width(190.dp),
+        modifier = Modifier.width(190.dp)
+            .clickable {
+                onClick(credit.id)
+            }
+        ,
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(
@@ -242,12 +246,16 @@ fun CastCreditsItem(credit: CastCreditDataClass) {
 }
 
 @Composable
-fun CrewCreditsItem(credit: CrewCreditDataClass) {
+fun CrewCreditsItem(credit: CrewCreditDataClass, onClick: (Int) -> Unit) {
 
     val url = Constants.IMAGE_BASE_URL + credit.profilePath
 
     Card(
-        modifier = Modifier.width(190.dp),
+        modifier = Modifier.width(190.dp)
+            .clickable {
+                onClick(credit.id)
+            }
+        ,
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(

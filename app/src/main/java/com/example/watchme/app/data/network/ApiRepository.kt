@@ -129,11 +129,17 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
     }
 
     suspend fun getPeopleMovieInterpretationsById(personId: Int): PeopleMovieInterpretationDataClass {
-        return apiService.getPeopleMovieInterpretationsById(personId).toPeopleMoviesInterpretationDataClass()
+        return apiService.getPeopleMovieInterpretationsById(personId)
+            .toPeopleMoviesInterpretationDataClass()
     }
 
     suspend fun getPeopleSeriesInterpretationsById(personId: Int): PeopleSeriesInterpretationDataClass {
-        return apiService.getPeopleSeriesInterpretationsById(personId).toPeopleSeriesInterpretationDataClass()
+        return apiService.getPeopleSeriesInterpretationsById(personId)
+            .toPeopleSeriesInterpretationDataClass()
+    }
+
+    suspend fun getPeopleMediaById(personId: Int): List<BackdropImageDataClass> {
+        return apiService.getPeopleMediaById(personId).toBackdropImageDataClass()
     }
 
 }

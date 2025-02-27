@@ -1,5 +1,6 @@
 package com.example.watchme.app.data.network.responses
 
+import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleSeriesInterpretationDataClass
@@ -55,3 +56,19 @@ fun PeopleSeriesInterpretationResponse.toPeopleSeriesInterpretationDataClass(): 
     )
 
 }
+
+data class ImagePeopleResponse(
+    @SerializedName("profiles") val profiles: List<PeopleProfile>
+)
+
+fun ImagePeopleResponse.toBackdropImageDataClass() : List<BackdropImageDataClass> {
+    return profiles.map {
+        BackdropImageDataClass(
+            filePath = it.filePath
+        )
+    }
+}
+
+data class PeopleProfile(
+    @SerializedName("file_path") val filePath: String
+)

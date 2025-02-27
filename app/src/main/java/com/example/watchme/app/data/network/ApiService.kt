@@ -3,6 +3,7 @@ package com.example.watchme.app.data.network
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
+import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
 import com.example.watchme.app.data.network.responses.PeopleMovieInterpretationResponse
@@ -24,11 +25,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     // MOVIES
 
     suspend fun getPopularMovies(): MovieResponse {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java).getPopularMovies()
             val body: MovieResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 MovieResponse(emptyList())
@@ -37,11 +38,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     }
 
     suspend fun getNowPlayingMovies(): MovieResponse {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java).getNowPlayingMovies()
             val body: MovieResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 MovieResponse(emptyList())
@@ -50,11 +51,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     }
 
     suspend fun getTopRatedMovies(): MovieResponse {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java).getTopRatedMovies()
             val body: MovieResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 MovieResponse(emptyList())
@@ -63,11 +64,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     }
 
     suspend fun getUpcomingMovies(): MovieResponse {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java).getUpcomingMovies()
             val body: MovieResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 MovieResponse(emptyList())
@@ -76,24 +77,25 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     }
 
     suspend fun getProviders(): ProvidersResponse {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java).getProviders()
             val body: ProvidersResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
-            } else{
+            } else {
                 ProvidersResponse(emptyList())
             }
         }
     }
 
-    suspend fun getMovieDetailsById(movieId:Int): DetailsMovieResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getMovieDetailsById("movie/$movieId${Constants.SPANISH_AR}")
+    suspend fun getMovieDetailsById(movieId: Int): DetailsMovieResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getMovieDetailsById("movie/$movieId${Constants.SPANISH_AR}")
             val body: DetailsMovieResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch movie details: ${response.errorBody()?.string()}")
@@ -101,12 +103,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getMovieCreditsById(movieId:Int): CreditsResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getCreditsById("movie/${movieId}/credits${Constants.SPANISH_AR}")
+    suspend fun getMovieCreditsById(movieId: Int): CreditsResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getCreditsById("movie/${movieId}/credits${Constants.SPANISH_AR}")
             val body: CreditsResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch movie credits: ${response.errorBody()?.string()}")
@@ -114,12 +117,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getMovieImageListById(movieId:Int): ImageBackdrop {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getImageListById("movie/$movieId/images")
+    suspend fun getMovieImageListById(movieId: Int): ImageBackdrop {
+        return withContext(Dispatchers.IO) {
+            val response =
+                retrofit.create(ApiClient::class.java).getImageListById("movie/$movieId/images")
             val body: ImageBackdrop? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch image backdrop: ${response.errorBody()?.string()}")
@@ -127,25 +131,31 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getRecommendationsById(movieId:Int): MovieResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getRecommendationsById("movie/${movieId}/recommendations")
+    suspend fun getRecommendationsById(movieId: Int): MovieResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getRecommendationsById("movie/${movieId}/recommendations")
             val body: MovieResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
-                throw Exception("Failed to fetch movie recommendations: ${response.errorBody()?.string()}")
+                throw Exception(
+                    "Failed to fetch movie recommendations: ${
+                        response.errorBody()?.string()
+                    }"
+                )
             }
         }
     }
 
-    suspend fun getReviewsById(movieId:Int): ReviewsResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getReviewsById("movie/${movieId}/reviews")
+    suspend fun getReviewsById(movieId: Int): ReviewsResponse {
+        return withContext(Dispatchers.IO) {
+            val response =
+                retrofit.create(ApiClient::class.java).getReviewsById("movie/${movieId}/reviews")
             val body: ReviewsResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch reviews: ${response.errorBody()?.string()}")
@@ -153,12 +163,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getMovieVideosById(movieId:Int): VideoResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getVideosById("movie/${movieId}/videos")
+    suspend fun getMovieVideosById(movieId: Int): VideoResponse {
+        return withContext(Dispatchers.IO) {
+            val response =
+                retrofit.create(ApiClient::class.java).getVideosById("movie/${movieId}/videos")
             val body: VideoResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch videos: ${response.errorBody()?.string()}")
@@ -169,11 +180,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     // SERIES
 
     suspend fun getPopularSeries(): SeriesResponse {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java).getPopularSeries()
             val body: SeriesResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 SeriesResponse(emptyList())
@@ -182,11 +193,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     }
 
     suspend fun getAiringSeriesToday(): SeriesResponse {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java).getAiringTodaySeries()
             val body: SeriesResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 SeriesResponse(emptyList())
@@ -195,11 +206,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     }
 
     suspend fun getOnTheAirSeries(): SeriesResponse {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java).getOnTheAirSeries()
             val body: SeriesResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
 
             } else {
@@ -209,11 +220,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     }
 
     suspend fun getTopRatedSeries(): SeriesResponse {
-        return withContext(Dispatchers.IO){
+        return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java).getTopRatedSeries()
             val body: SeriesResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
 
             } else {
@@ -222,12 +233,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSeriesDetailsById(seriesId:Int): SeriesDetailsResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getSeriesDetailsById("tv/${seriesId}")
+    suspend fun getSeriesDetailsById(seriesId: Int): SeriesDetailsResponse {
+        return withContext(Dispatchers.IO) {
+            val response =
+                retrofit.create(ApiClient::class.java).getSeriesDetailsById("tv/${seriesId}")
             val body: SeriesDetailsResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch series details: ${response.errorBody()?.string()}")
@@ -235,12 +247,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSeasonDetailsById(seriesId:Int, seasonNumber:Int): SeasonDetails {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getSeasonsDetailsById("tv/$seriesId/season/$seasonNumber")
+    suspend fun getSeasonDetailsById(seriesId: Int, seasonNumber: Int): SeasonDetails {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getSeasonsDetailsById("tv/$seriesId/season/$seasonNumber")
             val body: SeasonDetails? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch series details: ${response.errorBody()?.string()}")
@@ -248,12 +261,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSeriesRecommendationsById(seriesId:Int): SeriesResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getSeriesRecommendationsById("tv/$seriesId/recommendations")
+    suspend fun getSeriesRecommendationsById(seriesId: Int): SeriesResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getSeriesRecommendationsById("tv/$seriesId/recommendations")
             val body: SeriesResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch series details: ${response.errorBody()?.string()}")
@@ -261,12 +275,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSeriesImageListById(seriesId:Int): ImageBackdrop {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getImageListById("tv/${seriesId}/images")
+    suspend fun getSeriesImageListById(seriesId: Int): ImageBackdrop {
+        return withContext(Dispatchers.IO) {
+            val response =
+                retrofit.create(ApiClient::class.java).getImageListById("tv/${seriesId}/images")
             val body: ImageBackdrop? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch image backdrop: ${response.errorBody()?.string()}")
@@ -274,12 +289,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSeriesVideosById(seriesId:Int): VideoResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getVideosById("tv/${seriesId}/videos")
+    suspend fun getSeriesVideosById(seriesId: Int): VideoResponse {
+        return withContext(Dispatchers.IO) {
+            val response =
+                retrofit.create(ApiClient::class.java).getVideosById("tv/${seriesId}/videos")
             val body: VideoResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch videos: ${response.errorBody()?.string()}")
@@ -287,12 +303,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSeriesCreditsById(seriesId:Int): CreditsResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getCreditsById("tv/${seriesId}/credits${Constants.SPANISH_AR}")
+    suspend fun getSeriesCreditsById(seriesId: Int): CreditsResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getCreditsById("tv/${seriesId}/credits${Constants.SPANISH_AR}")
             val body: CreditsResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch movie credits: ${response.errorBody()?.string()}")
@@ -302,12 +319,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
 
     // PEOPLE
 
-    suspend fun getPeopleDetails(personId:Int): PeopleDetailsResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getPeopleDetailsById("person/$personId")
+    suspend fun getPeopleDetails(personId: Int): PeopleDetailsResponse {
+        return withContext(Dispatchers.IO) {
+            val response =
+                retrofit.create(ApiClient::class.java).getPeopleDetailsById("person/$personId")
             val body: PeopleDetailsResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch movie credits: ${response.errorBody()?.string()}")
@@ -315,12 +333,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getPeopleMovieInterpretationsById(personId:Int): PeopleMovieInterpretationResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getPeopleMovieInterpretationsById("person/$personId/movie_credits")
+    suspend fun getPeopleMovieInterpretationsById(personId: Int): PeopleMovieInterpretationResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getPeopleMovieInterpretationsById("person/$personId/movie_credits")
             val body: PeopleMovieInterpretationResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch movie credits: ${response.errorBody()?.string()}")
@@ -328,18 +347,33 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getPeopleSeriesInterpretationsById(personId:Int): PeopleSeriesInterpretationResponse {
-        return withContext(Dispatchers.IO){
-            val response = retrofit.create(ApiClient::class.java).getPeopleSeriesInterpretationsById("person/$personId/tv_credits")
+    suspend fun getPeopleSeriesInterpretationsById(personId: Int): PeopleSeriesInterpretationResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getPeopleSeriesInterpretationsById("person/$personId/tv_credits")
             val body: PeopleSeriesInterpretationResponse? = response.body()
 
-            if(response.isSuccessful && body != null){
+            if (response.isSuccessful && body != null) {
                 body
             } else {
                 throw Exception("Failed to fetch movie credits: ${response.errorBody()?.string()}")
             }
         }
     }
-    
+
+    suspend fun getPeopleMediaById(personId: Int): ImagePeopleResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getPeopleMediaById("person/$personId/images")
+            val body: ImagePeopleResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception("Failed to fetch movie credits: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
 
 }

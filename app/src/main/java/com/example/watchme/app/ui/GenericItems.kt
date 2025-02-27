@@ -98,14 +98,18 @@ fun SecondTitleTextItem(text: String, textAlign: TextAlign = TextAlign.Center) {
 fun ThirdTitleTextItem(
     text: String,
     textAlign: TextAlign = TextAlign.Center,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip
 ) {
     Text(
         text,
         modifier = modifier.fillMaxWidth(),
         style = MaterialTheme.typography.titleMedium,
         color = Color.White,
-        textAlign = textAlign
+        textAlign = textAlign,
+        maxLines = maxLines,
+        overflow = overflow
     )
 }
 
@@ -552,7 +556,7 @@ fun ImageListItem(imagesList: List<BackdropImageDataClass>?) {
 }
 
 @Composable
-fun CreditsSection(credits: CreditsDataClass?) {
+fun CreditsSection(credits: CreditsDataClass?, onClick: (Int) -> Unit) {
     if (credits == null) return
 
     if(credits.cast.isEmpty() && credits.crew.isEmpty()){
@@ -564,7 +568,7 @@ fun CreditsSection(credits: CreditsDataClass?) {
         SecondTitleTextItem(stringResource(R.string.cast))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             items(credits.cast){
-                CastCreditsItem(it)
+                CastCreditsItem(it) {personId -> onClick(personId) }
 
             }
         }
@@ -574,7 +578,7 @@ fun CreditsSection(credits: CreditsDataClass?) {
         SecondTitleTextItem(stringResource(R.string.crew))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             items(credits.crew) {
-                CrewCreditsItem(it)
+                CrewCreditsItem(it) { personId -> onClick(personId) }
             }
         }
     }
@@ -597,8 +601,8 @@ fun SectionSelectionItem(lazyList: List<String>, onItemClicked:(String) -> Unit)
                     it.uppercase(),
                     selectedText,
                 ) { clickedText, newTextWidth, newXPos ->
-                    onItemClicked(clickedText)
                     selectedText = clickedText.lowercase()
+                    onItemClicked(selectedText)
                     textWidth = newTextWidth
                     xPos = newXPos
                 }

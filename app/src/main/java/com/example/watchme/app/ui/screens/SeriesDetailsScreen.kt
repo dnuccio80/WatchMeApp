@@ -156,7 +156,7 @@ fun SeriesDetailsScreen(
                     Sections.Suggested.title -> SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
                     Sections.Details.title -> SeriesDetailsSection(seriesDetails)
                     Sections.Media.title ->  MediaSection(seriesImageList, seriesVideosList)
-                    Sections.Credits.title -> CreditsSection(seriesCredits)
+                    Sections.Credits.title -> CreditsSection(seriesCredits) { personId -> navController.navigate(Routes.PeopleDetails.createRoute(personId)) }
                 }
             }
         }
@@ -220,11 +220,11 @@ fun EpisodesSection(
                                 .padding(8.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            ThirdTitleTextItem(it.name, textAlign = TextAlign.Start)
+                            ThirdTitleTextItem(it.name, textAlign = TextAlign.Start, maxLines = 1, overflow = TextOverflow.Ellipsis)
                             BodyTextItem(
                                 it.overview,
                                 textAlign = TextAlign.Start,
-                                maxLines = 4,
+                                maxLines = 3,
                                 overflow = TextOverflow.Ellipsis
                             )
                         }
