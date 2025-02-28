@@ -57,89 +57,90 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) { innerPadding ->
-                    NavHost(navController, startDestination = startDestination) {
-                        composable(Routes.Home.route) {
-                            HomeScreen(
-                                innerPadding,
-                                viewModel,
-                                navController
-                            )
-                        }
-                        composable(
-                            Routes.MovieDetails.route,
-                            arguments = listOf(navArgument("movieId") {
-                                type = NavType.IntType
-                            })
-                        ) { backStackEntry ->
-                            MovieDetailsScreen(
-                                innerPadding,
-                                viewModel,
-                                navController,
-                                backStackEntry.arguments?.getInt("movieId") ?: 0
-                            )
-                        }
-                        composable(
-                            Routes.SeriesDetails.route,
-                            arguments = listOf(navArgument("seriesId") {
-                                type = NavType.IntType
-                            })
-                        ) { backStackEntry ->
-                            SeriesDetailsScreen(
-                                innerPadding,
-                                viewModel,
-                                navController,
-                                backStackEntry.arguments?.getInt("seriesId") ?: 0
-                            )
-                        }
-
-                        composable(
-                            Routes.PeopleDetails.route,
-                            arguments = listOf(navArgument("personId") {
-                                type = NavType.IntType
-                            })
-                        ) { backStackEntry ->
-                            PeopleDetailsScreen(
-                                innerPadding,
-                                viewModel,
-                                navController,
-                                backStackEntry.arguments?.getInt("personId") ?: 0
-                            )
-                        }
-
-                        composable(
-                            Routes.EpisodeDetails.route,
-                            arguments = listOf(
-                                navArgument("seriesId") { type = NavType.IntType },
-                                navArgument("episodeId") { type = NavType.IntType },
-                                navArgument("seasonNumber") { type = NavType.IntType })
-                        ) { backStackEntry ->
-                            EpisodesDetailsScreen(
-                                innerPadding,
-                                viewModel,
-                                navController,
-                                backStackEntry.arguments?.getInt("seriesId") ?: 0,
-                                backStackEntry.arguments?.getInt("episodeId") ?: 0,
-                                backStackEntry.arguments?.getInt("seasonNumber") ?: 0
-                            )
-                        }
-
-                        composable(
-                            Routes.CollectionDetails.route,
-                            arguments = listOf(navArgument("collectionId") {
-                                type = NavType.IntType
-                            })
-                        ) { backStackEntry ->
-                            CollectionDetailsScreen(
-                                innerPadding,
-                                viewModel,
-                                navController,
-                                backStackEntry.arguments?.getInt("collectionId") ?: 0
-                            )
-                        }
-                        composable(Routes.Search.route) {
-                            SearchScreen(innerPadding)
-                        }
-                    }
+//                    NavHost(navController, startDestination = startDestination) {
+//                        composable(Routes.Home.route) {
+//                            HomeScreen(
+//                                innerPadding,
+//                                viewModel,
+//                                navController
+//                            )
+//                        }
+//                        composable(
+//                            Routes.MovieDetails.route,
+//                            arguments = listOf(navArgument("movieId") {
+//                                type = NavType.IntType
+//                            })
+//                        ) { backStackEntry ->
+//                            MovieDetailsScreen(
+//                                innerPadding,
+//                                viewModel,
+//                                navController,
+//                                backStackEntry.arguments?.getInt("movieId") ?: 0
+//                            )
+//                        }
+//                        composable(
+//                            Routes.SeriesDetails.route,
+//                            arguments = listOf(navArgument("seriesId") {
+//                                type = NavType.IntType
+//                            })
+//                        ) { backStackEntry ->
+//                            SeriesDetailsScreen(
+//                                innerPadding,
+//                                viewModel,
+//                                navController,
+//                                backStackEntry.arguments?.getInt("seriesId") ?: 0
+//                            )
+//                        }
+//
+//                        composable(
+//                            Routes.PeopleDetails.route,
+//                            arguments = listOf(navArgument("personId") {
+//                                type = NavType.IntType
+//                            })
+//                        ) { backStackEntry ->
+//                            PeopleDetailsScreen(
+//                                innerPadding,
+//                                viewModel,
+//                                navController,
+//                                backStackEntry.arguments?.getInt("personId") ?: 0
+//                            )
+//                        }
+//
+//                        composable(
+//                            Routes.EpisodeDetails.route,
+//                            arguments = listOf(
+//                                navArgument("seriesId") { type = NavType.IntType },
+//                                navArgument("episodeId") { type = NavType.IntType },
+//                                navArgument("seasonNumber") { type = NavType.IntType })
+//                        ) { backStackEntry ->
+//                            EpisodesDetailsScreen(
+//                                innerPadding,
+//                                viewModel,
+//                                navController,
+//                                backStackEntry.arguments?.getInt("seriesId") ?: 0,
+//                                backStackEntry.arguments?.getInt("episodeId") ?: 0,
+//                                backStackEntry.arguments?.getInt("seasonNumber") ?: 0
+//                            )
+//                        }
+//
+//                        composable(
+//                            Routes.CollectionDetails.route,
+//                            arguments = listOf(navArgument("collectionId") {
+//                                type = NavType.IntType
+//                            })
+//                        ) { backStackEntry ->
+//                            CollectionDetailsScreen(
+//                                innerPadding,
+//                                viewModel,
+//                                navController,
+//                                backStackEntry.arguments?.getInt("collectionId") ?: 0
+//                            )
+//                        }
+//                        composable(Routes.Search.route) {
+//                            SearchScreen(innerPadding)
+//                        }
+//                    }
+                    SearchScreen(innerPadding)
                 }
             }
         }

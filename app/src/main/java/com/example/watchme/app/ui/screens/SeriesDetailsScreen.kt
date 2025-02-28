@@ -259,6 +259,12 @@ fun MediaSection(
     imagesList: List<BackdropImageDataClass>?,
     seriesVideosList: List<VideoDataClass>?
 ) {
+
+    if(imagesList.isNullOrEmpty() && seriesVideosList.isNullOrEmpty()){
+        BodyTextItem(stringResource(R.string.no_results_found))
+        return
+    }
+
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
         ImageListItem(imagesList)
         seriesVideosList?.let {

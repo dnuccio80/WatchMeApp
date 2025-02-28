@@ -281,7 +281,7 @@ fun MoviesInterpretationsCardItem(movieData: MovieDataClass, onMovieClicked: (In
                     .fillMaxSize()
                     .height(max(200.dp, 250.dp)),
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.unknown_male),
+                placeholder = painterResource(R.drawable.loading_image),
                 error = painterResource(R.drawable.image_not_found)
             )
             Column(
@@ -330,7 +330,7 @@ fun PeopleHeader(peopleDetails: PeopleDetailsDataClass?) {
                 modifier = Modifier.fillMaxSize(),
                 model = Constants.IMAGE_BASE_URL + peopleDetails?.profilePath,
                 contentDescription = "people image",
-                error = painterResource(R.drawable.unknown_male),
+                error = painterResource(R.drawable.loading_image),
                 contentScale = ContentScale.Crop
             )
         }

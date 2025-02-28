@@ -176,12 +176,18 @@ private fun OverviewSection(
     onCollectionButtonClicked:(Int) -> Unit
 ) {
     SecondTitleTextItem(movieDetails?.title.toString(), TextAlign.Start)
-    movieDetails?.let { BodyTextItem(it.overview) }
+    if(movieDetails?.overview.isNullOrEmpty()) {
+        BodyTextItem(stringResource(R.string.no_overview_available))
+    } else {
+        movieDetails?.overview?.let { BodyTextItem(it) }
+    }
     CollectionItem(movieDetails?.collection) { collectionId -> onCollectionButtonClicked(collectionId) }
     movieDetails?.releaseDate?.let {
         TitleSubtitleItem(
             stringResource(R.string.release_date),
-            it
+            it.ifEmpty {
+                stringResource(R.string.unknown)
+            }
         )
     }
     movieDetails?.genres?.map { it.nameGenre }?.let {
@@ -190,7 +196,7 @@ private fun OverviewSection(
             it.joinToString(separator = ", ")
         )
     }
-    TitleSubtitleItem("Runtime", runTime)
+    TitleSubtitleItem("Runtime", if(runTime == "0m") stringResource(R.string.unknown) else runTime)
     movieDetails?.budget?.let { viewModel.formatPrice(it) }?.let {
         val budget = if (it == "0") stringResource(R.string.unknown) else "$$it"
         TitleSubtitleItem(
@@ -347,8 +353,10 @@ fun MoviesRecommendationsSection(
     onClick: (Int) -> Unit
 ) {
 
-    if (moviesRecommendations == null) return
-
+    if (moviesRecommendations == null) {
+        BodyTextItem(stringResource(R.string.no_results_found))
+        return
+    }
     FlowRow(
         Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(16.dp),
@@ -358,9 +366,7 @@ fun MoviesRecommendationsSection(
             RecommendationCardItem(it) { movieId -> onClick(movieId) }
         }
     }
-
 }
-
 
 @Composable
 fun RecommendationCardItem(movies: MovieDataClass, onClick: (Int) -> Unit) {

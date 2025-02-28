@@ -43,6 +43,7 @@
     <string name="number_of_seasons">Number of seasons:</string>
     <string name="first_air_date">First air date:</string>
     <string name="last_episode_to_air">Last episode to air:</string>
+    <string name="no_overview_available">Overview is not available</string>
     <string name="next_episode_to_air">Next episode to air:</string>
     <string name="seasons">seasons</string>
     <string name="season">Season</string>
@@ -59,6 +60,7 @@
     <string name="search">Search</string>
     <string name="profile">Profile</string>
     <string name="download">Download</string>
+    <string name="search_by_title">Search by title</string>
     <string name="recommendations">Recommendations</string>
     <string name="reviews">Reviews</string>
     <string name="videos">Videos</string>

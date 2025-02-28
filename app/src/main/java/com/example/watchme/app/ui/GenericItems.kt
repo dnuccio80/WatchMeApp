@@ -557,6 +557,7 @@ fun ImageListItem(imagesList: List<BackdropImageDataClass>?) {
 
 @Composable
 fun CreditsSection(credits: CreditsDataClass?, onClick: (Int) -> Unit) {
+
     if (credits == null) return
 
     if(credits.cast.isEmpty() && credits.crew.isEmpty()){
