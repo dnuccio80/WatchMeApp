@@ -12,20 +12,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.navigation.NavType
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import com.example.watchme.app.ui.BottomBar
 import com.example.watchme.app.ui.TopBar
-import com.example.watchme.app.ui.screens.CollectionDetailsScreen
-import com.example.watchme.app.ui.screens.EpisodesDetailsScreen
-import com.example.watchme.app.ui.screens.HomeScreen
-import com.example.watchme.app.ui.screens.MovieDetailsScreen
-import com.example.watchme.app.ui.screens.PeopleDetailsScreen
 import com.example.watchme.app.ui.screens.SearchScreen
-import com.example.watchme.app.ui.screens.SeriesDetailsScreen
 import com.example.watchme.core.Routes
 import com.example.watchme.ui.theme.WatchMeTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -140,7 +130,7 @@ class MainActivity : ComponentActivity() {
 //                            SearchScreen(innerPadding)
 //                        }
 //                    }
-                    SearchScreen(innerPadding)
+                    SearchScreen(innerPadding, viewModel, navController)
                 }
             }
         }

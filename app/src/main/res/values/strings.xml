@@ -39,6 +39,7 @@
     <string name="no_results_found">No results found</string>
     <string name="guest_stars">Guest stars</string>
     <string name="show_all">Show all</string>
+    <string name="select_search_type">Select what do you want to search:</string>
     <string name="number_of_episodes">Number of episodes:</string>
     <string name="number_of_seasons">Number of seasons:</string>
     <string name="first_air_date">First air date:</string>

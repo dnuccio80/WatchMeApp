@@ -1,6 +1,7 @@
 package com.example.watchme.app.data.network
 
 import com.example.watchme.app.data.network.responses.CollectionResponse
+import com.example.watchme.app.data.network.responses.CollectionSearchResponse
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
@@ -410,6 +411,23 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             }
         }
     }
+
+    // SEARCHES
+
+    suspend fun getSearchCollection(query: String): CollectionSearchResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getCollectionSearch("search/collection?query=$query")
+            val body: CollectionSearchResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception("Failed to fetch searched collection: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
 
 
 }

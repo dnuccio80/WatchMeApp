@@ -1,6 +1,8 @@
 package com.example.watchme.app.ui.screens
 
-import androidx.compose.foundation.Image
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.TweenSpec
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,12 +16,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.windowInsetsEndWidth
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
@@ -29,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -43,19 +46,39 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
+import com.example.watchme.app.ui.dataClasses.CollectionSearchDataClass
+import com.example.watchme.core.SearchTypes
+import com.example.watchme.core.constants.Constants
+import com.example.watchme.ui.theme.AlphaButtonColor
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.ui.theme.CardContainerColor
-import retrofit2.http.Body
-import kotlin.math.truncate
 
 @Composable
-fun SearchScreen(innerPadding: PaddingValues) {
+fun SearchScreen(
+    innerPadding: PaddingValues,
+    viewModel: AppViewModel,
+    navController: NavHostController
+) {
 
-    var textFieldValue by rememberSaveable { mutableStateOf("") }
+
+    val query by viewModel.query.collectAsState()
+    val searchCollection by viewModel.searchCollection.collectAsState()
+
+    val searchList = listOf(
+        SearchTypes.Collections,
+        SearchTypes.TvSeries,
+        SearchTypes.Movies,
+        SearchTypes.People,
+    )
+
+    var searchTypeSelected by rememberSaveable { mutableStateOf(searchList[0].title) }
+
 
     Box(
         Modifier
@@ -69,8 +92,8 @@ fun SearchScreen(innerPadding: PaddingValues) {
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             TextField(
-                value = textFieldValue,
-                onValueChange = { textFieldValue = it },
+                value = query,
+                onValueChange = { viewModel.onQueryChanged(it) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 placeholder = { Text(stringResource(R.string.search_by_title)) },
@@ -78,24 +101,102 @@ fun SearchScreen(innerPadding: PaddingValues) {
             )
             HorizontalDivider(Modifier.fillMaxWidth(), color = Color.Gray, thickness = 1.dp)
 
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-            ) {
-                items(20) {
-                    SearchingCardItem()
+            if (searchCollection.isNullOrEmpty()) {
+                Column {
+                    ThirdTitleTextItem(
+                        stringResource(R.string.select_search_type),
+                        modifier = Modifier.padding(16.dp),
+                        textAlign = TextAlign.Start
+                    )
+                    SearchTypeSection(searchList, searchTypeSelected) {newTypeSelected -> searchTypeSelected = newTypeSelected.title }
+                }
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                ) {
+                    items(searchCollection!!) {
+                        SearchingCardItem(it)
+                    }
                 }
             }
+
         }
     }
 }
 
 @Composable
-fun SearchingCardItem() {
+fun SearchTypeSection(
+    searchList: List<SearchTypes>,
+    searchTypeSelected: String,
+    onClick: (SearchTypes) -> Unit
+) {
+    LazyRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.padding(8.dp)
+    ) {
+        items(searchList) { searchType ->
+            SearchCardItem(searchType, searchTypeSelected) { type -> onClick(type) }
+        }
+    }
+}
+
+@Composable
+fun SearchCardItem(
+    type: SearchTypes,
+    searchTitleSelected: String,
+    onClick: (SearchTypes) -> Unit
+) {
+
+    val isSelected = type.title == searchTitleSelected
+    
+    val cardColor by animateColorAsState(
+        targetValue = if (isSelected) CardContainerColor else AlphaButtonColor,
+        animationSpec = TweenSpec(300)
+    )
+
+    val cardSize by animateDpAsState(
+        if (isSelected) 104.dp else 100.dp,
+        animationSpec = TweenSpec(300)
+    )
+
+    Card(
+        modifier = Modifier
+            .size(cardSize)
+            .clickable {
+                onClick(type)
+            },
+        shape = RoundedCornerShape(4.dp),
+        elevation = CardDefaults.cardElevation(16.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = cardColor
+        )
+    ) {
+        Column(
+            Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Icon(
+                painterResource(id = type.icon),
+                contentDescription = "card icon",
+                tint = Color.White
+            )
+            Spacer(Modifier.size(12.dp))
+            BodyTextItem(type.title)
+        }
+    }
+}
+
+@Composable
+fun SearchingCardItem(collection: CollectionSearchDataClass) {
+
+    val url = Constants.IMAGE_BASE_URL + collection.posterPath
+
     Card(
         modifier = Modifier
             .width(190.dp)
@@ -108,17 +209,16 @@ fun SearchingCardItem() {
         )
     ) {
         Box(contentAlignment = Alignment.BottomCenter) {
-            Image(painterResource(R.drawable.image_not_found), modifier = Modifier.fillMaxSize().height(max(200.dp,250.dp)), contentDescription = "test image", contentScale = ContentScale.Crop)
-//            AsyncImage(
-//                model = url,
-//                contentDescription = stringResource(R.string.image_cast),
-//                modifier = Modifier
-//                    .fillMaxSize()
-//                    .height(max(200.dp, 250.dp)),
-//                contentScale = ContentScale.Crop,
-//                placeholder = painterResource(R.drawable.unknown_male),
-//                error = painterResource(R.drawable.unknown_male)
-//            )
+            AsyncImage(
+                model = url,
+                contentDescription = stringResource(R.string.image_cast),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(max(200.dp, 250.dp)),
+                contentScale = ContentScale.Crop,
+                placeholder = painterResource(R.drawable.loading_image),
+                error = painterResource(R.drawable.image_not_found)
+            )
             Column(
                 Modifier
                     .background(CardContainerColor)
@@ -126,9 +226,11 @@ fun SearchingCardItem() {
                     .padding(vertical = 16.dp, horizontal = 8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                ThirdTitleTextItem("Titulo de la serie / pelicula", TextAlign.Center, maxLines = 2, overflow = TextOverflow.Ellipsis)
-                BodyTextItem(
-                    "AÑO LANZ - GENRES TYPES",TextAlign.Center, maxLines = 1, overflow = TextOverflow.Ellipsis
+                ThirdTitleTextItem(
+                    collection.name,
+                    TextAlign.Center,
+                    maxLines = 2,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }

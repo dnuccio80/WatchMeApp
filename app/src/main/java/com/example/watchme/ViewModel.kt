@@ -21,6 +21,7 @@ import com.example.watchme.app.domain.people.GetPeopleMediaByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleMovieInterpretationsByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleSeriesInterpretationsByIdUseCase
 import com.example.watchme.app.domain.providers.GetProvidersUseCase
+import com.example.watchme.app.domain.searches.GetSearchCollectionUseCase
 import com.example.watchme.app.domain.series.GetAiringSeriesTodayUseCase
 import com.example.watchme.app.domain.series.GetOnTheAirSeriesUseCase
 import com.example.watchme.app.domain.series.GetPopularSeriesUseCase
@@ -33,6 +34,7 @@ import com.example.watchme.app.domain.series.GetSeriesVideosByIdUseCase
 import com.example.watchme.app.domain.series.GetTopRatedSeriesUseCase
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.CollectionSearchDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
@@ -51,8 +53,18 @@ import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.PositiveVoteColor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import java.text.NumberFormat
 import java.util.Locale
@@ -99,6 +111,10 @@ class AppViewModel @Inject constructor(
     private val getPeopleMovieInterpretationsByIdUseCase: GetPeopleMovieInterpretationsByIdUseCase,
     private val getPeopleSeriesInterpretationsByIdUseCase: GetPeopleSeriesInterpretationsByIdUseCase,
     private val getPeopleMediaByIdUseCase: GetPeopleMediaByIdUseCase,
+
+    // SEARCHES
+
+    private val getSearchCollectionUseCase: GetSearchCollectionUseCase,
 
     ) : ViewModel() {
 
@@ -206,6 +222,15 @@ class AppViewModel @Inject constructor(
     private val _peopleMediaImages = MutableStateFlow<List<BackdropImageDataClass>?>(null)
     val peopleMediaImages : StateFlow<List<BackdropImageDataClass>?> = _peopleMediaImages
 
+    // SEARCHES
+
+    private val _searchCollection = MutableStateFlow<List<CollectionSearchDataClass>?>(null)
+    val searchCollection : StateFlow<List<CollectionSearchDataClass>?> = _searchCollection
+
+    private val _query = MutableStateFlow("")
+    val query: StateFlow<String> = _query
+
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _popularMovies.value = getPopularMoviesUseCase()
@@ -218,6 +243,29 @@ class AppViewModel @Inject constructor(
             _onTheAirSeries.value = getOnTheAirSeriesUseCase()
             _topRatedSeries.value = getTopRatedSeriesUseCase()
         }
+        observeSearchQuery()
+    }
+
+    @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
+    private fun observeSearchQuery() {
+        _query.debounce(500)
+            .distinctUntilChanged()
+            .flatMapLatest {query ->
+                flow {
+                    try {
+                        emit(getSearchCollectionUseCase(query))
+                    } catch (e: Exception) {
+                        emit(emptyList())
+                    }
+                }
+            }
+            .flowOn(Dispatchers.IO)
+            .onEach { results -> _searchCollection.value = results }
+            .launchIn(viewModelScope)
+    }
+
+    fun onQueryChanged(newQuery: String) {
+        _query.value = newQuery
     }
 
     fun getPercentageColor(voteAverage: Int): Color {
@@ -227,6 +275,19 @@ class AppViewModel @Inject constructor(
             else -> PositiveVoteColor
         }
     }
+
+    fun getRunTimeInHours(minutes: Int): String {
+        val hours = minutes / 60
+        val remainingMinutes = minutes % 60
+        return if(hours != 0) "${hours}h ${remainingMinutes}m"
+        else "${remainingMinutes}m"
+    }
+
+    fun formatPrice(value: Long): String {
+        val formatter = NumberFormat.getInstance(Locale("es", "AR"))
+        return formatter.format(value)
+    }
+
 
     // MOVIES
 
@@ -346,18 +407,15 @@ class AppViewModel @Inject constructor(
         }
     }
 
+    // SEARCHES
 
-    fun getRunTimeInHours(minutes: Int): String {
-        val hours = minutes / 60
-        val remainingMinutes = minutes % 60
-        if(hours != 0) return "${hours}h ${remainingMinutes}m"
-        else return "${remainingMinutes}m"
+    fun getSearchCollection(query:String){
+        viewModelScope.launch(Dispatchers.IO) {
+            _searchCollection.value = getSearchCollectionUseCase(query)
+        }
     }
 
-    fun formatPrice(value: Long): String {
-        val formatter = NumberFormat.getInstance(Locale("es", "AR"))
-        return formatter.format(value)
-    }
+
 
 }
 

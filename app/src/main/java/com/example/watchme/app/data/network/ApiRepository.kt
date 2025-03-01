@@ -2,6 +2,7 @@ package com.example.watchme.app.data.network
 
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
 import com.example.watchme.app.data.network.responses.toCollectionDataClass
+import com.example.watchme.app.data.network.responses.toCollectionSearchDataClass
 import com.example.watchme.app.data.network.responses.toDetailsMovieDataClass
 import com.example.watchme.app.data.network.responses.toCreditsDataClass
 import com.example.watchme.app.data.network.responses.toEpisodesDetailsDataClass
@@ -17,6 +18,7 @@ import com.example.watchme.app.data.network.responses.toSeriesDetailsDataClass
 import com.example.watchme.app.data.network.responses.toVideoDataClass
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.CollectionSearchDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
@@ -158,6 +160,12 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         episodeNumber: Int
     ): EpisodesDetailsDataClass {
         return apiService.getEpisodesDetailsById(seriesId, seasonNumber, episodeNumber).toEpisodesDetailsDataClass()
+    }
+
+    // SEARCHES
+
+    suspend fun getSearchCollection(query:String): List<CollectionSearchDataClass> {
+        return apiService.getSearchCollection(query).toCollectionSearchDataClass()
     }
 
 }
