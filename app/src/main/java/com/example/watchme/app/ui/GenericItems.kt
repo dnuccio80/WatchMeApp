@@ -60,6 +60,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
+import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.watchme.R
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
@@ -197,12 +198,16 @@ fun HeaderInfo(
 }
 
 @Composable
-fun BackButton() {
+fun BackButton(navController: NavHostController) {
     Card(
         shape = CircleShape,
         modifier = Modifier
             .size(60.dp)
-            .padding(16.dp),
+            .padding(16.dp)
+            .clickable {
+                navController.popBackStack()
+            }
+        ,
         colors = CardDefaults.cardColors(
             containerColor = AlphaButtonColor,
             contentColor = Color.White

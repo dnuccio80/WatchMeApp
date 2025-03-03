@@ -128,8 +128,8 @@ fun SeriesDetailsScreen(
                     .fillMaxWidth()
                     .height(300.dp)
             ) {
-                seriesDetails?.backdropPath?.let { BackdropImageItem(it) }
-                BackButton()
+                BackdropImageItem(seriesDetails?.backdropPath.toString())
+                BackButton(navController)
             }
             Column(
                 Modifier
@@ -145,21 +145,39 @@ fun SeriesDetailsScreen(
                 seriesDetails?.name?.let { SecondTitleTextItem(it) }
                 SeriesOverviewSection(seriesDetails)
                 Spacer(Modifier.size(16.dp))
-                SectionSelectionItem(sectionList) { newSectionSelected -> sectionSelected = newSectionSelected }
-                when(sectionSelected.lowercase()){
+                SectionSelectionItem(sectionList) { newSectionSelected ->
+                    sectionSelected = newSectionSelected
+                }
+                when (sectionSelected.lowercase()) {
                     Sections.Episodes.title -> seriesDetails?.seasons?.let {
                         EpisodesSection(
                             seasonDetails, it, seasonSelected,
                             onValueChange = { seasonNumber -> seasonSelected = seasonNumber },
                             onEpisodeClicked = { episodeId, seasonNumber ->
-                                navController.navigate(Routes.EpisodeDetails.createRoute(seriesId, episodeId, seasonNumber))
+                                navController.navigate(
+                                    Routes.EpisodeDetails.createRoute(
+                                        seriesId,
+                                        episodeId,
+                                        seasonNumber
+                                    )
+                                )
                             }
                         )
                     }
-                    Sections.Suggested.title -> SeriesRecommendationsSection(seriesRecommendations) { navController.navigate(Routes.SeriesDetails.createRoute(it)) }
+
+                    Sections.Suggested.title -> SeriesRecommendationsSection(seriesRecommendations) {
+                        navController.navigate(
+                            Routes.SeriesDetails.createRoute(it)
+                        )
+                    }
+
                     Sections.Details.title -> SeriesDetailsSection(seriesDetails)
-                    Sections.Media.title ->  MediaSection(seriesImageList, seriesVideosList)
-                    Sections.Credits.title -> CreditsSection(seriesCredits) { personId -> navController.navigate(Routes.PeopleDetails.createRoute(personId)) }
+                    Sections.Media.title -> MediaSection(seriesImageList, seriesVideosList)
+                    Sections.Credits.title -> CreditsSection(seriesCredits) { personId ->
+                        navController.navigate(
+                            Routes.PeopleDetails.createRoute(personId)
+                        )
+                    }
                 }
             }
         }
@@ -172,7 +190,7 @@ fun EpisodesSection(
     seasons: List<SeasonDataClass>,
     seasonSelected: Int,
     onValueChange: (Int) -> Unit,
-    onEpisodeClicked:(Int, Int) -> Unit
+    onEpisodeClicked: (Int, Int) -> Unit
 ) {
 
     val seasonName: String = seasons.find {
@@ -204,11 +222,11 @@ fun EpisodesSection(
         }
         seasonDetails?.forEach {
             Card(
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier
+                    .fillMaxWidth()
                     .clickable {
                         onEpisodeClicked(it.episodeNumber, it.seasonNumber)
-                    }
-                ,
+                    },
                 colors = CardDefaults.cardColors(
                     containerColor = CardContainerColor
                 )
@@ -228,7 +246,12 @@ fun EpisodesSection(
                                 .padding(8.dp),
                             verticalArrangement = Arrangement.spacedBy(16.dp)
                         ) {
-                            ThirdTitleTextItem(it.name, textAlign = TextAlign.Start, maxLines = 1, overflow = TextOverflow.Ellipsis)
+                            ThirdTitleTextItem(
+                                it.name,
+                                textAlign = TextAlign.Start,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis
+                            )
                             BodyTextItem(
                                 it.overview,
                                 textAlign = TextAlign.Start,
@@ -260,7 +283,7 @@ fun MediaSection(
     seriesVideosList: List<VideoDataClass>?
 ) {
 
-    if(imagesList.isNullOrEmpty() && seriesVideosList.isNullOrEmpty()){
+    if (imagesList.isNullOrEmpty() && seriesVideosList.isNullOrEmpty()) {
         BodyTextItem(stringResource(R.string.no_results_found))
         return
     }
@@ -286,7 +309,13 @@ fun SeriesDetailsSection(seriesDetails: SeriesDetailsDataClass?) {
         ThirdTitleTextItem(text = seriesDetails.name, textAlign = TextAlign.Start)
         seriesDetails.overview?.let { BodyTextItem(it) }
         seriesDetails.genres.joinToString(separator = ", ") { it.name }
-            .let { TitleSubtitleItem(stringResource(R.string.genre), it) }
+            .let {
+                if (it.isNotEmpty()) {
+                    TitleSubtitleItem(stringResource(R.string.genre), it)
+                } else {
+                    TitleSubtitleItem(stringResource(R.string.genre), stringResource(R.string.no_results_found))
+                }
+            }
         TitleSubtitleItem(
             stringResource(R.string.number_of_seasons),
             "${seriesDetails.numberOfSeasons} ${stringResource(R.string.seasons)}"
@@ -328,7 +357,11 @@ fun SeriesRecommendationsSection(
     onClick: (Int) -> Unit
 ) {
 
-    if (seriesRecommendations == null) return
+    if (seriesRecommendations.isNullOrEmpty()) {
+        BodyTextItem(stringResource(R.string.no_results_found))
+        return
+    }
+
 
     FlowRow(
         Modifier.fillMaxWidth(),
@@ -367,7 +400,6 @@ fun RecommendationCardItem(series: SeriesDataClass, onClick: (Int) -> Unit) {
         )
     }
 }
-
 
 
 @Composable

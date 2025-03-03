@@ -5,6 +5,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.getValue
@@ -69,7 +71,9 @@ class MainActivity : ComponentActivity() {
                             Routes.MovieDetails.route,
                             arguments = listOf(navArgument("movieId") {
                                 type = NavType.IntType
-                            })
+                            }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
                         ) { backStackEntry ->
                             MovieDetailsScreen(
                                 innerPadding,
@@ -82,7 +86,9 @@ class MainActivity : ComponentActivity() {
                             Routes.SeriesDetails.route,
                             arguments = listOf(navArgument("seriesId") {
                                 type = NavType.IntType
-                            })
+                            }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
                         ) { backStackEntry ->
                             SeriesDetailsScreen(
                                 innerPadding,
@@ -96,7 +102,9 @@ class MainActivity : ComponentActivity() {
                             Routes.PeopleDetails.route,
                             arguments = listOf(navArgument("personId") {
                                 type = NavType.IntType
-                            })
+                            }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
                         ) { backStackEntry ->
                             PeopleDetailsScreen(
                                 innerPadding,
@@ -111,7 +119,9 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(
                                 navArgument("seriesId") { type = NavType.IntType },
                                 navArgument("episodeId") { type = NavType.IntType },
-                                navArgument("seasonNumber") { type = NavType.IntType })
+                                navArgument("seasonNumber") { type = NavType.IntType }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
                         ) { backStackEntry ->
                             EpisodesDetailsScreen(
                                 innerPadding,
@@ -136,7 +146,8 @@ class MainActivity : ComponentActivity() {
                                 backStackEntry.arguments?.getInt("collectionId") ?: 0
                             )
                         }
-                        composable(Routes.Search.route) {
+                        composable(Routes.Search.route,
+                        ) {
                             SearchScreen(innerPadding, viewModel, navController)
                         }
                     }

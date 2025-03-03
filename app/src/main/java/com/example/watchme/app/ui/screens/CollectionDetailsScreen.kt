@@ -65,8 +65,7 @@ fun CollectionDetailsScreen(
                     .height(300.dp)
             ) {
                 BackdropImageItem(collectionDetails?.backdropPath.toString())
-//                collectionDetails?.backdropPath?.let { BackdropImageItem(it) }
-                BackButton()
+                BackButton(navController)
             }
             Column(
                 Modifier

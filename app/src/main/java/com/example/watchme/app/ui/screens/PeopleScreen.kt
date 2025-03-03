@@ -256,7 +256,7 @@ fun SeriesInterpretationsCardItem(seriesData: SeriesDataClass, onSeriesClicked: 
                     .fillMaxSize()
                     .height(max(200.dp, 250.dp)),
                 contentScale = ContentScale.Crop,
-                placeholder = painterResource(R.drawable.unknown_male),
+                placeholder = painterResource(R.drawable.loading_image),
                 error = painterResource(R.drawable.film_not_found)
             )
             Column(

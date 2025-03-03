@@ -32,6 +32,7 @@ import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleTextItem
 import com.example.watchme.core.Routes
 import com.example.watchme.ui.theme.AppBackground
+import retrofit2.http.Body
 
 @Composable
 fun EpisodesDetailsScreen(
@@ -67,38 +68,64 @@ fun EpisodesDetailsScreen(
                     .fillMaxWidth()
                     .height(300.dp)
             ) {
-                episodeDetails?.stillPath?.let { BackdropImageItem(it) }
-                BackButton()
+                BackdropImageItem(episodeDetails?.stillPath.toString())
+                BackButton(navController)
             }
             Column(
                 Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
-            ){
+            ) {
 
                 episodeDetails?.name?.let { TitleTextItem(it) }
-                ThirdTitleTextItem("${stringResource(R.string.season)} $seasonNumber - ${stringResource(R.string.episode)} ${episodeDetails?.episodeNumber} - $runtime")
-                SecondTitleTextItem(stringResource(R.string.overview), textAlign = TextAlign.Start)
-                Spacer(modifier = Modifier.height(0.dp)) // It gives an extra 16.dp space because of verticalArrangement
-                if(episodeDetails?.overview?.isEmpty() == true){
+                ThirdTitleTextItem(
+                    "${stringResource(R.string.season)} $seasonNumber - ${
+                        stringResource(
+                            R.string.episode
+                        )
+                    } ${episodeDetails?.episodeNumber} - $runtime"
+                )
+
+                if(episodeDetails?.overview.isNullOrEmpty() && episodeDetails?.guestStars?.isEmpty() == true && episodeDetails?.crew?.isEmpty() == true){
                     BodyTextItem(stringResource(R.string.no_results_found))
-                } else{
-                    episodeDetails?.overview?.let { BodyTextItem(it) }
                 }
-                SecondTitleTextItem(stringResource(R.string.guest_stars))
-                if(episodeDetails != null){
+
+                if(episodeDetails?.overview?.isNotEmpty() == true){
+                    SecondTitleTextItem(stringResource(R.string.overview), textAlign = TextAlign.Start)
+                    episodeDetails?.overview?.let { BodyTextItem(it) }
+                    Spacer(modifier = Modifier.height(0.dp)) // It gives an extra 16.dp space because of verticalArrangement
+                }
+
+
+                if (episodeDetails?.guestStars?.isNotEmpty() == true) {
+                    SecondTitleTextItem(stringResource(R.string.guest_stars))
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                        items(episodeDetails!!.guestStars){ castItem ->
-                            CastCreditsItem(castItem) { personId -> navController.navigate(Routes.PeopleDetails.createRoute(personId))  }
+                        items(episodeDetails!!.guestStars) { castItem ->
+                            CastCreditsItem(castItem) { personId ->
+                                navController.navigate(
+                                    Routes.PeopleDetails.createRoute(
+                                        personId
+                                    )
+                                )
+                            }
                         }
                     }
                 }
+
+                if (episodeDetails?.crew?.isEmpty() == true) return
+
                 SecondTitleTextItem(stringResource(R.string.crew))
                 LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                     episodeDetails?.let {
-                        items(it.crew){crewItem ->
-                            CrewCreditsItem(crewItem) { personId -> navController.navigate(Routes.PeopleDetails.createRoute(personId))  }
+                        items(it.crew) { crewItem ->
+                            CrewCreditsItem(crewItem) { personId ->
+                                navController.navigate(
+                                    Routes.PeopleDetails.createRoute(
+                                        personId
+                                    )
+                                )
+                            }
                         }
                     }
                 }
