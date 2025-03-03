@@ -3,7 +3,6 @@ package com.example.watchme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.watchme.app.data.network.responses.toPeopleSeriesInterpretationDataClass
 import com.example.watchme.app.domain.collections.GetCollectionDetailsByIdUseCase
 import com.example.watchme.app.domain.episodes.GetEpisodeDetailsByIdUseCase
 import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
@@ -22,6 +21,9 @@ import com.example.watchme.app.domain.people.GetPeopleMovieInterpretationsByIdUs
 import com.example.watchme.app.domain.people.GetPeopleSeriesInterpretationsByIdUseCase
 import com.example.watchme.app.domain.providers.GetProvidersUseCase
 import com.example.watchme.app.domain.searches.GetSearchCollectionUseCase
+import com.example.watchme.app.domain.searches.GetSearchMovieUseCase
+import com.example.watchme.app.domain.searches.GetSearchPeopleUseCase
+import com.example.watchme.app.domain.searches.GetSearchSeriesUseCase
 import com.example.watchme.app.domain.series.GetAiringSeriesTodayUseCase
 import com.example.watchme.app.domain.series.GetOnTheAirSeriesUseCase
 import com.example.watchme.app.domain.series.GetPopularSeriesUseCase
@@ -34,7 +36,7 @@ import com.example.watchme.app.domain.series.GetSeriesVideosByIdUseCase
 import com.example.watchme.app.domain.series.GetTopRatedSeriesUseCase
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDetailsDataClass
-import com.example.watchme.app.ui.dataClasses.CollectionSearchDataClass
+import com.example.watchme.app.ui.dataClasses.SearchDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
@@ -48,6 +50,7 @@ import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
+import com.example.watchme.core.SearchTypes
 import com.example.watchme.ui.theme.IntermediateVoteColor
 import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.PositiveVoteColor
@@ -59,7 +62,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.debounce
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
@@ -115,6 +117,10 @@ class AppViewModel @Inject constructor(
     // SEARCHES
 
     private val getSearchCollectionUseCase: GetSearchCollectionUseCase,
+    private val getSearchMovieUseCase: GetSearchMovieUseCase,
+    private val getSearchSeriesUseCase: GetSearchSeriesUseCase,
+    private val getSearchPeopleUseCase: GetSearchPeopleUseCase,
+
 
     ) : ViewModel() {
 
@@ -224,12 +230,23 @@ class AppViewModel @Inject constructor(
 
     // SEARCHES
 
-    private val _searchCollection = MutableStateFlow<List<CollectionSearchDataClass>?>(null)
-    val searchCollection : StateFlow<List<CollectionSearchDataClass>?> = _searchCollection
+    private val _searchCollection = MutableStateFlow<List<SearchDataClass>?>(null)
+    val searchCollection : StateFlow<List<SearchDataClass>?> = _searchCollection
+
+    private val _searchMovie = MutableStateFlow<List<SearchDataClass>?>(null)
+    val searchMovie : StateFlow<List<SearchDataClass>?> = _searchMovie
+
+    private val _searchSeries =  MutableStateFlow<List<SearchDataClass>?>(null)
+    val searchSeries  : StateFlow<List<SearchDataClass>?> = _searchSeries
+
+    private val _searchPeople = MutableStateFlow<List<SearchDataClass>?>(null)
+    val searchPeople  : StateFlow<List<SearchDataClass>?> = _searchPeople
 
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
 
+    private val _searchTypeSelected = MutableStateFlow(SearchTypes.Collections.title)
+    val searchTypeSelected: StateFlow<String> = _searchTypeSelected
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -248,24 +265,44 @@ class AppViewModel @Inject constructor(
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
     private fun observeSearchQuery() {
+
+        val useCase: suspend (String) -> List<SearchDataClass> = when (_searchTypeSelected.value) {
+            SearchTypes.Collections.title -> { query -> getSearchCollectionUseCase(query) }
+            SearchTypes.Movies.title -> { query -> getSearchMovieUseCase(query) }
+            SearchTypes.TvSeries.title -> { query -> getSearchSeriesUseCase(query) }
+            else -> { query -> getSearchPeopleUseCase(query) }
+        }
+
+        val searchType = when (_searchTypeSelected.value) {
+            SearchTypes.Collections.title -> _searchCollection
+            SearchTypes.Movies.title -> _searchMovie
+            SearchTypes.TvSeries.title -> _searchSeries
+            else -> _searchPeople
+        }
+
         _query.debounce(500)
             .distinctUntilChanged()
             .flatMapLatest {query ->
                 flow {
                     try {
-                        emit(getSearchCollectionUseCase(query))
+                        emit(useCase(query))
                     } catch (e: Exception) {
                         emit(emptyList())
                     }
                 }
             }
             .flowOn(Dispatchers.IO)
-            .onEach { results -> _searchCollection.value = results }
+            .onEach { results -> searchType.value = results }
             .launchIn(viewModelScope)
     }
 
     fun onQueryChanged(newQuery: String) {
         _query.value = newQuery
+    }
+
+    fun onSearchTypeSelectedChange(newType:String){
+        _searchTypeSelected.value = newType
+        observeSearchQuery()
     }
 
     fun getPercentageColor(voteAverage: Int): Color {
@@ -287,7 +324,6 @@ class AppViewModel @Inject constructor(
         val formatter = NumberFormat.getInstance(Locale("es", "AR"))
         return formatter.format(value)
     }
-
 
     // MOVIES
 
@@ -406,15 +442,6 @@ class AppViewModel @Inject constructor(
             _peopleMediaImages.value = getPeopleMediaByIdUseCase(personId)
         }
     }
-
-    // SEARCHES
-
-    fun getSearchCollection(query:String){
-        viewModelScope.launch(Dispatchers.IO) {
-            _searchCollection.value = getSearchCollectionUseCase(query)
-        }
-    }
-
 
 
 }

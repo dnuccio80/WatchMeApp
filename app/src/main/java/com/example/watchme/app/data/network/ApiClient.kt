@@ -8,14 +8,18 @@ import com.example.watchme.app.data.network.responses.CreditsResponse
 import com.example.watchme.app.data.network.responses.EpisodeResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
+import com.example.watchme.app.data.network.responses.MovieSearchResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
 import com.example.watchme.app.data.network.responses.PeopleMovieInterpretationResponse
 import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretationResponse
+import com.example.watchme.app.data.network.responses.PersonSearch
+import com.example.watchme.app.data.network.responses.PersonSearchResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
 import com.example.watchme.app.data.network.responses.ReviewsResponse
 import com.example.watchme.app.data.network.responses.SeasonDetails
 import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
 import com.example.watchme.app.data.network.responses.SeriesResponse
+import com.example.watchme.app.data.network.responses.SeriesSearchResponse
 import com.example.watchme.app.data.network.responses.VideoResponse
 import com.example.watchme.core.constants.Constants
 import retrofit2.Response
@@ -139,6 +143,18 @@ interface ApiClient {
     @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
     @GET()
     suspend fun getCollectionSearch(@Url url:String): Response<CollectionSearchResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET()
+    suspend fun getMoviesSearch(@Url url:String): Response<MovieSearchResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET()
+    suspend fun getSeriesSearch(@Url url:String): Response<SeriesSearchResponse>
+
+    @Headers(Constants.ACCEPT_JSON,Constants.AUTHORIZATION_TOKEN_API)
+    @GET()
+    suspend fun getPeopleSearch(@Url url:String): Response<PersonSearchResponse>
 
 
 }

@@ -8,14 +8,18 @@ import com.example.watchme.app.data.network.responses.CreditsResponse
 import com.example.watchme.app.data.network.responses.EpisodeResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
+import com.example.watchme.app.data.network.responses.MovieSearchResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
 import com.example.watchme.app.data.network.responses.PeopleMovieInterpretationResponse
 import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretationResponse
+import com.example.watchme.app.data.network.responses.PersonSearch
+import com.example.watchme.app.data.network.responses.PersonSearchResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
 import com.example.watchme.app.data.network.responses.ReviewsResponse
 import com.example.watchme.app.data.network.responses.SeasonDetails
 import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
 import com.example.watchme.app.data.network.responses.SeriesResponse
+import com.example.watchme.app.data.network.responses.SeriesSearchResponse
 import com.example.watchme.app.data.network.responses.VideoResponse
 import com.example.watchme.core.constants.Constants
 import kotlinx.coroutines.Dispatchers
@@ -428,6 +432,47 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
+    suspend fun getSearchMovies(query: String): MovieSearchResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getMoviesSearch("search/movie?query=$query")
+            val body: MovieSearchResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception("Failed to fetch searched collection: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
+    suspend fun getSearchSeries(query: String): SeriesSearchResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getSeriesSearch("search/tv?query=$query")
+            val body: SeriesSearchResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception("Failed to fetch searched collection: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
+    suspend fun getSearchPeople(query: String): PersonSearchResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getPeopleSearch("search/person?query=$query")
+            val body: PersonSearchResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception("Failed to fetch searched collection: ${response.errorBody()?.string()}")
+            }
+        }
+    }
 
 
 }

@@ -52,7 +52,7 @@ import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
-import com.example.watchme.app.ui.dataClasses.CollectionSearchDataClass
+import com.example.watchme.app.ui.dataClasses.SearchDataClass
 import com.example.watchme.core.SearchTypes
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaButtonColor
@@ -68,7 +68,12 @@ fun SearchScreen(
 
 
     val query by viewModel.query.collectAsState()
+
     val searchCollection by viewModel.searchCollection.collectAsState()
+    val searchMovie by viewModel.searchMovie.collectAsState()
+    val searchSeries by viewModel.searchSeries.collectAsState()
+    val searchPeople by viewModel.searchPeople.collectAsState()
+    val searchTypeSelected by viewModel.searchTypeSelected.collectAsState()
 
     val searchList = listOf(
         SearchTypes.Collections,
@@ -77,7 +82,7 @@ fun SearchScreen(
         SearchTypes.People,
     )
 
-    var searchTypeSelected by rememberSaveable { mutableStateOf(searchList[0].title) }
+
 
 
     Box(
@@ -101,28 +106,22 @@ fun SearchScreen(
             )
             HorizontalDivider(Modifier.fillMaxWidth(), color = Color.Gray, thickness = 1.dp)
 
-            if (searchCollection.isNullOrEmpty()) {
-                Column {
-                    ThirdTitleTextItem(
-                        stringResource(R.string.select_search_type),
-                        modifier = Modifier.padding(16.dp),
-                        textAlign = TextAlign.Start
-                    )
-                    SearchTypeSection(searchList, searchTypeSelected) {newTypeSelected -> searchTypeSelected = newTypeSelected.title }
-                }
-            } else {
-                LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(16.dp),
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    items(searchCollection!!) {
-                        SearchingCardItem(it)
-                    }
-                }
+            Column {
+                ThirdTitleTextItem(
+                    stringResource(R.string.select_search_type),
+                    modifier = Modifier.padding(16.dp),
+                    textAlign = TextAlign.Start
+                )
+                SearchTypeSection(
+                    searchList,
+                    searchTypeSelected
+                ) { newTypeSelected -> viewModel.onSearchTypeSelectedChange(newTypeSelected.title) }
+            }
+            when (searchTypeSelected) {
+                SearchTypes.Collections.title -> SearchSection(searchCollection)
+                SearchTypes.TvSeries.title -> SearchSection(searchSeries)
+                SearchTypes.Movies.title -> SearchSection(searchMovie)
+                SearchTypes.People.title -> SearchSection(searchPeople)
             }
 
         }
@@ -146,6 +145,24 @@ fun SearchTypeSection(
 }
 
 @Composable
+fun SearchSection(searchList: List<SearchDataClass>?) {
+    if (!searchList.isNullOrEmpty()) {
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            horizontalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+        ) {
+            items(searchList!!) {
+                SearchingCardItem(it)
+            }
+        }
+    }
+}
+
+@Composable
 fun SearchCardItem(
     type: SearchTypes,
     searchTitleSelected: String,
@@ -153,15 +170,15 @@ fun SearchCardItem(
 ) {
 
     val isSelected = type.title == searchTitleSelected
-    
+
     val cardColor by animateColorAsState(
         targetValue = if (isSelected) CardContainerColor else AlphaButtonColor,
-        animationSpec = TweenSpec(300)
+        animationSpec = TweenSpec(300), label = ""
     )
 
     val cardSize by animateDpAsState(
         if (isSelected) 104.dp else 100.dp,
-        animationSpec = TweenSpec(300)
+        animationSpec = TweenSpec(300), label = ""
     )
 
     Card(
@@ -193,9 +210,9 @@ fun SearchCardItem(
 }
 
 @Composable
-fun SearchingCardItem(collection: CollectionSearchDataClass) {
+fun SearchingCardItem(searchData: SearchDataClass) {
 
-    val url = Constants.IMAGE_BASE_URL + collection.posterPath
+    val url = Constants.IMAGE_BASE_URL + searchData.posterPath
 
     Card(
         modifier = Modifier
@@ -227,7 +244,7 @@ fun SearchingCardItem(collection: CollectionSearchDataClass) {
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 ThirdTitleTextItem(
-                    collection.name,
+                    searchData.name,
                     TextAlign.Center,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
