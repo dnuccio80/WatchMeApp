@@ -181,12 +181,19 @@ fun SeriesInterpretations(
     if (seriesInterpretations == null) return
 
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        if (seriesInterpretations.cast.isNotEmpty()) ThirdTitleTextItem(
+            stringResource(R.string.cast),
+            textAlign = TextAlign.Start
+        )
         LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             items(seriesInterpretations.cast) {
                 SeriesInterpretationsCardItem(it) { seriesId -> onSeriesClicked(seriesId) }
             }
         }
-
+        if (seriesInterpretations.crew.isNotEmpty()) ThirdTitleTextItem(
+            stringResource(R.string.crew),
+            textAlign = TextAlign.Start
+        )
         LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             items(seriesInterpretations.crew) {
                 SeriesInterpretationsCardItem(it) { seriesId -> onSeriesClicked(seriesId) }
@@ -205,12 +212,19 @@ fun MovieInterpretations(
 
 
     Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        if (movieInterpretations.cast.isNotEmpty()) ThirdTitleTextItem(
+            stringResource(R.string.cast),
+            textAlign = TextAlign.Start
+        )
         LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             items(movieInterpretations.cast) {
                 MoviesInterpretationsCardItem(it) { movieId -> onMovieClicked(movieId) }
             }
         }
-
+        if (movieInterpretations.crew.isNotEmpty()) ThirdTitleTextItem(
+            stringResource(R.string.crew),
+            textAlign = TextAlign.Start
+        )
         LazyRow(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             items(movieInterpretations.crew) {
                 MoviesInterpretationsCardItem(it) { movieId -> onMovieClicked(movieId) }
@@ -243,7 +257,7 @@ fun SeriesInterpretationsCardItem(seriesData: SeriesDataClass, onSeriesClicked: 
                     .height(max(200.dp, 250.dp)),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(R.drawable.unknown_male),
-                error = painterResource(R.drawable.image_not_found)
+                error = painterResource(R.drawable.film_not_found)
             )
             Column(
                 Modifier
@@ -282,7 +296,7 @@ fun MoviesInterpretationsCardItem(movieData: MovieDataClass, onMovieClicked: (In
                     .height(max(200.dp, 250.dp)),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(R.drawable.loading_image),
-                error = painterResource(R.drawable.image_not_found)
+                error = painterResource(R.drawable.film_not_found)
             )
             Column(
                 Modifier
@@ -327,10 +341,12 @@ fun PeopleHeader(peopleDetails: PeopleDetailsDataClass?) {
             border = BorderStroke(4.dp, CardContainerColor)
         ) {
             AsyncImage(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(max(300.dp, 350.dp)),
                 model = Constants.IMAGE_BASE_URL + peopleDetails?.profilePath,
                 contentDescription = "people image",
-                error = painterResource(R.drawable.loading_image),
+                error = painterResource(R.drawable.unknown_male),
                 contentScale = ContentScale.Crop
             )
         }

@@ -231,7 +231,7 @@ fun BackdropImageItem(imageUrl: String) {
             modifier = Modifier.fillMaxSize(),
             contentScale = ContentScale.Crop,
             contentDescription = stringResource(R.string.movie_image),
-            error = painterResource(R.drawable.image_not_found)
+            error = painterResource(R.drawable.backdrop_path_not_found)
         )
     }
 }
@@ -485,7 +485,7 @@ fun VideosSection(
                     modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     placeholder = painterResource(R.drawable.loading_image),
-                    error = painterResource(R.drawable.image_not_found)
+                    error = painterResource(R.drawable.film_not_found)
                 )
                 NextPreviousButtonsRow(
                     index = index, size = size, modifier = Modifier

@@ -220,7 +220,7 @@ fun EpisodesSection(
                             contentDescription = stringResource(R.string.episode_image),
                             modifier = Modifier.size(140.dp),
                             contentScale = ContentScale.Crop,
-                            error = painterResource(R.drawable.image_not_found)
+                            error = painterResource(R.drawable.film_not_found)
                         )
                         Column(
                             Modifier

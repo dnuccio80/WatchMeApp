@@ -33,9 +33,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,8 +48,10 @@ import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.dataClasses.SearchDataClass
+import com.example.watchme.core.Routes
 import com.example.watchme.core.SearchTypes
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaButtonColor
@@ -66,9 +65,7 @@ fun SearchScreen(
     navController: NavHostController
 ) {
 
-
     val query by viewModel.query.collectAsState()
-
     val searchCollection by viewModel.searchCollection.collectAsState()
     val searchMovie by viewModel.searchMovie.collectAsState()
     val searchSeries by viewModel.searchSeries.collectAsState()
@@ -81,9 +78,6 @@ fun SearchScreen(
         SearchTypes.Movies,
         SearchTypes.People,
     )
-
-
-
 
     Box(
         Modifier
@@ -117,13 +111,15 @@ fun SearchScreen(
                     searchTypeSelected
                 ) { newTypeSelected -> viewModel.onSearchTypeSelectedChange(newTypeSelected.title) }
             }
-            when (searchTypeSelected) {
-                SearchTypes.Collections.title -> SearchSection(searchCollection)
-                SearchTypes.TvSeries.title -> SearchSection(searchSeries)
-                SearchTypes.Movies.title -> SearchSection(searchMovie)
-                SearchTypes.People.title -> SearchSection(searchPeople)
+            if(query.isEmpty()){
+                ThirdTitleTextItem(stringResource(R.string.try_type_something_search), textAlign = TextAlign.Center)
             }
-
+            when (searchTypeSelected) {
+                SearchTypes.Collections.title -> SearchSection(searchCollection, searchTypeSelected) {id -> navController.navigate(Routes.CollectionDetails.createRoute(id)) }
+                SearchTypes.TvSeries.title -> SearchSection(searchSeries, searchTypeSelected) {id -> navController.navigate(Routes.SeriesDetails.createRoute(id)) }
+                SearchTypes.Movies.title -> SearchSection(searchMovie, searchTypeSelected) {id -> navController.navigate(Routes.MovieDetails.createRoute(id)) }
+                SearchTypes.People.title -> SearchSection(searchPeople, searchTypeSelected) {id -> navController.navigate(Routes.PeopleDetails.createRoute(id)) }
+            }
         }
     }
 }
@@ -139,13 +135,13 @@ fun SearchTypeSection(
         modifier = Modifier.padding(8.dp)
     ) {
         items(searchList) { searchType ->
-            SearchCardItem(searchType, searchTypeSelected) { type -> onClick(type) }
+            SearchTypeCardItem(searchType, searchTypeSelected) { type -> onClick(type) }
         }
     }
 }
 
 @Composable
-fun SearchSection(searchList: List<SearchDataClass>?) {
+fun SearchSection(searchList: List<SearchDataClass>?, searchTypeSelected: String, onClick: (Int) -> Unit) {
     if (!searchList.isNullOrEmpty()) {
         LazyVerticalGrid(
             columns = GridCells.Fixed(2),
@@ -155,15 +151,15 @@ fun SearchSection(searchList: List<SearchDataClass>?) {
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
-            items(searchList!!) {
-                SearchingCardItem(it)
+            items(searchList) {
+                SearchingCardItem(it, searchTypeSelected) {id -> onClick(id) }
             }
         }
     }
 }
 
 @Composable
-fun SearchCardItem(
+fun SearchTypeCardItem(
     type: SearchTypes,
     searchTitleSelected: String,
     onClick: (SearchTypes) -> Unit
@@ -210,14 +206,24 @@ fun SearchCardItem(
 }
 
 @Composable
-fun SearchingCardItem(searchData: SearchDataClass) {
+fun SearchingCardItem(
+    searchData: SearchDataClass,
+    searchTypeSelected: String,
+    onClick: (Int) -> Unit
+) {
 
     val url = Constants.IMAGE_BASE_URL + searchData.posterPath
+
+    val errorImage = when (searchTypeSelected) {
+        SearchTypes.People.title -> R.drawable.unknown_male
+        else -> R.drawable.film_not_found
+    }
 
     Card(
         modifier = Modifier
             .width(190.dp)
             .clickable {
+                onClick(searchData.id)
             },
         shape = RoundedCornerShape(8.dp),
         elevation = CardDefaults.cardElevation(8.dp),
@@ -234,7 +240,7 @@ fun SearchingCardItem(searchData: SearchDataClass) {
                     .height(max(200.dp, 250.dp)),
                 contentScale = ContentScale.Crop,
                 placeholder = painterResource(R.drawable.loading_image),
-                error = painterResource(R.drawable.image_not_found)
+                error = painterResource(errorImage)
             )
             Column(
                 Modifier

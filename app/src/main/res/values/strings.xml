@@ -46,6 +46,7 @@
     <string name="last_episode_to_air">Last episode to air:</string>
     <string name="no_overview_available">Overview is not available</string>
     <string name="next_episode_to_air">Next episode to air:</string>
+    <string name="try_type_something_search">Try typing something in the search bar</string>
     <string name="seasons">seasons</string>
     <string name="season">Season</string>
     <string name="cast">Cast</string>
