@@ -12,7 +12,6 @@ import com.example.watchme.app.data.network.responses.MovieSearchResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
 import com.example.watchme.app.data.network.responses.PeopleMovieInterpretationResponse
 import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretationResponse
-import com.example.watchme.app.data.network.responses.PersonSearch
 import com.example.watchme.app.data.network.responses.PersonSearchResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
 import com.example.watchme.app.data.network.responses.RatingRequestDto
@@ -191,7 +190,8 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     suspend fun getCollectionDetailsById(collectionId: Int): CollectionResponse {
         return withContext(Dispatchers.IO) {
             val response =
-                retrofit.create(ApiClient::class.java).getCollectionDetailsById("collection/$collectionId")
+                retrofit.create(ApiClient::class.java)
+                    .getCollectionDetailsById("collection/$collectionId")
             val body: CollectionResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -413,7 +413,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             if (response.isSuccessful && body != null) {
                 body
             } else {
-                throw Exception("Failed to fetch episode details: ${response.errorBody()?.string()}")
+                throw Exception(
+                    "Failed to fetch episode details: ${
+                        response.errorBody()?.string()
+                    }"
+                )
             }
         }
     }
@@ -429,7 +433,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             if (response.isSuccessful && body != null) {
                 body
             } else {
-                throw Exception("Failed to fetch searched collection: ${response.errorBody()?.string()}")
+                throw Exception(
+                    "Failed to fetch searched collection: ${
+                        response.errorBody()?.string()
+                    }"
+                )
             }
         }
     }
@@ -443,7 +451,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             if (response.isSuccessful && body != null) {
                 body
             } else {
-                throw Exception("Failed to fetch searched collection: ${response.errorBody()?.string()}")
+                throw Exception(
+                    "Failed to fetch searched collection: ${
+                        response.errorBody()?.string()
+                    }"
+                )
             }
         }
     }
@@ -457,7 +469,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             if (response.isSuccessful && body != null) {
                 body
             } else {
-                throw Exception("Failed to fetch searched collection: ${response.errorBody()?.string()}")
+                throw Exception(
+                    "Failed to fetch searched collection: ${
+                        response.errorBody()?.string()
+                    }"
+                )
             }
         }
     }
@@ -471,21 +487,120 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             if (response.isSuccessful && body != null) {
                 body
             } else {
-                throw Exception("Failed to fetch searched collection: ${response.errorBody()?.string()}")
+                throw Exception(
+                    "Failed to fetch searched collection: ${
+                        response.errorBody()?.string()
+                    }"
+                )
             }
         }
     }
 
-    suspend fun rateMovie(movieId: Int, rating: Float) : RatingResponse {
+    // RATING MOVIE
+
+    suspend fun rateMovie(movieId: Int, rating: Float): RatingResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .rateMovie(RatingRequestDto(rating), "movie/$movieId/rating")
+                .rateItem(RatingRequestDto(rating), "movie/$movieId/rating")
             val body: RatingResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
                 body
             } else {
-                throw Exception("Failed to fetch searched collection: ${response.errorBody()?.string()}")
+                throw Exception(
+                    "Failed to rate movie: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun deleteRateMovie(movieId: Int): RatingResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .deleteRate("movie/$movieId/rating")
+            val body: RatingResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to delete rate movie: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+
+    suspend fun rateSeries(seriesId: Int, rating: Float): RatingResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .rateItem(RatingRequestDto(rating), "tv/$seriesId/rating")
+            val body: RatingResponse? = response.body()
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to rate series: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun deleteRateSeries(seriesId: Int): RatingResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .deleteRate("tv/$seriesId/rating")
+            val body: RatingResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to delete rate: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun rateSeriesEpisodes(seriesId: Int, seasonNumber: Int, episodeNumber: Int, rating: Float): RatingResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .rateItem(RatingRequestDto(rating), "tv/$seriesId/season/$seasonNumber/episode/$episodeNumber/rating")
+            val body: RatingResponse? = response.body()
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to rate series episodes: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun deleteRateSeriesEpisodes(seriesId: Int, seasonNumber: Int, episodeNumber: Int): RatingResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .deleteRate("tv/$seriesId/season/$seasonNumber/episode/$episodeNumber/rating")
+            val body: RatingResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to delete rate series episode: ${
+                        response.errorBody()?.string()
+                    }"
+                )
             }
         }
     }

@@ -25,6 +25,7 @@ import com.example.watchme.app.data.network.responses.VideoResponse
 import com.example.watchme.core.constants.Constants
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Query
@@ -131,10 +132,13 @@ interface ApiClient {
     @GET("search/person")
     suspend fun getPeopleSearch(@Query("query") query:String): Response<PersonSearchResponse>
 
-    // RATING
+    // RATING - MOVIES
 
     @POST
-    suspend fun rateMovie(@Body ratingRequest: RatingRequestDto, @Url url:String): Response<RatingResponse>
+    suspend fun rateItem(@Body ratingRequest: RatingRequestDto, @Url url:String): Response<RatingResponse>
+
+    @DELETE
+    suspend fun deleteRate(@Url url:String): Response<RatingResponse>
 
 }
 

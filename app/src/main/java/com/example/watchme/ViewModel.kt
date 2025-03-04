@@ -21,7 +21,12 @@ import com.example.watchme.app.domain.people.GetPeopleMediaByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleMovieInterpretationsByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleSeriesInterpretationsByIdUseCase
 import com.example.watchme.app.domain.providers.GetProvidersUseCase
+import com.example.watchme.app.domain.rating.DeleteRateMovieUseCase
+import com.example.watchme.app.domain.rating.DeleteRateSeriesEpisodeUseCase
+import com.example.watchme.app.domain.rating.DeleteRateSeriesUseCase
 import com.example.watchme.app.domain.rating.RateMovieUseCase
+import com.example.watchme.app.domain.rating.RateSeriesEpisodeUseCase
+import com.example.watchme.app.domain.rating.RateSeriesUseCase
 import com.example.watchme.app.domain.searches.GetSearchCollectionUseCase
 import com.example.watchme.app.domain.searches.GetSearchMovieUseCase
 import com.example.watchme.app.domain.searches.GetSearchPeopleUseCase
@@ -48,6 +53,7 @@ import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleSeriesInterpretationDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
+import com.example.watchme.app.ui.dataClasses.RatingDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
@@ -126,6 +132,11 @@ class AppViewModel @Inject constructor(
     // RATING
 
     private val rateMovieUseCase: RateMovieUseCase,
+    private val deleteRateMovieUseCase: DeleteRateMovieUseCase,
+    private val rateSeriesUseCase: RateSeriesUseCase,
+    private val deleteRateSeriesUseCase: DeleteRateSeriesUseCase,
+    private val rateSeriesEpisodeUseCase: RateSeriesEpisodeUseCase,
+    private val deleteRateSeriesEpisodeUseCase: DeleteRateSeriesEpisodeUseCase,
 
 
     ) : ViewModel() {
@@ -229,24 +240,25 @@ class AppViewModel @Inject constructor(
 
     private val _peopleSeriesInterpretations =
         MutableStateFlow<PeopleSeriesInterpretationDataClass?>(null)
-    val peopleSeriesInterpretations: StateFlow<PeopleSeriesInterpretationDataClass?> = _peopleSeriesInterpretations
+    val peopleSeriesInterpretations: StateFlow<PeopleSeriesInterpretationDataClass?> =
+        _peopleSeriesInterpretations
 
     private val _peopleMediaImages = MutableStateFlow<List<BackdropImageDataClass>?>(null)
-    val peopleMediaImages : StateFlow<List<BackdropImageDataClass>?> = _peopleMediaImages
+    val peopleMediaImages: StateFlow<List<BackdropImageDataClass>?> = _peopleMediaImages
 
     // SEARCHES
 
     private val _searchCollection = MutableStateFlow<List<SearchDataClass>?>(null)
-    val searchCollection : StateFlow<List<SearchDataClass>?> = _searchCollection
+    val searchCollection: StateFlow<List<SearchDataClass>?> = _searchCollection
 
     private val _searchMovie = MutableStateFlow<List<SearchDataClass>?>(null)
-    val searchMovie : StateFlow<List<SearchDataClass>?> = _searchMovie
+    val searchMovie: StateFlow<List<SearchDataClass>?> = _searchMovie
 
-    private val _searchSeries =  MutableStateFlow<List<SearchDataClass>?>(null)
-    val searchSeries  : StateFlow<List<SearchDataClass>?> = _searchSeries
+    private val _searchSeries = MutableStateFlow<List<SearchDataClass>?>(null)
+    val searchSeries: StateFlow<List<SearchDataClass>?> = _searchSeries
 
     private val _searchPeople = MutableStateFlow<List<SearchDataClass>?>(null)
-    val searchPeople  : StateFlow<List<SearchDataClass>?> = _searchPeople
+    val searchPeople: StateFlow<List<SearchDataClass>?> = _searchPeople
 
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
@@ -256,8 +268,9 @@ class AppViewModel @Inject constructor(
 
     // RATING
 
-    private val _rating = MutableStateFlow<RatingResponse?>(null)
-    val rating: StateFlow<RatingResponse?> = _rating
+    private val _rating = MutableStateFlow<RatingDataClass?>(null)
+    val rating: StateFlow<RatingDataClass?> = _rating
+
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -293,7 +306,7 @@ class AppViewModel @Inject constructor(
 
         _query.debounce(500)
             .distinctUntilChanged()
-            .flatMapLatest {query ->
+            .flatMapLatest { query ->
                 flow {
                     try {
                         emit(useCase(query))
@@ -311,7 +324,7 @@ class AppViewModel @Inject constructor(
         _query.value = newQuery
     }
 
-    fun onSearchTypeSelectedChange(newType:String){
+    fun onSearchTypeSelectedChange(newType: String) {
         _searchTypeSelected.value = newType
         observeSearchQuery()
     }
@@ -327,7 +340,7 @@ class AppViewModel @Inject constructor(
     fun getRunTimeInHours(minutes: Int): String {
         val hours = minutes / 60
         val remainingMinutes = minutes % 60
-        return if(hours != 0) "${hours}h ${remainingMinutes}m"
+        return if (hours != 0) "${hours}h ${remainingMinutes}m"
         else "${remainingMinutes}m"
     }
 
@@ -376,7 +389,7 @@ class AppViewModel @Inject constructor(
 
     // COLLECTIONS
 
-    fun getCollectionDetailsById(collectionId:Int) {
+    fun getCollectionDetailsById(collectionId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _collectionDetails.value = getCollectionDetailsByIdUseCase(collectionId)
         }
@@ -424,7 +437,8 @@ class AppViewModel @Inject constructor(
 
     fun getEpisodeDetailsById(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _episodeDetails.value = getEpisodeDetailsByIdUseCase(seriesId, seasonNumber, episodeNumber)
+            _episodeDetails.value =
+                getEpisodeDetailsByIdUseCase(seriesId, seasonNumber, episodeNumber)
         }
     }
 
@@ -448,7 +462,7 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun getPeopleMediaById(personId: Int){
+    fun getPeopleMediaById(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _peopleMediaImages.value = getPeopleMediaByIdUseCase(personId)
         }
@@ -456,9 +470,43 @@ class AppViewModel @Inject constructor(
 
     // RATING
 
-    fun rateMovie(value:Float, movieId:Int){
+    fun rateMovie(value: Float, movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _rating.value = rateMovieUseCase(rating = value, movieId = movieId)
+        }
+    }
+
+    fun deleteRateMovie(movieId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _rating.value = deleteRateMovieUseCase(movieId)
+        }
+    }
+
+    fun rateSeries(value: Float, seriesId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _rating.value = rateSeriesUseCase(rating = value, seriesId = seriesId)
+        }
+    }
+
+    fun deleteRateSeries(seriesId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _rating.value = deleteRateSeriesUseCase(seriesId)
+        }
+    }
+
+    fun rateSeriesEpisodes(value: Float, seriesId: Int, episodeNumber: Int, seasonNumber: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _rating.value = rateSeriesEpisodeUseCase(rating = value, seriesId = seriesId, episodeNumber = episodeNumber, seasonNumber = seasonNumber)
+        }
+    }
+
+    fun deleteRateSeriesEpisodes(seriesId: Int, episodeNumber: Int, seasonNumber: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _rating.value = deleteRateSeriesEpisodeUseCase(
+                seriesId = seriesId,
+                episodeNumber = episodeNumber,
+                seasonNumber = seasonNumber
+            )
         }
     }
 
