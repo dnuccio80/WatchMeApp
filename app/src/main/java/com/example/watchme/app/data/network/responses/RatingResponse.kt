@@ -1,0 +1,13 @@
+package com.example.watchme.app.data.network.responses
+
+import com.google.gson.annotations.SerializedName
+
+data class RatingResponse(
+    @SerializedName("success") val success:Boolean,
+    @SerializedName("status_message") val statusMessage:String,
+)
+
+// Dto = data transfer object
+data class RatingRequestDto(
+    val value:Float
+)

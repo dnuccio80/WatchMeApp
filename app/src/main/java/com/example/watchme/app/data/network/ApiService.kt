@@ -15,6 +15,8 @@ import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretation
 import com.example.watchme.app.data.network.responses.PersonSearch
 import com.example.watchme.app.data.network.responses.PersonSearchResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
+import com.example.watchme.app.data.network.responses.RatingRequestDto
+import com.example.watchme.app.data.network.responses.RatingResponse
 import com.example.watchme.app.data.network.responses.ReviewsResponse
 import com.example.watchme.app.data.network.responses.SeasonDetails
 import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
@@ -465,6 +467,20 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             val response = retrofit.create(ApiClient::class.java)
                 .getPeopleSearch(query)
             val body: PersonSearchResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception("Failed to fetch searched collection: ${response.errorBody()?.string()}")
+            }
+        }
+    }
+
+    suspend fun rateMovie(movieId: Int, rating: Float) : RatingResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .rateMovie(RatingRequestDto(rating), "movie/$movieId/rating")
+            val body: RatingResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
                 body

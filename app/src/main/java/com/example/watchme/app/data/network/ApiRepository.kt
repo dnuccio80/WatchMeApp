@@ -1,5 +1,6 @@
 package com.example.watchme.app.data.network
 
+import com.example.watchme.app.data.network.responses.RatingResponse
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
 import com.example.watchme.app.data.network.responses.toCollectionDataClass
 import com.example.watchme.app.data.network.responses.toSearchDataClass
@@ -178,6 +179,12 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun getSearchPeople(query:String): List<SearchDataClass> {
         return apiService.getSearchPeople(query).toSearchDataClass()
+    }
+
+    // RATING
+
+    suspend fun rateMovie(rating: Float, movieId: Int): RatingResponse {
+        return apiService.rateMovie(rating = rating, movieId =  movieId)
     }
 
 }

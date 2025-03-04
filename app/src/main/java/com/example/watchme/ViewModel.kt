@@ -3,6 +3,7 @@ package com.example.watchme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.watchme.app.data.network.responses.RatingResponse
 import com.example.watchme.app.domain.collections.GetCollectionDetailsByIdUseCase
 import com.example.watchme.app.domain.episodes.GetEpisodeDetailsByIdUseCase
 import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
@@ -20,6 +21,7 @@ import com.example.watchme.app.domain.people.GetPeopleMediaByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleMovieInterpretationsByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleSeriesInterpretationsByIdUseCase
 import com.example.watchme.app.domain.providers.GetProvidersUseCase
+import com.example.watchme.app.domain.rating.RateMovieUseCase
 import com.example.watchme.app.domain.searches.GetSearchCollectionUseCase
 import com.example.watchme.app.domain.searches.GetSearchMovieUseCase
 import com.example.watchme.app.domain.searches.GetSearchPeopleUseCase
@@ -120,6 +122,10 @@ class AppViewModel @Inject constructor(
     private val getSearchMovieUseCase: GetSearchMovieUseCase,
     private val getSearchSeriesUseCase: GetSearchSeriesUseCase,
     private val getSearchPeopleUseCase: GetSearchPeopleUseCase,
+
+    // RATING
+
+    private val rateMovieUseCase: RateMovieUseCase,
 
 
     ) : ViewModel() {
@@ -247,6 +253,11 @@ class AppViewModel @Inject constructor(
 
     private val _searchTypeSelected = MutableStateFlow(SearchTypes.Collections.title)
     val searchTypeSelected: StateFlow<String> = _searchTypeSelected
+
+    // RATING
+
+    private val _rating = MutableStateFlow<RatingResponse?>(null)
+    val rating: StateFlow<RatingResponse?> = _rating
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -440,6 +451,14 @@ class AppViewModel @Inject constructor(
     fun getPeopleMediaById(personId: Int){
         viewModelScope.launch(Dispatchers.IO) {
             _peopleMediaImages.value = getPeopleMediaByIdUseCase(personId)
+        }
+    }
+
+    // RATING
+
+    fun rateMovie(value:Float, movieId:Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            _rating.value = rateMovieUseCase(rating = value, movieId = movieId)
         }
     }
 

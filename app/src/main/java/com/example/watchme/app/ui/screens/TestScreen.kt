@@ -1,0 +1,73 @@
+package com.example.watchme.app.ui.screens
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderState
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.example.watchme.AppViewModel
+import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.ThirdTitleTextItem
+import com.example.watchme.ui.theme.AppBackground
+
+@Composable
+fun TestScreen(innerPadding: PaddingValues, viewModel: AppViewModel) {
+
+    val ratedMovie by viewModel.rating.collectAsState()
+
+    Box(
+        Modifier
+            .fillMaxSize()
+            .background(AppBackground)
+            .padding(innerPadding)
+    ) {
+
+        var sliderValue by rememberSaveable { mutableStateOf(0f) }
+
+        Column(
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Slider(
+                value = sliderValue,
+                onValueChange = { newValue ->
+                    val valueFormated = String.format("%.1f", newValue).toFloat()
+                    sliderValue = valueFormated
+                },
+                valueRange = 0.5f..10f,
+                steps = 18
+            )
+            ThirdTitleTextItem(sliderValue.toString())
+            Button(
+                onClick = {
+                    viewModel.rateMovie(
+                        value = sliderValue,
+                        movieId = 15
+                    )
+                },
+                modifier = Modifier.align(Alignment.CenterHorizontally)
+            ) {
+                BodyTextItem("SEND")
+            }
+            BodyTextItem(ratedMovie?.statusMessage.toString())
+        }
+    }
+}

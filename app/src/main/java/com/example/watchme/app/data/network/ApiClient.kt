@@ -12,9 +12,10 @@ import com.example.watchme.app.data.network.responses.MovieSearchResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
 import com.example.watchme.app.data.network.responses.PeopleMovieInterpretationResponse
 import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretationResponse
-import com.example.watchme.app.data.network.responses.PersonSearch
 import com.example.watchme.app.data.network.responses.PersonSearchResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
+import com.example.watchme.app.data.network.responses.RatingRequestDto
+import com.example.watchme.app.data.network.responses.RatingResponse
 import com.example.watchme.app.data.network.responses.ReviewsResponse
 import com.example.watchme.app.data.network.responses.SeasonDetails
 import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
@@ -25,7 +26,6 @@ import com.example.watchme.core.constants.Constants
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
-import retrofit2.http.Headers
 import retrofit2.http.POST
 import retrofit2.http.Query
 import retrofit2.http.Url
@@ -133,7 +133,8 @@ interface ApiClient {
 
     // RATING
 
-//    @POST
-//    suspend fun postRating(): Response<Unit>
+    @POST
+    suspend fun rateMovie(@Body ratingRequest: RatingRequestDto, @Url url:String): Response<RatingResponse>
 
 }
+
