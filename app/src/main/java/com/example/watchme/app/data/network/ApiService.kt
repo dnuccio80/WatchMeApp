@@ -421,7 +421,7 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     suspend fun getSearchCollection(query: String): CollectionSearchResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getCollectionSearch("search/collection?query=$query")
+                .getCollectionSearch(query)
             val body: CollectionSearchResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -435,7 +435,7 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     suspend fun getSearchMovies(query: String): MovieSearchResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getMoviesSearch("search/movie?query=$query")
+                .getMoviesSearch(query)
             val body: MovieSearchResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -449,7 +449,7 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     suspend fun getSearchSeries(query: String): SeriesSearchResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getSeriesSearch("search/tv?query=$query")
+                .getSeriesSearch(query)
             val body: SeriesSearchResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -463,7 +463,7 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     suspend fun getSearchPeople(query: String): PersonSearchResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getPeopleSearch("search/person?query=$query")
+                .getPeopleSearch(query)
             val body: PersonSearchResponse? = response.body()
 
             if (response.isSuccessful && body != null) {

@@ -27,6 +27,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.POST
+import retrofit2.http.Query
 import retrofit2.http.Url
 
 interface ApiClient {
@@ -118,17 +119,17 @@ interface ApiClient {
 
     // SEARCHES
 
-    @GET()
-    suspend fun getCollectionSearch(@Url url:String): Response<CollectionSearchResponse>
+    @GET("search/collection")
+    suspend fun getCollectionSearch(@Query("query") query:String): Response<CollectionSearchResponse>
 
-    @GET()
-    suspend fun getMoviesSearch(@Url url:String): Response<MovieSearchResponse>
+    @GET("search/movie")
+    suspend fun getMoviesSearch(@Query("query") query:String): Response<MovieSearchResponse>
 
-    @GET()
-    suspend fun getSeriesSearch(@Url url:String): Response<SeriesSearchResponse>
+    @GET("search/tv")
+    suspend fun getSeriesSearch(@Query("query") query:String): Response<SeriesSearchResponse>
 
-    @GET()
-    suspend fun getPeopleSearch(@Url url:String): Response<PersonSearchResponse>
+    @GET("search/person")
+    suspend fun getPeopleSearch(@Query("query") query:String): Response<PersonSearchResponse>
 
     // RATING
 
