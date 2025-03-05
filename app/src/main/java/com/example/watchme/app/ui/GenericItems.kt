@@ -257,13 +257,9 @@ fun CircularButtonIcon(icon: ImageVector, onClick: () -> Unit) {
 @Composable
 fun RateDialog(
     show: Boolean,
-    title: String,
-    id: Int,
-    episodeNumber: Int = 0,
-    seasonNumber: Int = 0,
     percentage: Int,
+    mediaItem: MediaItem,
     viewModel: AppViewModel,
-    categoryType: Categories,
     onDismiss: () -> Unit
 ) {
 
@@ -276,7 +272,7 @@ fun RateDialog(
 
     var isSeriesEpisode = false
 
-    val rateCall = when (categoryType) {
+    val rateCall = when (mediaItem.category) {
         is Categories.Movies -> {
             viewModel::rateMovie
         }
@@ -287,7 +283,7 @@ fun RateDialog(
 
         is Categories.TvEpisodes -> {
             isSeriesEpisode = true
-            return
+            viewModel::rateSeries // this does not a function, it is only because for avoid errors
         }
 
         else -> {
@@ -295,12 +291,16 @@ fun RateDialog(
         }
     }
 
-    val deleteRateCall = when (categoryType) {
+    val deleteRateCall = when (mediaItem.category) {
         is Categories.Movies -> {
             viewModel::deleteRateMovie
         }
 
         is Categories.TvSeries -> {
+            viewModel::deleteRateSeries
+        }
+
+        is Categories.TvEpisodes -> {
             viewModel::deleteRateSeries
         }
 
@@ -343,7 +343,7 @@ fun RateDialog(
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     TitleSubtitleItem(
-                        "${stringResource(R.string.question_rating)} $title?",
+                        "${stringResource(R.string.question_rating)} ${mediaItem.title}?",
                         "$percentage% ${stringResource(R.string.user_score)}"
                     )
                 }
@@ -372,12 +372,12 @@ fun RateDialog(
                             if (isSeriesEpisode) {
                                 viewModel.rateSeriesEpisodes(
                                     sliderValue,
-                                    id,
-                                    episodeNumber,
-                                    seasonNumber
+                                    seriesId = mediaItem.id,
+                                    episodeNumber = mediaItem.episodeNumber,
+                                    seasonNumber = mediaItem.seasonNumber
                                 )
                             } else {
-                                rateCall(sliderValue, id)
+                                rateCall(sliderValue, mediaItem.id)
                             }
                             onDismiss()
                         },
@@ -392,9 +392,9 @@ fun RateDialog(
                     Button(
                         onClick = {
                             if (isSeriesEpisode) {
-                                viewModel.deleteRateSeriesEpisodes(id, episodeNumber, seasonNumber)
+                                viewModel.deleteRateSeriesEpisodes(mediaItem.id, mediaItem.episodeNumber, mediaItem.seasonNumber)
                             } else {
-                                deleteRateCall(id)
+                                deleteRateCall(mediaItem.id)
                             }
                             onDismiss()
                         },
@@ -957,11 +957,9 @@ fun RatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
 
         RateDialog(
             show = showDialog,
-            title = mediaItem.title,
-            id = mediaItem.id,
             percentage = percentage,
             viewModel = viewModel,
-            categoryType = mediaItem.category
+            mediaItem = mediaItem,
         ) { showDialog = false }
     }
 }

@@ -27,12 +27,14 @@ import com.example.watchme.R
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.RatingSection
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleTextItem
+import com.example.watchme.core.Categories
+import com.example.watchme.core.MediaItem
 import com.example.watchme.core.Routes
 import com.example.watchme.ui.theme.AppBackground
-import retrofit2.http.Body
 
 @Composable
 fun EpisodesDetailsScreen(
@@ -40,15 +42,17 @@ fun EpisodesDetailsScreen(
     viewModel: AppViewModel,
     navController: NavHostController,
     seriesId: Int,
-    episodeId: Int,
+    episodeNumber: Int,
     seasonNumber: Int
 ) {
 
     val episodeDetails by viewModel.episodeDetails.collectAsState()
 
-    viewModel.getEpisodeDetailsById(seriesId, seasonNumber, episodeId)
+    viewModel.getEpisodeDetailsById(seriesId, seasonNumber, episodeNumber)
 
     val runtime = episodeDetails?.runtime?.let { viewModel.getRunTimeInHours(it) }
+
+    if(episodeDetails == null) return
 
     Box(
         Modifier
@@ -85,6 +89,17 @@ fun EpisodesDetailsScreen(
                             R.string.episode
                         )
                     } ${episodeDetails?.episodeNumber} - $runtime"
+                )
+                RatingSection(
+                    mediaItem = MediaItem(
+                        id = seriesId,
+                        title = episodeDetails!!.name,
+                        voteAverage = episodeDetails!!.voteAverage?:0f,
+                        seasonNumber = seasonNumber,
+                        episodeNumber = episodeDetails!!.episodeNumber,
+                        category = Categories.TvEpisodes
+                    ),
+                    viewModel = viewModel
                 )
 
                 if(episodeDetails?.overview.isNullOrEmpty() && episodeDetails?.guestStars?.isEmpty() == true && episodeDetails?.crew?.isEmpty() == true){
