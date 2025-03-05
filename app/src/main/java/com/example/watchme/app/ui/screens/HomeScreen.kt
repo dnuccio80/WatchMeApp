@@ -358,9 +358,9 @@ fun TopRatedCardItem(movie: MovieDataClass, viewModel: AppViewModel, onClick: (I
                     .fillMaxSize()
             )
             PercentageVisualItem(
-                votePercentage,
-                Modifier.align(Alignment.TopStart),
-                viewModel.getPercentageColor(votePercentage)
+                percentage = votePercentage,
+                modifier = Modifier.align(Alignment.TopStart),
+                cardColor = viewModel.getPercentageColor(votePercentage)
             )
         }
     }

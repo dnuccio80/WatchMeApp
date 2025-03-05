@@ -48,21 +48,8 @@ fun TestScreen(innerPadding: PaddingValues, viewModel: AppViewModel) {
                 .fillMaxWidth()
                 .padding(16.dp), verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Slider(
-                value = sliderValue,
-                onValueChange = { newValue ->
-                    val valueFormated = String.format("%.1f", newValue).toFloat()
-                    sliderValue = valueFormated
-                },
-                valueRange = 0.5f..10f,
-                steps = 18,
-                colors = SliderDefaults.colors(
-                    thumbColor = Color.Magenta,
-                    activeTrackColor = CardContainerColor,
-                    inactiveTrackColor = AlphaButtonColor
-                )
-            )
-            ThirdTitleTextItem(sliderValue.toString())
+
+
             Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.Absolute.SpaceEvenly) {
                 Button(
                     onClick = {

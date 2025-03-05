@@ -15,6 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import com.example.watchme.app.ui.BottomBar
 import com.example.watchme.app.ui.TopBar
+import com.example.watchme.app.ui.screens.MovieDetailsScreen
+import com.example.watchme.app.ui.screens.SeriesDetailsScreen
+import com.example.watchme.app.ui.screens.SeriesDetailsSection
 import com.example.watchme.app.ui.screens.TestScreen
 import com.example.watchme.core.Routes
 import com.example.watchme.ui.theme.WatchMeTheme
@@ -140,7 +143,8 @@ class MainActivity : ComponentActivity() {
 //                        }
 //                    }
 //                    SearchScreen(innerPadding, viewModel, navController)
-                    TestScreen(innerPadding, viewModel)
+//                    TestScreen(innerPadding, viewModel)
+                        SeriesDetailsScreen(innerPadding, viewModel,navController, 1434)
                 }
             }
         }

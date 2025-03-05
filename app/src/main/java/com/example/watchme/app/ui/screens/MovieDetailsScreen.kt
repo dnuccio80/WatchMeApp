@@ -1,5 +1,6 @@
 package com.example.watchme.app.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -9,24 +10,27 @@ import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyRow
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.List
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -36,8 +40,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -48,27 +52,29 @@ import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
-import com.example.watchme.app.data.network.responses.Movie
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.CircularButtonIcon
 import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
-import com.example.watchme.app.ui.ImageListItem
 import com.example.watchme.app.ui.NextPreviousButtonsRow
+import com.example.watchme.app.ui.PercentageVisualItem
+import com.example.watchme.app.ui.RateDialog
+import com.example.watchme.app.ui.RatingSection
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SectionSelectionItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleSubtitleItem
-import com.example.watchme.app.ui.VideosSection
 import com.example.watchme.app.ui.dataClasses.CastCreditDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDataClass
 import com.example.watchme.app.ui.dataClasses.CrewCreditDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
-import com.example.watchme.app.ui.dataClasses.SeriesDataClass
+import com.example.watchme.core.Categories
+import com.example.watchme.core.MediaItem
 import com.example.watchme.core.Routes
 import com.example.watchme.core.Sections
 import com.example.watchme.core.constants.Constants
@@ -82,7 +88,6 @@ fun MovieDetailsScreen(
     navController: NavHostController,
     movieId: Int
 ) {
-
     viewModel.getMovieDetailsById(movieId)
     viewModel.getMovieCreditsById(movieId)
     viewModel.getMovieImageListById(movieId)
@@ -107,6 +112,7 @@ fun MovieDetailsScreen(
         Sections.Media.title,
         Sections.Credits.title,
     )
+
 
     Box(
         Modifier
@@ -140,13 +146,29 @@ fun MovieDetailsScreen(
                     Modifier.align(Alignment.CenterHorizontally)
                 )
                 movieDetails?.let { SecondTitleTextItem(it.title) }
+                if (movieDetails != null) {
+                    RatingSection(
+                        MediaItem(
+                            id = movieId,
+                            title = movieDetails!!.title,
+                            voteAverage = movieDetails!!.voteAverage,
+                            category = Categories.Movies
+                        ), viewModel
+                    )
+                }
+                Spacer(Modifier.size(0.dp))
                 SectionSelectionItem(sectionList) { newSectionSelected ->
                     sectionSelected = newSectionSelected
                 }
                 when (sectionSelected.lowercase()) {
-                    Sections.Details.title -> OverviewSection(movieDetails, runTime, viewModel) { collectionId ->
+                    Sections.Details.title -> OverviewSection(
+                        movieDetails,
+                        runTime,
+                        viewModel
+                    ) { collectionId ->
                         navController.navigate(
-                            Routes.CollectionDetails.createRoute(collectionId))
+                            Routes.CollectionDetails.createRoute(collectionId)
+                        )
                     }
 
                     Sections.Suggested.title -> MoviesRecommendationsSection(recommendations) { movieId ->
@@ -168,20 +190,29 @@ fun MovieDetailsScreen(
 }
 
 
+
+
 @Composable
 private fun OverviewSection(
     movieDetails: DetailsMovieDataClass?,
     runTime: String,
     viewModel: AppViewModel,
-    onCollectionButtonClicked:(Int) -> Unit
+    onCollectionButtonClicked: (Int) -> Unit
 ) {
+
+
     SecondTitleTextItem(movieDetails?.title.toString(), TextAlign.Start)
-    if(movieDetails?.overview.isNullOrEmpty()) {
+    if (movieDetails?.overview.isNullOrEmpty()) {
         BodyTextItem(stringResource(R.string.no_overview_available))
     } else {
         movieDetails?.overview?.let { BodyTextItem(it) }
     }
-    CollectionItem(movieDetails?.collection) { collectionId -> onCollectionButtonClicked(collectionId) }
+
+    CollectionItem(movieDetails?.collection) { collectionId ->
+        onCollectionButtonClicked(
+            collectionId
+        )
+    }
     movieDetails?.releaseDate?.let {
         TitleSubtitleItem(
             stringResource(R.string.release_date),
@@ -196,7 +227,7 @@ private fun OverviewSection(
             it.joinToString(separator = ", ")
         )
     }
-    TitleSubtitleItem("Runtime", if(runTime == "0m") stringResource(R.string.unknown) else runTime)
+    TitleSubtitleItem("Runtime", if (runTime == "0m") stringResource(R.string.unknown) else runTime)
     movieDetails?.budget?.let { viewModel.formatPrice(it) }?.let {
         val budget = if (it == "0") stringResource(R.string.unknown) else "$$it"
         TitleSubtitleItem(

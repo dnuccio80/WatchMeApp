@@ -58,6 +58,7 @@ import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.ImageListItem
+import com.example.watchme.app.ui.RatingSection
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SectionSelectionItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
@@ -70,6 +71,8 @@ import com.example.watchme.app.ui.dataClasses.SeasonDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
+import com.example.watchme.core.Categories
+import com.example.watchme.core.MediaItem
 import com.example.watchme.core.Routes
 import com.example.watchme.core.Sections
 import com.example.watchme.core.constants.Constants
@@ -143,6 +146,18 @@ fun SeriesDetailsScreen(
                     Modifier.align(Alignment.CenterHorizontally)
                 )
                 seriesDetails?.name?.let { SecondTitleTextItem(it) }
+                if(seriesDetails != null) {
+                    RatingSection(
+                        MediaItem(
+                            id = seriesId,
+                            title = seriesDetails!!.name,
+                            voteAverage = seriesDetails!!.voteAverage?:0f,
+                            category = Categories.TvSeries
+                        ),
+                        viewModel = viewModel
+                    )
+
+                }
                 SeriesOverviewSection(seriesDetails)
                 Spacer(Modifier.size(16.dp))
                 SectionSelectionItem(sectionList) { newSectionSelected ->

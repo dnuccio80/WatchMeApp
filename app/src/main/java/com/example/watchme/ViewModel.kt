@@ -3,7 +3,6 @@ package com.example.watchme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.watchme.app.data.network.responses.RatingResponse
 import com.example.watchme.app.domain.collections.GetCollectionDetailsByIdUseCase
 import com.example.watchme.app.domain.episodes.GetEpisodeDetailsByIdUseCase
 import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
@@ -58,7 +57,7 @@ import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
-import com.example.watchme.core.SearchTypes
+import com.example.watchme.core.Categories
 import com.example.watchme.ui.theme.IntermediateVoteColor
 import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.PositiveVoteColor
@@ -263,7 +262,7 @@ class AppViewModel @Inject constructor(
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
 
-    private val _searchTypeSelected = MutableStateFlow(SearchTypes.Collections.title)
+    private val _searchTypeSelected = MutableStateFlow(Categories.Collections.title)
     val searchTypeSelected: StateFlow<String> = _searchTypeSelected
 
     // RATING
@@ -291,16 +290,16 @@ class AppViewModel @Inject constructor(
     private fun observeSearchQuery() {
 
         val useCase: suspend (String) -> List<SearchDataClass> = when (_searchTypeSelected.value) {
-            SearchTypes.Collections.title -> { query -> getSearchCollectionUseCase(query) }
-            SearchTypes.Movies.title -> { query -> getSearchMovieUseCase(query) }
-            SearchTypes.TvSeries.title -> { query -> getSearchSeriesUseCase(query) }
+            Categories.Collections.title -> { query -> getSearchCollectionUseCase(query) }
+            Categories.Movies.title -> { query -> getSearchMovieUseCase(query) }
+            Categories.TvSeries.title -> { query -> getSearchSeriesUseCase(query) }
             else -> { query -> getSearchPeopleUseCase(query) }
         }
 
         val searchType = when (_searchTypeSelected.value) {
-            SearchTypes.Collections.title -> _searchCollection
-            SearchTypes.Movies.title -> _searchMovie
-            SearchTypes.TvSeries.title -> _searchSeries
+            Categories.Collections.title -> _searchCollection
+            Categories.Movies.title -> _searchMovie
+            Categories.TvSeries.title -> _searchSeries
             else -> _searchPeople
         }
 
@@ -347,6 +346,10 @@ class AppViewModel @Inject constructor(
     fun formatPrice(value: Long): String {
         val formatter = NumberFormat.getInstance(Locale("es", "AR"))
         return formatter.format(value)
+    }
+
+    fun clearRatingResponse() {
+        _rating.value = null
     }
 
     // MOVIES

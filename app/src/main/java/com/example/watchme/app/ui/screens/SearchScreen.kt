@@ -48,11 +48,10 @@ import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.BodyTextItem
-import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.dataClasses.SearchDataClass
 import com.example.watchme.core.Routes
-import com.example.watchme.core.SearchTypes
+import com.example.watchme.core.Categories
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaButtonColor
 import com.example.watchme.ui.theme.AppBackground
@@ -73,10 +72,10 @@ fun SearchScreen(
     val searchTypeSelected by viewModel.searchTypeSelected.collectAsState()
 
     val searchList = listOf(
-        SearchTypes.Collections,
-        SearchTypes.TvSeries,
-        SearchTypes.Movies,
-        SearchTypes.People,
+        Categories.Collections,
+        Categories.TvSeries,
+        Categories.Movies,
+        Categories.People,
     )
 
     Box(
@@ -115,10 +114,10 @@ fun SearchScreen(
                 ThirdTitleTextItem(stringResource(R.string.try_type_something_search), textAlign = TextAlign.Center)
             }
             when (searchTypeSelected) {
-                SearchTypes.Collections.title -> SearchSection(searchCollection, searchTypeSelected) {id -> navController.navigate(Routes.CollectionDetails.createRoute(id)) }
-                SearchTypes.TvSeries.title -> SearchSection(searchSeries, searchTypeSelected) {id -> navController.navigate(Routes.SeriesDetails.createRoute(id)) }
-                SearchTypes.Movies.title -> SearchSection(searchMovie, searchTypeSelected) {id -> navController.navigate(Routes.MovieDetails.createRoute(id)) }
-                SearchTypes.People.title -> SearchSection(searchPeople, searchTypeSelected) {id -> navController.navigate(Routes.PeopleDetails.createRoute(id)) }
+                Categories.Collections.title -> SearchSection(searchCollection, searchTypeSelected) { id -> navController.navigate(Routes.CollectionDetails.createRoute(id)) }
+                Categories.TvSeries.title -> SearchSection(searchSeries, searchTypeSelected) { id -> navController.navigate(Routes.SeriesDetails.createRoute(id)) }
+                Categories.Movies.title -> SearchSection(searchMovie, searchTypeSelected) { id -> navController.navigate(Routes.MovieDetails.createRoute(id)) }
+                Categories.People.title -> SearchSection(searchPeople, searchTypeSelected) { id -> navController.navigate(Routes.PeopleDetails.createRoute(id)) }
             }
         }
     }
@@ -126,9 +125,9 @@ fun SearchScreen(
 
 @Composable
 fun SearchTypeSection(
-    searchList: List<SearchTypes>,
+    searchList: List<Categories>,
     searchTypeSelected: String,
-    onClick: (SearchTypes) -> Unit
+    onClick: (Categories) -> Unit
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -160,9 +159,9 @@ fun SearchSection(searchList: List<SearchDataClass>?, searchTypeSelected: String
 
 @Composable
 fun SearchTypeCardItem(
-    type: SearchTypes,
+    type: Categories,
     searchTitleSelected: String,
-    onClick: (SearchTypes) -> Unit
+    onClick: (Categories) -> Unit
 ) {
 
     val isSelected = type.title == searchTitleSelected
@@ -215,7 +214,7 @@ fun SearchingCardItem(
     val url = Constants.IMAGE_BASE_URL + searchData.posterPath
 
     val errorImage = when (searchTypeSelected) {
-        SearchTypes.People.title -> R.drawable.unknown_male
+        Categories.People.title -> R.drawable.unknown_male
         else -> R.drawable.film_not_found
     }
 

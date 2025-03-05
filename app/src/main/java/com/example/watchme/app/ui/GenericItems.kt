@@ -1,7 +1,9 @@
 package com.example.watchme.app.ui
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.widget.Toast
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
@@ -11,6 +13,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,15 +31,24 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowLeft
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
+import androidx.compose.material.icons.automirrored.filled.List
 import androidx.compose.material.icons.automirrored.rounded.KeyboardArrowLeft
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -46,6 +58,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
@@ -57,22 +70,28 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
+import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.app.ui.screens.CastCreditsItem
 import com.example.watchme.app.ui.screens.CrewCreditsItem
+import com.example.watchme.core.Categories
+import com.example.watchme.core.MediaItem
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaButtonColor
 import com.example.watchme.ui.theme.CardContainerColor
 import com.example.watchme.ui.theme.DialogContainerColor
+import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.Pink40
+import com.example.watchme.ui.theme.ThumbColor
 
 @Composable
 fun TitleTextItem(text: String) {
@@ -101,16 +120,18 @@ fun ThirdTitleTextItem(
     textAlign: TextAlign = TextAlign.Center,
     modifier: Modifier = Modifier,
     maxLines: Int = Int.MAX_VALUE,
-    overflow: TextOverflow = TextOverflow.Clip
+    overflow: TextOverflow = TextOverflow.Clip,
+    hasMaxWidth: Boolean = true,
+    color: Color = Color.White
 ) {
     Text(
         text,
-        modifier = modifier.fillMaxWidth(),
+        modifier = if (hasMaxWidth) modifier.fillMaxWidth() else Modifier,
         style = MaterialTheme.typography.titleMedium,
-        color = Color.White,
+        color = color,
         textAlign = textAlign,
         maxLines = maxLines,
-        overflow = overflow
+        overflow = overflow,
     )
 }
 
@@ -136,7 +157,7 @@ fun LazyRowItemText(
                 textWidth = layoutCoordinates.size.width
                 xPos = layoutCoordinates.positionInParent().x
 
-                if(isSelectedText){
+                if (isSelectedText) {
                     onClick(text, textWidth, xPos)
                 }
             }
@@ -152,7 +173,8 @@ fun BodyTextItem(
     textAlign: TextAlign = TextAlign.Start,
     modifier: Modifier = Modifier,
     overflow: TextOverflow = TextOverflow.Clip,
-    maxLines: Int = Int.MAX_VALUE
+    maxLines: Int = Int.MAX_VALUE,
+    color: Color = Color.White
 ) {
     Text(
         text,
@@ -160,7 +182,8 @@ fun BodyTextItem(
         modifier = if (textAlign != TextAlign.Start) modifier.fillMaxWidth() else modifier,
         textAlign = textAlign,
         maxLines = maxLines,
-        overflow = overflow
+        overflow = overflow,
+        color = color
     )
 }
 
@@ -206,8 +229,7 @@ fun BackButton(navController: NavHostController) {
             .padding(16.dp)
             .clickable {
                 navController.popBackStack()
-            }
-        ,
+            },
         colors = CardDefaults.cardColors(
             containerColor = AlphaButtonColor,
             contentColor = Color.White
@@ -220,6 +242,228 @@ fun BackButton(navController: NavHostController) {
         )
     }
 }
+
+@Composable
+fun CircularButtonIcon(icon: ImageVector, onClick: () -> Unit) {
+    Button(
+        onClick = { onClick() },
+        shape = CircleShape,
+        contentPadding = PaddingValues(0.dp),
+    ) {
+        Icon(icon, contentDescription = "icon button")
+    }
+}
+
+@Composable
+fun RateDialog(
+    show: Boolean,
+    title: String,
+    id: Int,
+    episodeNumber: Int = 0,
+    seasonNumber: Int = 0,
+    percentage: Int,
+    viewModel: AppViewModel,
+    categoryType: Categories,
+    onDismiss: () -> Unit
+) {
+
+    var sliderValue by rememberSaveable { mutableStateOf(7.0f) }
+
+    val sliderValueInt = sliderValue.times(10).toInt()
+    val activeTrackColor = viewModel.getPercentageColor(sliderValueInt)
+
+    if (!show) return
+
+    var isSeriesEpisode = false
+
+    val rateCall = when (categoryType) {
+        is Categories.Movies -> {
+            viewModel::rateMovie
+        }
+
+        is Categories.TvSeries -> {
+            viewModel::rateSeries
+        }
+
+        is Categories.TvEpisodes -> {
+            isSeriesEpisode = true
+            return
+        }
+
+        else -> {
+            return
+        }
+    }
+
+    val deleteRateCall = when (categoryType) {
+        is Categories.Movies -> {
+            viewModel::deleteRateMovie
+        }
+
+        is Categories.TvSeries -> {
+            viewModel::deleteRateSeries
+        }
+
+        else -> {
+            return
+        }
+    }
+
+    Dialog(
+        onDismissRequest = { onDismiss() }
+    ) {
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(8.dp),
+            colors = CardDefaults.cardColors(
+                containerColor = CardContainerColor
+            )
+        ) {
+            Column(
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    ThirdTitleTextItem(stringResource(R.string.rating), hasMaxWidth = false)
+                    Icon(
+                        Icons.Filled.Close,
+                        contentDescription = "close icon",
+                        modifier = Modifier.clickable { onDismiss() })
+                }
+                HorizontalDivider(color = Color.White)
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    TitleSubtitleItem(
+                        "${stringResource(R.string.question_rating)} $title?",
+                        "$percentage% ${stringResource(R.string.user_score)}"
+                    )
+                }
+                Slider(
+                    value = sliderValue,
+                    onValueChange = { newValue ->
+                        val valueFormated = String.format("%.1f", newValue).toFloat()
+                        sliderValue = valueFormated
+                    },
+                    valueRange = 0.5f..10f,
+                    steps = 18,
+                    colors = SliderDefaults.colors(
+                        thumbColor = activeTrackColor,
+                        activeTrackColor = activeTrackColor,
+                        inactiveTrackColor = AlphaButtonColor
+                    )
+                )
+                ThirdTitleTextItem("$sliderValueInt - ${getRatingText(sliderValueInt)}")
+                Row(
+                    Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Button(
+                        onClick = {
+                            if (isSeriesEpisode) {
+                                viewModel.rateSeriesEpisodes(
+                                    sliderValue,
+                                    id,
+                                    episodeNumber,
+                                    seasonNumber
+                                )
+                            } else {
+                                rateCall(sliderValue, id)
+                            }
+                            onDismiss()
+                        },
+                        shape = RoundedCornerShape(4.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = ThumbColor
+                        ),
+                        elevation = ButtonDefaults.elevatedButtonElevation(16.dp)
+                    ) {
+                        BodyTextItem(stringResource(R.string.rate))
+                    }
+                    Button(
+                        onClick = {
+                            if (isSeriesEpisode) {
+                                viewModel.deleteRateSeriesEpisodes(id, episodeNumber, seasonNumber)
+                            } else {
+                                deleteRateCall(id)
+                            }
+                            onDismiss()
+                        },
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = Color.Transparent
+                        ),
+
+                        ) {
+                        ThirdTitleTextItem(
+                            stringResource(R.string.clear_rating),
+                            color = NegativeVoteColor,
+                            hasMaxWidth = false
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun getRatingText(percentage: Int): String {
+    return when (percentage) {
+        in 0..9 -> {
+            stringResource(R.string.dumpster_fire)
+        }
+
+        in 10..19 -> {
+            stringResource(R.string.absolute_trash)
+        }
+
+        in 20..29 -> {
+            stringResource(R.string.garbage)
+        }
+
+        in 30..39 -> {
+            stringResource(R.string.truly_bad)
+        }
+
+        in 40..49 -> {
+            stringResource(R.string.not_good)
+        }
+
+        in 50..59 -> {
+            stringResource(R.string.passable)
+        }
+
+        in 60..69 -> {
+            stringResource(R.string.its_alright)
+        }
+
+        in 70..79 -> {
+            stringResource(R.string.pretty_decent)
+        }
+
+        in 80..89 -> {
+            stringResource(R.string.really_good)
+        }
+
+        in 90..99 -> {
+            stringResource(R.string.greatness)
+        }
+
+        else -> {
+            stringResource(R.string.champion)
+        }
+    }
+}
+
 
 @Composable
 fun BackdropImageItem(imageUrl: String) {
@@ -255,11 +499,12 @@ fun PointSeparatorIcon(modifier: Modifier = Modifier) {
 fun PercentageVisualItem(
     percentage: Int,
     modifier: Modifier = Modifier,
-    cardColor: Color
+    size: Dp = 38.dp,
+    cardColor: Color,
 ) {
 
     Card(
-        modifier = modifier.size(38.dp),
+        modifier = modifier.size(size),
         shape = CircleShape,
         colors = CardDefaults.cardColors(
             containerColor = cardColor
@@ -325,7 +570,7 @@ fun TitleSubtitleItem(title: String, subtitle: String, isClickable: Boolean = fa
 @Composable
 fun TitleSubtitleItemWithNullability(title: String, subtitle: String?) {
 
-    if(subtitle == null) return
+    if (subtitle == null) return
 
     if (subtitle.contains("null")) {
         TitleSubtitleItem(title, stringResource(R.string.unknown))
@@ -538,7 +783,7 @@ fun ImageListItem(imagesList: List<BackdropImageDataClass>?) {
         val url = Constants.IMAGE_BASE_URL + imagesList?.get(index)?.filePath
         Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
             SecondTitleTextItem(stringResource(R.string.images))
-            Box(){
+            Box() {
                 AsyncImage(
                     model = url,
                     contentDescription = stringResource(R.string.image_cast),
@@ -565,22 +810,22 @@ fun CreditsSection(credits: CreditsDataClass?, onClick: (Int) -> Unit) {
 
     if (credits == null) return
 
-    if(credits.cast.isEmpty() && credits.crew.isEmpty()){
+    if (credits.cast.isEmpty() && credits.crew.isEmpty()) {
         BodyTextItem(stringResource(R.string.no_results_found))
         return
     }
 
-    if(credits.cast.isNotEmpty()){
+    if (credits.cast.isNotEmpty()) {
         SecondTitleTextItem(stringResource(R.string.cast))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-            items(credits.cast){
-                CastCreditsItem(it) {personId -> onClick(personId) }
+            items(credits.cast) {
+                CastCreditsItem(it) { personId -> onClick(personId) }
 
             }
         }
     }
 
-    if(credits.crew.isNotEmpty()){
+    if (credits.crew.isNotEmpty()) {
         SecondTitleTextItem(stringResource(R.string.crew))
         LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
             items(credits.crew) {
@@ -592,7 +837,7 @@ fun CreditsSection(credits: CreditsDataClass?, onClick: (Int) -> Unit) {
 
 
 @Composable
-fun SectionSelectionItem(lazyList: List<String>, onItemClicked:(String) -> Unit) {
+fun SectionSelectionItem(lazyList: List<String>, onItemClicked: (String) -> Unit) {
 
     var selectedText by rememberSaveable { mutableStateOf(lazyList[0]) }
     var textWidth by rememberSaveable { mutableStateOf(223) }
@@ -646,5 +891,77 @@ fun LazyHorizontalDividerItem(textWidth: Int, xPos: Float) {
             )
         ) { }
         HorizontalDivider(Modifier.fillMaxWidth(), color = Color.White, thickness = 1.dp)
+    }
+}
+
+@Composable
+fun RatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
+
+    val percentage = (mediaItem.voteAverage.times(10)).toInt()
+    val context = LocalContext.current
+
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+    val ratingResponse by viewModel.rating.collectAsState()
+
+    LaunchedEffect(ratingResponse) {
+        ratingResponse?.let {
+            if (it.success) {
+                Toast.makeText(context, it.statusMessage, Toast.LENGTH_SHORT).show()
+                viewModel.clearRatingResponse()
+            }
+        }
+    }
+
+    Row(
+        Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceAround
+    ) {
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                PercentageVisualItem(
+                    percentage = percentage,
+                    cardColor = viewModel.getPercentageColor(percentage),
+                    size = 50.dp
+                )
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    ThirdTitleTextItem(stringResource(R.string.user), hasMaxWidth = false)
+                    ThirdTitleTextItem(stringResource(R.string.score), hasMaxWidth = false)
+                }
+            }
+            Button(
+                onClick = { showDialog = true },
+                elevation = ButtonDefaults.elevatedButtonElevation(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = CardContainerColor
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                BodyTextItem(stringResource(R.string.rate).uppercase())
+            }
+        }
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            CircularButtonIcon(Icons.AutoMirrored.Filled.List) { }
+            CircularButtonIcon(Icons.Filled.Favorite) { }
+            CircularButtonIcon(Icons.Filled.Star) { }
+        }
+
+        RateDialog(
+            show = showDialog,
+            title = mediaItem.title,
+            id = mediaItem.id,
+            percentage = percentage,
+            viewModel = viewModel,
+            categoryType = mediaItem.category
+        ) { showDialog = false }
     }
 }
