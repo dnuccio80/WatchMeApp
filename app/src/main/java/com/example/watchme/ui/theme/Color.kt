@@ -22,4 +22,5 @@ val NegativeVoteColor = Color(0xFFA40018)
 val CardContainerColor = Color(0xE10A3641)
 val DialogContainerColor = Color(0xFF181515)
 val ThumbColor = Color(0xFF559655)
+val LightBlueColor = Color(0xFF01B4E4)
 

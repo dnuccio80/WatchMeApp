@@ -1,6 +1,5 @@
 package com.example.watchme.app.ui
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.widget.Toast
@@ -392,7 +391,11 @@ fun RateDialog(
                     Button(
                         onClick = {
                             if (isSeriesEpisode) {
-                                viewModel.deleteRateSeriesEpisodes(mediaItem.id, mediaItem.episodeNumber, mediaItem.seasonNumber)
+                                viewModel.deleteRateSeriesEpisodes(
+                                    mediaItem.id,
+                                    mediaItem.episodeNumber,
+                                    mediaItem.seasonNumber
+                                )
                             } else {
                                 deleteRateCall(mediaItem.id)
                             }
@@ -895,7 +898,7 @@ fun LazyHorizontalDividerItem(textWidth: Int, xPos: Float) {
 }
 
 @Composable
-fun RatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
+fun RatingSectionWithLists(mediaItem: MediaItem, viewModel: AppViewModel) {
 
     val percentage = (mediaItem.voteAverage.times(10)).toInt()
     val context = LocalContext.current
@@ -962,4 +965,56 @@ fun RatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
             mediaItem = mediaItem,
         ) { showDialog = false }
     }
+}
+
+@Composable
+fun SimpleRatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
+    val percentage = (mediaItem.voteAverage.times(10)).toInt()
+    val context = LocalContext.current
+
+    var showDialog by rememberSaveable { mutableStateOf(false) }
+    val ratingResponse by viewModel.rating.collectAsState()
+
+    LaunchedEffect(ratingResponse) {
+        ratingResponse?.let {
+            if (it.success) {
+                Toast.makeText(context, it.statusMessage, Toast.LENGTH_SHORT).show()
+                viewModel.clearRatingResponse()
+            }
+        }
+    }
+
+
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Absolute.SpaceEvenly
+    ) {
+        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+            PercentageVisualItem(
+                percentage = percentage,
+                cardColor = viewModel.getPercentageColor(percentage),
+                size = 50.dp
+            )
+            ThirdTitleTextItem(stringResource(R.string.user_score), hasMaxWidth = false)
+        }
+        Button(
+            onClick = { showDialog = true },
+            elevation = ButtonDefaults.elevatedButtonElevation(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = CardContainerColor
+            ),
+            shape = RoundedCornerShape(8.dp)
+        ) {
+            BodyTextItem(stringResource(R.string.rate).uppercase())
+        }
+    }
+
+    RateDialog(
+        show = showDialog,
+        percentage = percentage,
+        viewModel = viewModel,
+        mediaItem = mediaItem,
+    ) { showDialog = false }
+
 }

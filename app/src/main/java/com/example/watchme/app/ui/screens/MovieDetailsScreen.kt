@@ -1,6 +1,5 @@
 package com.example.watchme.app.ui.screens
 
-import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -21,16 +20,10 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.List
-import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -41,7 +34,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -56,13 +48,10 @@ import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
-import com.example.watchme.app.ui.CircularButtonIcon
 import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.NextPreviousButtonsRow
-import com.example.watchme.app.ui.PercentageVisualItem
-import com.example.watchme.app.ui.RateDialog
-import com.example.watchme.app.ui.RatingSection
+import com.example.watchme.app.ui.RatingSectionWithLists
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SectionSelectionItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
@@ -147,7 +136,7 @@ fun MovieDetailsScreen(
                 )
                 movieDetails?.let { SecondTitleTextItem(it.title) }
                 if (movieDetails != null) {
-                    RatingSection(
+                    RatingSectionWithLists(
                         MediaItem(
                             id = movieId,
                             title = movieDetails!!.title,

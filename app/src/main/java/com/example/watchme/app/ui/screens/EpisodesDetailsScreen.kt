@@ -27,8 +27,9 @@ import com.example.watchme.R
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
-import com.example.watchme.app.ui.RatingSection
+import com.example.watchme.app.ui.RatingSectionWithLists
 import com.example.watchme.app.ui.SecondTitleTextItem
+import com.example.watchme.app.ui.SimpleRatingSection
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.TitleTextItem
 import com.example.watchme.core.Categories
@@ -90,7 +91,7 @@ fun EpisodesDetailsScreen(
                         )
                     } ${episodeDetails?.episodeNumber} - $runtime"
                 )
-                RatingSection(
+                SimpleRatingSection(
                     mediaItem = MediaItem(
                         id = seriesId,
                         title = episodeDetails!!.name,

@@ -58,7 +58,7 @@ import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.ImageListItem
-import com.example.watchme.app.ui.RatingSection
+import com.example.watchme.app.ui.RatingSectionWithLists
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SectionSelectionItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
@@ -147,7 +147,7 @@ fun SeriesDetailsScreen(
                 )
                 seriesDetails?.name?.let { SecondTitleTextItem(it) }
                 if(seriesDetails != null) {
-                    RatingSection(
+                    RatingSectionWithLists(
                         MediaItem(
                             id = seriesId,
                             title = seriesDetails!!.name,
