@@ -103,10 +103,10 @@ fun TitleTextItem(text: String) {
 }
 
 @Composable
-fun SecondTitleTextItem(text: String, textAlign: TextAlign = TextAlign.Center) {
+fun SecondTitleTextItem(text: String, textAlign: TextAlign = TextAlign.Center, hasMaxWidth: Boolean = true) {
     Text(
         text,
-        modifier = Modifier.fillMaxWidth(),
+        modifier = if(hasMaxWidth)Modifier.fillMaxWidth() else Modifier,
         style = MaterialTheme.typography.titleLarge,
         color = Color.White,
         textAlign = textAlign
