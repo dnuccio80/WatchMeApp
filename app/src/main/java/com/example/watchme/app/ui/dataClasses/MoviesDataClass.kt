@@ -6,7 +6,7 @@ data class MovieDataClass(
     val releaseDate: String,
     val title: String,
     val overview: String,
-    val poster: String?,
+    val posterPath: String?,
     val backdrop: String?,
     val voteAverage: Float,
     val voteCount: Int

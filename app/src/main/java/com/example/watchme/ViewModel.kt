@@ -3,6 +3,9 @@ package com.example.watchme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.watchme.app.domain.account.GetRatedEpisodesUseCase
+import com.example.watchme.app.domain.account.GetRatedMoviesUseCase
+import com.example.watchme.app.domain.account.GetRatedSeriesUseCase
 import com.example.watchme.app.domain.collections.GetCollectionDetailsByIdUseCase
 import com.example.watchme.app.domain.episodes.GetEpisodeDetailsByIdUseCase
 import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
@@ -47,6 +50,7 @@ import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
@@ -58,6 +62,7 @@ import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.core.Categories
+import com.example.watchme.core.RatedItem
 import com.example.watchme.ui.theme.IntermediateVoteColor
 import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.PositiveVoteColor
@@ -136,6 +141,12 @@ class AppViewModel @Inject constructor(
     private val deleteRateSeriesUseCase: DeleteRateSeriesUseCase,
     private val rateSeriesEpisodeUseCase: RateSeriesEpisodeUseCase,
     private val deleteRateSeriesEpisodeUseCase: DeleteRateSeriesEpisodeUseCase,
+
+    // ACCOUNT
+
+    private val getRatedMoviesUseCase: GetRatedMoviesUseCase,
+    private val getRatedSeriesUseCase: GetRatedSeriesUseCase,
+    private val getRatedEpisodesUseCase: GetRatedEpisodesUseCase,
 
 
     ) : ViewModel() {
@@ -269,6 +280,17 @@ class AppViewModel @Inject constructor(
 
     private val _rating = MutableStateFlow<RatingDataClass?>(null)
     val rating: StateFlow<RatingDataClass?> = _rating
+
+    // ACCOUNT
+
+    private val _ratedMovies = MutableStateFlow<List<MovieDataClass>?>(null)
+    val ratedMovies: StateFlow<List<MovieDataClass>?> = _ratedMovies
+
+    private val _ratedSeries = MutableStateFlow<List<SeriesDataClass>?>(null)
+    val ratedSeries: StateFlow<List<SeriesDataClass>?> = _ratedSeries
+
+    private val _ratedSeriesEpisodes = MutableStateFlow<List<EpisodesRatedDataClass>?>(null)
+    val ratedSeriesEpisodes: StateFlow<List<EpisodesRatedDataClass>?> = _ratedSeriesEpisodes
 
 
     init {
@@ -499,7 +521,12 @@ class AppViewModel @Inject constructor(
 
     fun rateSeriesEpisodes(value: Float, seriesId: Int, episodeNumber: Int, seasonNumber: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _rating.value = rateSeriesEpisodeUseCase(rating = value, seriesId = seriesId, episodeNumber = episodeNumber, seasonNumber = seasonNumber)
+            _rating.value = rateSeriesEpisodeUseCase(
+                rating = value,
+                seriesId = seriesId,
+                episodeNumber = episodeNumber,
+                seasonNumber = seasonNumber
+            )
         }
     }
 
@@ -510,6 +537,26 @@ class AppViewModel @Inject constructor(
                 episodeNumber = episodeNumber,
                 seasonNumber = seasonNumber
             )
+        }
+    }
+
+    // ACCOUNT
+
+    fun getRatedMovies(accountId: Int = 0) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _ratedMovies.value = getRatedMoviesUseCase()
+        }
+    }
+
+    fun getRatedSeries(accountId: Int = 0) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _ratedSeries.value = getRatedSeriesUseCase(accountId)
+        }
+    }
+
+    fun getRatedSeriesEpisodes(accountId: Int = 0) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _ratedSeriesEpisodes.value = getRatedEpisodesUseCase(accountId)
         }
     }
 

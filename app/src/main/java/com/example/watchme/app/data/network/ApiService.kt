@@ -6,6 +6,8 @@ import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
 import com.example.watchme.app.data.network.responses.EpisodeResponse
+import com.example.watchme.app.data.network.responses.EpisodesRated
+import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.MovieSearchResponse
@@ -570,10 +572,18 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun rateSeriesEpisodes(seriesId: Int, seasonNumber: Int, episodeNumber: Int, rating: Float): RatingResponse {
+    suspend fun rateSeriesEpisodes(
+        seriesId: Int,
+        seasonNumber: Int,
+        episodeNumber: Int,
+        rating: Float
+    ): RatingResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .rateItem(RatingRequestDto(rating), "tv/$seriesId/season/$seasonNumber/episode/$episodeNumber/rating")
+                .rateItem(
+                    RatingRequestDto(rating),
+                    "tv/$seriesId/season/$seasonNumber/episode/$episodeNumber/rating"
+                )
             val body: RatingResponse? = response.body()
             if (response.isSuccessful && body != null) {
                 body
@@ -587,7 +597,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun deleteRateSeriesEpisodes(seriesId: Int, seasonNumber: Int, episodeNumber: Int): RatingResponse {
+    suspend fun deleteRateSeriesEpisodes(
+        seriesId: Int,
+        seasonNumber: Int,
+        episodeNumber: Int
+    ): RatingResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .deleteRate("tv/$seriesId/season/$seasonNumber/episode/$episodeNumber/rating")
@@ -598,6 +612,63 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             } else {
                 throw Exception(
                     "Failed to delete rate series episode: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    // ACCOUNT
+
+    suspend fun getRatedMovies(accountId: Int = 0): MovieResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getRatedMovies("account/$accountId/rated/movies")
+            val body: MovieResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get rated movies: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+
+    suspend fun getRatedSeries(accountId: Int = 0): SeriesResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getRatedSeries("account/$accountId/rated/tv")
+            val body: SeriesResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get rated series: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun getRatedSeriesEpisodes(accountId: Int = 0): EpisodesRatedResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getRatedSeriesEpisodes("account/$accountId/rated/tv/episodes")
+            val body: EpisodesRatedResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get rated series episodes: ${
                         response.errorBody()?.string()
                     }"
                 )

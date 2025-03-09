@@ -26,7 +26,7 @@ fun MovieResponse.toMovieDataClass(): List<MovieDataClass> {
             releaseDate = it.releaseDate,
             title = it.title,
             overview = it.overview,
-            poster = it.poster,
+            posterPath = it.poster,
             backdrop = it.backdrop,
             voteAverage = it.voteAverage,
             voteCount = it.voteCount
@@ -53,7 +53,7 @@ fun Movie.toMovieDataClass() : MovieDataClass{
         releaseDate = releaseDate,
         title = title,
         overview = overview,
-        poster = poster,
+        posterPath = poster,
         backdrop = backdrop,
         voteAverage = voteAverage,
         voteCount = voteCount

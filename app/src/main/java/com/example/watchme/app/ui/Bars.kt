@@ -78,7 +78,7 @@ fun BottomBar(
         )
         NavigationBarItem(
             selected = destination == Routes.Profile.route,
-            onClick = {},
+            onClick = { onItemClicked(Routes.Profile.route) },
             icon = {
                 Icon(
                     Icons.Default.AccountCircle,

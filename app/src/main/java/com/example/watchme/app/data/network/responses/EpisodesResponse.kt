@@ -1,6 +1,8 @@
 package com.example.watchme.app.data.network.responses
 
+import com.example.watchme.app.ui.dataClasses.EpisodesDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
 import com.google.gson.annotations.SerializedName
 
 data class EpisodeResponse(
@@ -34,3 +36,29 @@ fun EpisodeResponse.toEpisodesDetailsDataClass(): EpisodesDetailsDataClass {
         voteCount = voteCount
     )
 }
+
+data class EpisodesRatedResponse(
+    @SerializedName("results") val results: List<EpisodesRated>
+)
+
+fun EpisodesRatedResponse.toEpisodesRatedDataClass(): List<EpisodesRatedDataClass> {
+    return results.map {
+        EpisodesRatedDataClass(
+            id = it.id,
+            showId = it.showId,
+            seasonNumber = it.seasonNumber,
+            name =  it.name,
+            episodeNumber = it.episodeNumber,
+            stillPath = it.stillPath
+        )
+    }
+}
+
+data class EpisodesRated(
+    @SerializedName("id") val id: Int,
+    @SerializedName("show_id") val showId: Int,
+    @SerializedName("name") val name: String,
+    @SerializedName("season_number") val seasonNumber: Int,
+    @SerializedName("episode_number") val episodeNumber: Int,
+    @SerializedName("still_path") val stillPath: String,
+)

@@ -237,7 +237,7 @@ fun PopularMoviesLazyRow(popularMovies: List<MovieDataClass>, onItemClick: (Int)
 
 @Composable
 fun PopularMovieCardItem(movie: MovieDataClass, isCentered: Boolean, onClick: (Int) -> Unit) {
-    val imageUrl = Constants.IMAGE_BASE_URL + movie.poster
+    val imageUrl = Constants.IMAGE_BASE_URL + movie.posterPath
 
     val cardHeight by animateDpAsState(
         targetValue = if (isCentered) 460.dp else 440.dp,
@@ -268,7 +268,7 @@ fun PopularMovieCardItem(movie: MovieDataClass, isCentered: Boolean, onClick: (I
 
 @Composable
 fun DefaultMovieCardItem(movie: MovieDataClass, onClick: (Int) -> Unit) {
-    val imageUrl = Constants.IMAGE_BASE_URL + movie.poster
+    val imageUrl = Constants.IMAGE_BASE_URL + movie.posterPath
 
     Card(
         modifier = Modifier
@@ -334,7 +334,7 @@ fun TopRatedMoviesLazyRow(
 @Composable
 fun TopRatedCardItem(movie: MovieDataClass, viewModel: AppViewModel, onClick: (Int) -> Unit) {
 
-    val imageUrl = Constants.IMAGE_BASE_URL + movie.poster
+    val imageUrl = Constants.IMAGE_BASE_URL + movie.posterPath
     val votePercentage = (movie.voteAverage * 10).toInt()
 
     Card(

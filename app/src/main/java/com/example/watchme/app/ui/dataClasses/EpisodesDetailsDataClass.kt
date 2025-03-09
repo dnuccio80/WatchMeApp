@@ -17,3 +17,12 @@ data class EpisodesDetailsDataClass (
     val voteAverage:Float?,
     val voteCount:Int?,
 )
+
+data class EpisodesRatedDataClass(
+    val id: Int,
+    val showId: Int,
+    val name: String,
+    val seasonNumber: Int,
+    val episodeNumber: Int,
+    val stillPath: String?,
+)

@@ -390,7 +390,7 @@ fun MoviesRecommendationsSection(
 
 @Composable
 fun RecommendationCardItem(movies: MovieDataClass, onClick: (Int) -> Unit) {
-    val imageUrl = Constants.IMAGE_BASE_URL + movies.poster
+    val imageUrl = Constants.IMAGE_BASE_URL + movies.posterPath
 
     Card(
         modifier = Modifier

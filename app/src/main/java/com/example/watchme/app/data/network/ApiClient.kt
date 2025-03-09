@@ -6,6 +6,8 @@ import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
 import com.example.watchme.app.data.network.responses.EpisodeResponse
+import com.example.watchme.app.data.network.responses.EpisodesRated
+import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.MovieSearchResponse
@@ -51,19 +53,19 @@ interface ApiClient {
     suspend fun getProviders(): Response<ProvidersResponse>
 
     @GET
-    suspend fun getMovieDetailsById(@Url url:String): Response<DetailsMovieResponse>
+    suspend fun getMovieDetailsById(@Url url: String): Response<DetailsMovieResponse>
 
 
     @GET
-    suspend fun getRecommendationsById(@Url url:String): Response<MovieResponse>
+    suspend fun getRecommendationsById(@Url url: String): Response<MovieResponse>
 
     @GET
-    suspend fun getReviewsById(@Url url:String): Response<ReviewsResponse>
+    suspend fun getReviewsById(@Url url: String): Response<ReviewsResponse>
 
     // COLLECTIONS
 
     @GET
-    suspend fun getCollectionDetailsById(@Url url:String): Response<CollectionResponse>
+    suspend fun getCollectionDetailsById(@Url url: String): Response<CollectionResponse>
 
     // SERIES
 
@@ -80,65 +82,80 @@ interface ApiClient {
     suspend fun getTopRatedSeries(): Response<SeriesResponse>
 
     @GET()
-    suspend fun getSeriesDetailsById(@Url url:String): Response<SeriesDetailsResponse>
+    suspend fun getSeriesDetailsById(@Url url: String): Response<SeriesDetailsResponse>
 
     @GET()
-    suspend fun getSeasonsDetailsById(@Url url:String): Response<SeasonDetails>
+    suspend fun getSeasonsDetailsById(@Url url: String): Response<SeasonDetails>
 
     @GET()
-    suspend fun getSeriesRecommendationsById(@Url url:String): Response<SeriesResponse>
+    suspend fun getSeriesRecommendationsById(@Url url: String): Response<SeriesResponse>
 
     // EPISODES
 
     @GET()
-    suspend fun getEpisodesDetailsById(@Url url:String): Response<EpisodeResponse>
+    suspend fun getEpisodesDetailsById(@Url url: String): Response<EpisodeResponse>
 
     // SERIES & MOVIES
 
     @GET
-    suspend fun getImageListById(@Url url:String): Response<ImageBackdrop>
+    suspend fun getImageListById(@Url url: String): Response<ImageBackdrop>
 
     @GET
-    suspend fun getVideosById(@Url url:String): Response<VideoResponse>
+    suspend fun getVideosById(@Url url: String): Response<VideoResponse>
 
     @GET
-    suspend fun getCreditsById(@Url url:String): Response<CreditsResponse>
+    suspend fun getCreditsById(@Url url: String): Response<CreditsResponse>
 
     // PEOPLE
 
     @GET
-    suspend fun getPeopleDetailsById(@Url url:String): Response<PeopleDetailsResponse>
+    suspend fun getPeopleDetailsById(@Url url: String): Response<PeopleDetailsResponse>
 
     @GET
-    suspend fun getPeopleMovieInterpretationsById(@Url url:String): Response<PeopleMovieInterpretationResponse>
+    suspend fun getPeopleMovieInterpretationsById(@Url url: String): Response<PeopleMovieInterpretationResponse>
 
     @GET
-    suspend fun getPeopleSeriesInterpretationsById(@Url url:String): Response<PeopleSeriesInterpretationResponse>
+    suspend fun getPeopleSeriesInterpretationsById(@Url url: String): Response<PeopleSeriesInterpretationResponse>
 
     @GET
-    suspend fun getPeopleMediaById(@Url url:String): Response<ImagePeopleResponse>
+    suspend fun getPeopleMediaById(@Url url: String): Response<ImagePeopleResponse>
 
     // SEARCHES
 
     @GET("search/collection")
-    suspend fun getCollectionSearch(@Query("query") query:String): Response<CollectionSearchResponse>
+    suspend fun getCollectionSearch(@Query("query") query: String): Response<CollectionSearchResponse>
 
     @GET("search/movie")
-    suspend fun getMoviesSearch(@Query("query") query:String): Response<MovieSearchResponse>
+    suspend fun getMoviesSearch(@Query("query") query: String): Response<MovieSearchResponse>
 
     @GET("search/tv")
-    suspend fun getSeriesSearch(@Query("query") query:String): Response<SeriesSearchResponse>
+    suspend fun getSeriesSearch(@Query("query") query: String): Response<SeriesSearchResponse>
 
     @GET("search/person")
-    suspend fun getPeopleSearch(@Query("query") query:String): Response<PersonSearchResponse>
+    suspend fun getPeopleSearch(@Query("query") query: String): Response<PersonSearchResponse>
 
     // RATING - MOVIES
 
     @POST
-    suspend fun rateItem(@Body ratingRequest: RatingRequestDto, @Url url:String): Response<RatingResponse>
+    suspend fun rateItem(
+        @Body ratingRequest: RatingRequestDto,
+        @Url url: String
+    ): Response<RatingResponse>
 
     @DELETE
-    suspend fun deleteRate(@Url url:String): Response<RatingResponse>
+    suspend fun deleteRate(@Url url: String): Response<RatingResponse>
+
+    // ACCOUNT
+
+    @GET()
+    suspend fun getRatedMovies(@Url url: String): Response<MovieResponse>
+
+    @GET()
+    suspend fun getRatedSeries(@Url url: String): Response<SeriesResponse>
+
+    @GET()
+    suspend fun getRatedSeriesEpisodes(@Url url: String): Response<EpisodesRatedResponse>
+
 
 }
 
