@@ -751,5 +751,43 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
+    suspend fun getWatchListMovies(accountId: Int): MovieResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getWatchlistMovies("account/$accountId/watchlist/movies")
+            val body: MovieResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get watchlist movies: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun getWatchListSeries(accountId: Int): SeriesResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getWatchlistSeries("account/$accountId/watchlist/tv")
+            val body: SeriesResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get watchlist series: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+
+
 
 }

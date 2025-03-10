@@ -178,5 +178,11 @@ interface ApiClient {
         @Url url: String
     ) : Response<WatchListResponse>
 
+    @GET
+    suspend fun getWatchlistMovies(@Url url: String): Response<MovieResponse>
+
+    @GET
+    suspend fun getWatchlistSeries(@Url url: String): Response<SeriesResponse>
+
 }
 

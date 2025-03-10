@@ -97,13 +97,15 @@ fun SeriesDetailsScreen(
     val seriesImageList by viewModel.seriesImageList.collectAsState()
     val seriesVideosList by viewModel.seriesVideos.collectAsState()
     val seriesCredits by viewModel.seriesCredits.collectAsState()
-    val addFavoritesRequest by viewModel.addFavorite.collectAsState()
+    val addFavoritesRequest by viewModel.addFavoriteRequest.collectAsState()
+    val watchlistRequest by viewModel.watchListRequest.collectAsState()
 
     val verticalScrollState = rememberScrollState()
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
     var sectionSelected by rememberSaveable { mutableStateOf(Sections.Episodes.title) }
 
     var isFavorite by rememberSaveable { mutableStateOf(viewModel.seriesIsFavorite(seriesId)) }
+    var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.movieIsInWatchlist(seriesId)) }
 
     viewModel.getSeriesDetailsById(seriesId)
     viewModel.getSeasonDetailsById(seriesId, seasonSelected)
@@ -116,9 +118,17 @@ fun SeriesDetailsScreen(
 
     LaunchedEffect(addFavoritesRequest) {
         if(addFavoritesRequest != null && addFavoritesRequest?.success == true) {
-            Toast.makeText(context, addFavoritesRequest?.statusMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, if(isFavorite) context.getString(R.string.series_added_favorites) else context.getString(R.string.series_removed_favorites) , Toast.LENGTH_SHORT).show()
             viewModel.clearFavoriteRequest()
             viewModel.updateFavoritesSeries()
+        }
+    }
+
+    LaunchedEffect(watchlistRequest) {
+        if(watchlistRequest != null && watchlistRequest?.success == true) {
+            Toast.makeText(context, if(isInWatchlist) context.getString(R.string.series_added_watchlist) else context.getString(R.string.series_removed_watchlist), Toast.LENGTH_SHORT).show()
+            viewModel.clearWatchlistRequest()
+            viewModel.updateWatchlistSeries()
         }
     }
 
@@ -172,10 +182,14 @@ fun SeriesDetailsScreen(
                         ),
                         viewModel = viewModel,
                         addedToFavorites = isFavorite,
-                        addedToWatchLater = false,
+                        addedToWatchLater = isInWatchlist,
                         onFavoriteButtonClicked = {
                             isFavorite = !isFavorite
                             viewModel.onAddFavorite(mediaId = seriesId, mediaType = Categories.TvSeries.mediaType, favorite = isFavorite)
+                        },
+                        onWatchlistButtonClicked = {
+                            isInWatchlist = !isInWatchlist
+                            viewModel.onAddToWatchlist(mediaId = seriesId, mediaType = Categories.TvSeries.mediaType, watchList = isInWatchlist)
                         }
                     )
                 }

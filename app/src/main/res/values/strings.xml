@@ -50,8 +50,14 @@
     <string name="garbage">Garbage</string>
     <string name="truly_bad">Truly bad</string>
     <string name="my_ratings">My Ratings</string>
-    <string name="movie_added_favorites">Movie was added to your favorites</string>
-    <string name="movie_removed_favorites">Movie was removed from your favorites</string>
+    <string name="movie_added_favorites">The movie was added to your favorites</string>
+    <string name="movie_removed_favorites">The movie was removed from your favorites</string>
+    <string name="movie_added_watchlist">The movie was added to your watch list</string>
+    <string name="movie_removed_watchlist">The movie was removed from your watch list</string>
+    <string name="series_added_favorites">The series was added to your favorites</string>
+    <string name="series_removed_favorites">The series was removed from your favorites</string>
+    <string name="series_added_watchlist">The series was added to your watch list</string>
+    <string name="series_removed_watchlist">The series was removed from your watch list</string>
     <string name="not_good">Not good</string>
     <string name="passable">Passable</string>
     <string name="rating_saved">Rating saved successfully!</string>

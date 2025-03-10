@@ -903,7 +903,10 @@ fun RatingSectionWithLists(
     viewModel: AppViewModel,
     addedToFavorites: Boolean,
     addedToWatchLater: Boolean,
-    onFavoriteButtonClicked:() -> Unit) {
+    onFavoriteButtonClicked:() -> Unit,
+    onWatchlistButtonClicked:() -> Unit,
+
+) {
 
     val percentage = (mediaItem.voteAverage.times(10)).toInt()
     val context = LocalContext.current
@@ -960,7 +963,7 @@ fun RatingSectionWithLists(
         ) {
             CircularButtonIcon(Icons.AutoMirrored.Filled.List, Color.White) { }
             CircularButtonIcon(Icons.Filled.Favorite, if(addedToFavorites) Color.Red else Color.White) { onFavoriteButtonClicked() }
-            CircularButtonIcon(Icons.Filled.Star, if(addedToWatchLater) Color.Yellow else Color.White) { }
+            CircularButtonIcon(Icons.Filled.Star, if(addedToWatchLater) Color.Yellow else Color.White) { onWatchlistButtonClicked() }
         }
 
         RateDialog(

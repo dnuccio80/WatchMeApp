@@ -10,6 +10,8 @@ import com.example.watchme.app.domain.account.GetFavoritesSeriesUseCase
 import com.example.watchme.app.domain.account.GetRatedEpisodesUseCase
 import com.example.watchme.app.domain.account.GetRatedMoviesUseCase
 import com.example.watchme.app.domain.account.GetRatedSeriesUseCase
+import com.example.watchme.app.domain.account.GetWatchlistMoviesUseCase
+import com.example.watchme.app.domain.account.GetWatchlistSeriesUseCase
 import com.example.watchme.app.domain.collections.GetCollectionDetailsByIdUseCase
 import com.example.watchme.app.domain.episodes.GetEpisodeDetailsByIdUseCase
 import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
@@ -156,7 +158,8 @@ class AppViewModel @Inject constructor(
     private val getFavoritesMoviesUseCase: GetFavoritesMoviesUseCase,
     private val getFavoritesSeriesUseCase: GetFavoritesSeriesUseCase,
     private val addToWatchlistUseCase: AddToWatchlistUseCase,
-
+    private val getWatchlistMoviesUseCase: GetWatchlistMoviesUseCase,
+    private val getWatchlistSeriesUseCase: GetWatchlistSeriesUseCase,
 
     ) : ViewModel() {
 
@@ -301,8 +304,8 @@ class AppViewModel @Inject constructor(
     private val _ratedSeriesEpisodes = MutableStateFlow<List<EpisodesRatedDataClass>?>(null)
     val ratedSeriesEpisodes: StateFlow<List<EpisodesRatedDataClass>?> = _ratedSeriesEpisodes
 
-    private val _addFavorite = MutableStateFlow<FavoriteDataClass?>(null)
-    val addFavorite: StateFlow<FavoriteDataClass?> = _addFavorite
+    private val _addFavoriteRequest = MutableStateFlow<FavoriteDataClass?>(null)
+    val addFavoriteRequest: StateFlow<FavoriteDataClass?> = _addFavoriteRequest
 
     private val _favoritesMovies = MutableStateFlow<List<MovieDataClass>?>(null)
     val favoritesMovies: StateFlow<List<MovieDataClass>?> = _favoritesMovies
@@ -310,8 +313,14 @@ class AppViewModel @Inject constructor(
     private val _favoritesSeries = MutableStateFlow<List<SeriesDataClass>?>(null)
     val favoritesSeries: StateFlow<List<SeriesDataClass>?> = _favoritesSeries
 
-    private val _addToWatchListRequest = MutableStateFlow<WatchListDataClass?>(null)
-    val addToWatchListRequest: StateFlow<WatchListDataClass?> = _addToWatchListRequest
+    private val _watchListRequest = MutableStateFlow<WatchListDataClass?>(null)
+    val watchListRequest: StateFlow<WatchListDataClass?> = _watchListRequest
+
+    private val _watchlistMovies = MutableStateFlow<List<MovieDataClass>?>(null)
+    val watchlistMovies: StateFlow<List<MovieDataClass>?> = _watchlistMovies
+
+    private val _watchlistSeries = MutableStateFlow<List<SeriesDataClass>?>(null)
+    val watchlistSeries: StateFlow<List<SeriesDataClass>?> = _watchlistSeries
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -326,6 +335,8 @@ class AppViewModel @Inject constructor(
             _topRatedSeries.value = getTopRatedSeriesUseCase()
             _favoritesMovies.value = getFavoritesMoviesUseCase(0)
             _favoritesSeries.value = getFavoritesSeriesUseCase(0)
+            _watchlistSeries.value = getWatchlistSeriesUseCase(0)
+            _watchlistMovies.value = getWatchlistMoviesUseCase(0)
         }
         observeSearchQuery()
     }
@@ -584,12 +595,12 @@ class AppViewModel @Inject constructor(
 
     fun onAddFavorite(mediaId: Int, mediaType: String, favorite: Boolean, accountId: Int = 0) {
         viewModelScope.launch(Dispatchers.IO) {
-            _addFavorite.value = addFavoriteUseCase(mediaId, mediaType, favorite, accountId)
+            _addFavoriteRequest.value = addFavoriteUseCase(mediaId, mediaType, favorite, accountId)
         }
     }
 
     fun clearFavoriteRequest(){
-        _addFavorite.value = null
+        _addFavoriteRequest.value = null
     }
 
     fun updateFavoritesMovies(){
@@ -614,15 +625,36 @@ class AppViewModel @Inject constructor(
 
     fun onAddToWatchlist(mediaId: Int, mediaType: String, watchList: Boolean, accountId: Int = 0) {
         viewModelScope.launch(Dispatchers.IO) {
-            _addToWatchListRequest.value = addToWatchlistUseCase(mediaId, mediaType, watchList, accountId)
+            _watchListRequest.value = addToWatchlistUseCase(mediaId, mediaType, watchList, accountId)
         }
     }
 
-//    fun movieIsInWatchlist(movieId:Int): Boolean{
-//    }
+    fun clearWatchlistRequest(){
+        _watchListRequest.value = null
+    }
+
+    fun movieIsInWatchlist(movieId:Int): Boolean{
+        return _watchlistMovies.value?.any { it.id == movieId } == true
+    }
+
+    fun seriesIsInWatchlist(seriesId: Int):Boolean{
+        return _watchlistSeries.value?.any { it.id == seriesId } == true
+    }
+
+    fun updateWatchlistMovies(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _watchlistMovies.value = getWatchlistMoviesUseCase(0)
+        }
+    }
+
+    fun updateWatchlistSeries(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _watchlistSeries.value = getWatchlistSeriesUseCase(0)
+        }
+    }
 
     fun clearWatchListRequest(){
-        _addToWatchListRequest.value = null
+        _watchListRequest.value = null
     }
 
 }

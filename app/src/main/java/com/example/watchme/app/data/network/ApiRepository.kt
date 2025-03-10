@@ -261,5 +261,13 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.addToWatchList(mediaId = mediaId, mediaType = mediaType, watchlist = watchlist, accountId = accountId).toWatchListDataClass()
     }
 
+    suspend fun getWatchlistMovies(accountId: Int): List<MovieDataClass> {
+        return apiService.getWatchListMovies(accountId).toMovieDataClass()
+    }
+
+    suspend fun getWatchlistSeries(accountId: Int): List<SeriesDataClass> {
+        return apiService.getWatchListSeries(accountId).toSeriesDataClass()
+    }
+
 
 }

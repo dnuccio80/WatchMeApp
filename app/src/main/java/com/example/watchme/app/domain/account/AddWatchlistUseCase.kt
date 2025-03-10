@@ -15,4 +15,4 @@ class AddToWatchlistUseCase @Inject constructor(private val apiRepository: ApiRe
         watchlist = watchlist,
         accountId = accountId
     )
-}
+}    

@@ -93,13 +93,15 @@ fun MovieDetailsScreen(
     val recommendations by viewModel.movieRecommendations.collectAsState()
     val reviews by viewModel.reviews.collectAsState()
     val videos by viewModel.movieVideos.collectAsState()
-    val addFavoritesRequest by viewModel.addFavorite.collectAsState()
+    val addFavoritesRequest by viewModel.addFavoriteRequest.collectAsState()
+    val watchlistRequest by viewModel.watchListRequest.collectAsState()
 
     val runTime = viewModel.getRunTimeInHours(movieDetails?.runtime ?: 0)
     val scrollState = rememberScrollState()
     var sectionSelected by rememberSaveable { mutableStateOf(Sections.Suggested.title) }
 
     var isFavorite by rememberSaveable { mutableStateOf(viewModel.movieIsFavorite(movieId)) }
+    var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.movieIsInWatchlist(movieId)) }
 
     val sectionList = listOf(
         Sections.Details.title,
@@ -112,9 +114,17 @@ fun MovieDetailsScreen(
 
     LaunchedEffect(addFavoritesRequest) {
         if(addFavoritesRequest != null && addFavoritesRequest?.success == true) {
-            Toast.makeText(context, addFavoritesRequest?.statusMessage, Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, if(isFavorite) context.getString(R.string.movie_added_favorites) else context.getString(R.string.movie_removed_favorites), Toast.LENGTH_SHORT).show()
             viewModel.clearFavoriteRequest()
             viewModel.updateFavoritesMovies()
+        }
+    }
+
+    LaunchedEffect(watchlistRequest) {
+        if(watchlistRequest != null && watchlistRequest?.success == true) {
+            Toast.makeText(context, if(isInWatchlist) context.getString(R.string.movie_added_watchlist) else context.getString(R.string.movie_removed_watchlist), Toast.LENGTH_SHORT).show()
+            viewModel.clearWatchlistRequest()
+            viewModel.updateWatchlistMovies()
         }
     }
 
@@ -159,10 +169,14 @@ fun MovieDetailsScreen(
                             category = Categories.Movies
                         ), viewModel,
                         addedToFavorites = isFavorite,
-                        addedToWatchLater = false,
+                        addedToWatchLater = isInWatchlist,
                         onFavoriteButtonClicked = {
                             isFavorite = !isFavorite
                             viewModel.onAddFavorite(mediaId = movieId, mediaType = Categories.Movies.mediaType, favorite = isFavorite)
+                        },
+                        onWatchlistButtonClicked = {
+                            isInWatchlist = !isInWatchlist
+                            viewModel.onAddToWatchlist(mediaId = movieId, mediaType = Categories.Movies.mediaType, watchList = isInWatchlist)
                         }
                     )
                 }
