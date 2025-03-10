@@ -1,6 +1,5 @@
 package com.example.watchme.app.data.network
 
-import com.example.watchme.app.data.network.responses.RatingResponse
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
 import com.example.watchme.app.data.network.responses.toCollectionDataClass
 import com.example.watchme.app.data.network.responses.toSearchDataClass
@@ -8,6 +7,7 @@ import com.example.watchme.app.data.network.responses.toDetailsMovieDataClass
 import com.example.watchme.app.data.network.responses.toCreditsDataClass
 import com.example.watchme.app.data.network.responses.toEpisodesDetailsDataClass
 import com.example.watchme.app.data.network.responses.toEpisodesRatedDataClass
+import com.example.watchme.app.data.network.responses.toFavoriteDataClass
 import com.example.watchme.app.data.network.responses.toMovieDataClass
 import com.example.watchme.app.data.network.responses.toPeopleDetailsDataClass
 import com.example.watchme.app.data.network.responses.toPeopleMoviesInterpretationDataClass
@@ -19,15 +19,16 @@ import com.example.watchme.app.data.network.responses.toSeasonDetailsDataClass
 import com.example.watchme.app.data.network.responses.toSeriesDataClass
 import com.example.watchme.app.data.network.responses.toSeriesDetailsDataClass
 import com.example.watchme.app.data.network.responses.toVideoDataClass
+import com.example.watchme.app.data.network.responses.toWatchListDataClass
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.SearchDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
-import com.example.watchme.app.ui.dataClasses.EpisodesDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
+import com.example.watchme.app.ui.dataClasses.FavoriteDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
@@ -38,7 +39,7 @@ import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
-import com.example.watchme.core.Routes
+import com.example.watchme.app.ui.dataClasses.WatchListDataClass
 import javax.inject.Inject
 
 class ApiRepository @Inject constructor(private val apiService: ApiService) {
@@ -243,5 +244,22 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
     suspend fun getRatedSeriesEpisodes(accountId: Int = 0): List<EpisodesRatedDataClass> {
         return apiService.getRatedSeriesEpisodes(accountId = accountId).toEpisodesRatedDataClass()
     }
+
+    suspend fun addFavorites(mediaId: Int, mediaType: String, favorite: Boolean, accountId: Int): FavoriteDataClass {
+        return apiService.addFavorite(mediaId = mediaId, mediaType = mediaType, favorite = favorite, accountId = accountId).toFavoriteDataClass()
+    }
+
+    suspend fun getFavoritesMovies(accountId: Int): List<MovieDataClass> {
+        return apiService.getFavoritesMovies(accountId).toMovieDataClass()
+    }
+
+    suspend fun getFavoritesSeries(accountId: Int): List<SeriesDataClass> {
+        return apiService.getFavoritesSeries(accountId).toSeriesDataClass()
+    }
+
+    suspend fun addToWatchlist(mediaId: Int, mediaType: String, watchlist: Boolean, accountId: Int): WatchListDataClass {
+        return apiService.addToWatchList(mediaId = mediaId, mediaType = mediaType, watchlist = watchlist, accountId = accountId).toWatchListDataClass()
+    }
+
 
 }

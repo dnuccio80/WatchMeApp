@@ -6,8 +6,9 @@ import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
 import com.example.watchme.app.data.network.responses.EpisodeResponse
-import com.example.watchme.app.data.network.responses.EpisodesRated
 import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
+import com.example.watchme.app.data.network.responses.FavoriteRequestDto
+import com.example.watchme.app.data.network.responses.FavoriteResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.MovieSearchResponse
@@ -24,6 +25,8 @@ import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
 import com.example.watchme.app.data.network.responses.SeriesResponse
 import com.example.watchme.app.data.network.responses.SeriesSearchResponse
 import com.example.watchme.app.data.network.responses.VideoResponse
+import com.example.watchme.app.data.network.responses.WatchListRequestDto
+import com.example.watchme.app.data.network.responses.WatchListResponse
 import com.example.watchme.core.constants.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -669,6 +672,78 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             } else {
                 throw Exception(
                     "Failed to get rated series episodes: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun addFavorite(mediaId: Int, mediaType: String, favorite: Boolean, accountId: Int ): FavoriteResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .addFavorite(FavoriteRequestDto(mediaId = mediaId, mediaType = mediaType, favorite = favorite), url = "account/$accountId/favorite")
+            val body: FavoriteResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get favorites: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun getFavoritesMovies(accountId: Int): MovieResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getFavoritesMovies("account/$accountId/favorite/movies")
+            val body: MovieResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get favorites movies: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun getFavoritesSeries(accountId: Int): SeriesResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getFavoritesSeries("account/$accountId/favorite/tv")
+            val body: SeriesResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get favorites series: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun addToWatchList(mediaId: Int, mediaType: String, watchlist: Boolean, accountId: Int ): WatchListResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .addToWatchList(WatchListRequestDto(mediaId = mediaId, mediaType = mediaType, watchlist = watchlist), url = "account/$accountId/watchlist")
+            val body: WatchListResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get watchlist: ${
                         response.errorBody()?.string()
                     }"
                 )

@@ -243,13 +243,13 @@ fun BackButton(navController: NavHostController) {
 }
 
 @Composable
-fun CircularButtonIcon(icon: ImageVector, onClick: () -> Unit) {
+fun CircularButtonIcon(icon: ImageVector, tint:Color, onClick: () -> Unit) {
     Button(
         onClick = { onClick() },
         shape = CircleShape,
         contentPadding = PaddingValues(0.dp),
     ) {
-        Icon(icon, contentDescription = "icon button")
+        Icon(icon, contentDescription = "icon button", tint = tint)
     }
 }
 
@@ -898,7 +898,12 @@ fun LazyHorizontalDividerItem(textWidth: Int, xPos: Float) {
 }
 
 @Composable
-fun RatingSectionWithLists(mediaItem: MediaItem, viewModel: AppViewModel) {
+fun RatingSectionWithLists(
+    mediaItem: MediaItem,
+    viewModel: AppViewModel,
+    addedToFavorites: Boolean,
+    addedToWatchLater: Boolean,
+    onFavoriteButtonClicked:() -> Unit) {
 
     val percentage = (mediaItem.voteAverage.times(10)).toInt()
     val context = LocalContext.current
@@ -953,9 +958,9 @@ fun RatingSectionWithLists(mediaItem: MediaItem, viewModel: AppViewModel) {
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            CircularButtonIcon(Icons.AutoMirrored.Filled.List) { }
-            CircularButtonIcon(Icons.Filled.Favorite) { }
-            CircularButtonIcon(Icons.Filled.Star) { }
+            CircularButtonIcon(Icons.AutoMirrored.Filled.List, Color.White) { }
+            CircularButtonIcon(Icons.Filled.Favorite, if(addedToFavorites) Color.Red else Color.White) { onFavoriteButtonClicked() }
+            CircularButtonIcon(Icons.Filled.Star, if(addedToWatchLater) Color.Yellow else Color.White) { }
         }
 
         RateDialog(

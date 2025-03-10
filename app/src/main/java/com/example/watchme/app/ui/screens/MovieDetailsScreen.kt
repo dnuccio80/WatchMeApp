@@ -1,5 +1,6 @@
 package com.example.watchme.app.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,6 +25,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
@@ -34,6 +36,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -90,10 +93,13 @@ fun MovieDetailsScreen(
     val recommendations by viewModel.movieRecommendations.collectAsState()
     val reviews by viewModel.reviews.collectAsState()
     val videos by viewModel.movieVideos.collectAsState()
+    val addFavoritesRequest by viewModel.addFavorite.collectAsState()
 
     val runTime = viewModel.getRunTimeInHours(movieDetails?.runtime ?: 0)
     val scrollState = rememberScrollState()
     var sectionSelected by rememberSaveable { mutableStateOf(Sections.Suggested.title) }
+
+    var isFavorite by rememberSaveable { mutableStateOf(viewModel.movieIsFavorite(movieId)) }
 
     val sectionList = listOf(
         Sections.Details.title,
@@ -102,6 +108,15 @@ fun MovieDetailsScreen(
         Sections.Credits.title,
     )
 
+    val context = LocalContext.current
+
+    LaunchedEffect(addFavoritesRequest) {
+        if(addFavoritesRequest != null && addFavoritesRequest?.success == true) {
+            Toast.makeText(context, addFavoritesRequest?.statusMessage, Toast.LENGTH_SHORT).show()
+            viewModel.clearFavoriteRequest()
+            viewModel.updateFavoritesMovies()
+        }
+    }
 
     Box(
         Modifier
@@ -142,7 +157,13 @@ fun MovieDetailsScreen(
                             title = movieDetails!!.title,
                             voteAverage = movieDetails!!.voteAverage,
                             category = Categories.Movies
-                        ), viewModel
+                        ), viewModel,
+                        addedToFavorites = isFavorite,
+                        addedToWatchLater = false,
+                        onFavoriteButtonClicked = {
+                            isFavorite = !isFavorite
+                            viewModel.onAddFavorite(mediaId = movieId, mediaType = Categories.Movies.mediaType, favorite = isFavorite)
+                        }
                     )
                 }
                 Spacer(Modifier.size(0.dp))

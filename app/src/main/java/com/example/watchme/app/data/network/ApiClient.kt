@@ -8,6 +8,8 @@ import com.example.watchme.app.data.network.responses.CreditsResponse
 import com.example.watchme.app.data.network.responses.EpisodeResponse
 import com.example.watchme.app.data.network.responses.EpisodesRated
 import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
+import com.example.watchme.app.data.network.responses.FavoriteRequestDto
+import com.example.watchme.app.data.network.responses.FavoriteResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.MovieSearchResponse
@@ -24,6 +26,8 @@ import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
 import com.example.watchme.app.data.network.responses.SeriesResponse
 import com.example.watchme.app.data.network.responses.SeriesSearchResponse
 import com.example.watchme.app.data.network.responses.VideoResponse
+import com.example.watchme.app.data.network.responses.WatchListRequestDto
+import com.example.watchme.app.data.network.responses.WatchListResponse
 import com.example.watchme.core.constants.Constants
 import retrofit2.Response
 import retrofit2.http.Body
@@ -156,6 +160,23 @@ interface ApiClient {
     @GET()
     suspend fun getRatedSeriesEpisodes(@Url url: String): Response<EpisodesRatedResponse>
 
+    @POST
+    suspend fun addFavorite(
+        @Body favoriteRequest: FavoriteRequestDto,
+        @Url url: String
+    ): Response<FavoriteResponse>
+
+    @GET
+    suspend fun getFavoritesMovies(@Url url: String): Response<MovieResponse>
+
+    @GET
+    suspend fun getFavoritesSeries(@Url url: String): Response<SeriesResponse>
+
+    @POST
+    suspend fun addToWatchList(
+        @Body watchListRequest: WatchListRequestDto,
+        @Url url: String
+    ) : Response<WatchListResponse>
 
 }
 

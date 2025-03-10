@@ -50,6 +50,8 @@
     <string name="garbage">Garbage</string>
     <string name="truly_bad">Truly bad</string>
     <string name="my_ratings">My Ratings</string>
+    <string name="movie_added_favorites">Movie was added to your favorites</string>
+    <string name="movie_removed_favorites">Movie was removed from your favorites</string>
     <string name="not_good">Not good</string>
     <string name="passable">Passable</string>
     <string name="rating_saved">Rating saved successfully!</string>

@@ -3,6 +3,10 @@ package com.example.watchme
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.watchme.app.domain.account.AddFavoriteUseCase
+import com.example.watchme.app.domain.account.AddToWatchlistUseCase
+import com.example.watchme.app.domain.account.GetFavoritesMoviesUseCase
+import com.example.watchme.app.domain.account.GetFavoritesSeriesUseCase
 import com.example.watchme.app.domain.account.GetRatedEpisodesUseCase
 import com.example.watchme.app.domain.account.GetRatedMoviesUseCase
 import com.example.watchme.app.domain.account.GetRatedSeriesUseCase
@@ -51,6 +55,7 @@ import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
+import com.example.watchme.app.ui.dataClasses.FavoriteDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
@@ -61,8 +66,8 @@ import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
+import com.example.watchme.app.ui.dataClasses.WatchListDataClass
 import com.example.watchme.core.Categories
-import com.example.watchme.core.RatedItem
 import com.example.watchme.ui.theme.IntermediateVoteColor
 import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.PositiveVoteColor
@@ -147,6 +152,10 @@ class AppViewModel @Inject constructor(
     private val getRatedMoviesUseCase: GetRatedMoviesUseCase,
     private val getRatedSeriesUseCase: GetRatedSeriesUseCase,
     private val getRatedEpisodesUseCase: GetRatedEpisodesUseCase,
+    private val addFavoriteUseCase: AddFavoriteUseCase,
+    private val getFavoritesMoviesUseCase: GetFavoritesMoviesUseCase,
+    private val getFavoritesSeriesUseCase: GetFavoritesSeriesUseCase,
+    private val addToWatchlistUseCase: AddToWatchlistUseCase,
 
 
     ) : ViewModel() {
@@ -292,6 +301,17 @@ class AppViewModel @Inject constructor(
     private val _ratedSeriesEpisodes = MutableStateFlow<List<EpisodesRatedDataClass>?>(null)
     val ratedSeriesEpisodes: StateFlow<List<EpisodesRatedDataClass>?> = _ratedSeriesEpisodes
 
+    private val _addFavorite = MutableStateFlow<FavoriteDataClass?>(null)
+    val addFavorite: StateFlow<FavoriteDataClass?> = _addFavorite
+
+    private val _favoritesMovies = MutableStateFlow<List<MovieDataClass>?>(null)
+    val favoritesMovies: StateFlow<List<MovieDataClass>?> = _favoritesMovies
+
+    private val _favoritesSeries = MutableStateFlow<List<SeriesDataClass>?>(null)
+    val favoritesSeries: StateFlow<List<SeriesDataClass>?> = _favoritesSeries
+
+    private val _addToWatchListRequest = MutableStateFlow<WatchListDataClass?>(null)
+    val addToWatchListRequest: StateFlow<WatchListDataClass?> = _addToWatchListRequest
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -304,6 +324,8 @@ class AppViewModel @Inject constructor(
             _airingSeriesToday.value = getAiringSeriesTodayUseCase()
             _onTheAirSeries.value = getOnTheAirSeriesUseCase()
             _topRatedSeries.value = getTopRatedSeriesUseCase()
+            _favoritesMovies.value = getFavoritesMoviesUseCase(0)
+            _favoritesSeries.value = getFavoritesSeriesUseCase(0)
         }
         observeSearchQuery()
     }
@@ -560,6 +582,48 @@ class AppViewModel @Inject constructor(
         }
     }
 
+    fun onAddFavorite(mediaId: Int, mediaType: String, favorite: Boolean, accountId: Int = 0) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _addFavorite.value = addFavoriteUseCase(mediaId, mediaType, favorite, accountId)
+        }
+    }
+
+    fun clearFavoriteRequest(){
+        _addFavorite.value = null
+    }
+
+    fun updateFavoritesMovies(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _favoritesMovies.value = getFavoritesMoviesUseCase(0)
+        }
+    }
+
+    fun updateFavoritesSeries(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _favoritesSeries.value = getFavoritesSeriesUseCase(0)
+        }
+    }
+
+    fun movieIsFavorite(movieId: Int): Boolean {
+        return _favoritesMovies.value?.any { it.id == movieId } == true
+    }
+
+    fun seriesIsFavorite(seriesId:Int): Boolean {
+        return _favoritesSeries.value?.any { it.id == seriesId } == true
+    }
+
+    fun onAddToWatchlist(mediaId: Int, mediaType: String, watchList: Boolean, accountId: Int = 0) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _addToWatchListRequest.value = addToWatchlistUseCase(mediaId, mediaType, watchList, accountId)
+        }
+    }
+
+//    fun movieIsInWatchlist(movieId:Int): Boolean{
+//    }
+
+    fun clearWatchListRequest(){
+        _addToWatchListRequest.value = null
+    }
 
 }
 
