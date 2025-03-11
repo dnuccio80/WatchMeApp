@@ -107,6 +107,8 @@ fun TitleTextItem(text: String) {
 fun SecondTitleTextItem(
     text: String,
     textAlign: TextAlign = TextAlign.Center,
+    maxLines: Int = Int.MAX_VALUE,
+    overflow: TextOverflow = TextOverflow.Clip,
     hasMaxWidth: Boolean = true
 ) {
     Text(
@@ -114,7 +116,9 @@ fun SecondTitleTextItem(
         modifier = if (hasMaxWidth) Modifier.fillMaxWidth() else Modifier,
         style = MaterialTheme.typography.titleLarge,
         color = Color.White,
-        textAlign = textAlign
+        textAlign = textAlign,
+        maxLines = maxLines,
+        overflow = overflow,
     )
 }
 

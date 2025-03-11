@@ -21,6 +21,7 @@ val IntermediateVoteColor = Color(0xFFD2B60A)
 val NegativeVoteColor = Color(0xFFA40018)
 val CardContainerColor = Color(0xE10A3641)
 val DialogContainerColor = Color(0xFF181515)
+val AlphaContrastColor = Color(0x4F0A0909)
 val ThumbColor = Color(0xFF559655)
 val LightBlueColor = Color(0xFF01B4E4)
 

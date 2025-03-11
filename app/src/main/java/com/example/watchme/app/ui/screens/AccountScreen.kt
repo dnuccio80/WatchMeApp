@@ -78,20 +78,19 @@ fun AccountScreen(
                     stringResource(R.string.my_ratings),
                     stringResource(R.string.see_ratings),
                     painterResource(R.drawable.ratings_background),
-                     onClick = { navController.navigate(Routes.Ratings.route) }
+                    onClick = { navController.navigate(Routes.Ratings.route) }
                 )
                 ListSection(
                     stringResource(R.string.watchlist),
                     stringResource(R.string.see_watchlist),
                     painterResource(R.drawable.watchlist_background),
-                    onClick = { }
+                    onClick = { navController.navigate(Routes.WatchList.route) }
                 )
                 ListSection(
                     stringResource(R.string.my_lists),
                     stringResource(R.string.see_lists),
                     painterResource(R.drawable.lists_background),
-                     onClick = { }
-
+                    onClick = { navController.navigate(Routes.Lists.route) }
                 )
             }
         }

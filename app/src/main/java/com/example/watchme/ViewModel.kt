@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.watchme.app.domain.account.AddFavoriteUseCase
 import com.example.watchme.app.domain.account.AddToWatchlistUseCase
+import com.example.watchme.app.domain.account.CreateListUseCase
 import com.example.watchme.app.domain.account.GetAccountDetailsUseCase
 import com.example.watchme.app.domain.account.GetFavoritesMoviesUseCase
 import com.example.watchme.app.domain.account.GetFavoritesSeriesUseCase
+import com.example.watchme.app.domain.account.GetListDetailsUseCase
 import com.example.watchme.app.domain.account.GetMyListsUseCase
 import com.example.watchme.app.domain.account.GetRatedEpisodesUseCase
 import com.example.watchme.app.domain.account.GetRatedMoviesUseCase
@@ -54,6 +56,7 @@ import com.example.watchme.app.domain.series.GetTopRatedSeriesUseCase
 import com.example.watchme.app.ui.dataClasses.AccountDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.CreateListDataClass
 import com.example.watchme.app.ui.dataClasses.SearchDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
@@ -62,6 +65,7 @@ import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
 import com.example.watchme.app.ui.dataClasses.FavoriteDataClass
 import com.example.watchme.app.ui.dataClasses.ListDataClass
+import com.example.watchme.app.ui.dataClasses.ListDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
@@ -91,6 +95,7 @@ import kotlinx.coroutines.flow.flowOn
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import org.intellij.lang.annotations.Language
 import java.text.NumberFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -166,6 +171,8 @@ class AppViewModel @Inject constructor(
     private val getWatchlistSeriesUseCase: GetWatchlistSeriesUseCase,
     private val getAccountDetailsUseCase: GetAccountDetailsUseCase,
     private val getMyListsUseCase: GetMyListsUseCase,
+    private val createListUseCase: CreateListUseCase,
+    private val getListDetailsUseCase: GetListDetailsUseCase,
 
     ) : ViewModel() {
 
@@ -333,6 +340,12 @@ class AppViewModel @Inject constructor(
 
     private val _myLists = MutableStateFlow<List<ListDataClass>?>(null)
     val myLists: StateFlow<List<ListDataClass>?> = _myLists
+
+    private val _createListRequest = MutableStateFlow<CreateListDataClass?>(null)
+    val createListRequest: StateFlow<CreateListDataClass?> = _createListRequest
+
+    private val _listDetails = MutableStateFlow<ListDetailsDataClass?>(null)
+    val listDetails: StateFlow<ListDetailsDataClass?> = _listDetails
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -612,17 +625,17 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun clearFavoriteRequest(){
+    fun clearFavoriteRequest() {
         _addFavoriteRequest.value = null
     }
 
-    fun updateFavoritesMovies(){
+    fun updateFavoritesMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             _favoritesMovies.value = getFavoritesMoviesUseCase(0)
         }
     }
 
-    fun updateFavoritesSeries(){
+    fun updateFavoritesSeries() {
         viewModelScope.launch(Dispatchers.IO) {
             _favoritesSeries.value = getFavoritesSeriesUseCase(0)
         }
@@ -632,35 +645,36 @@ class AppViewModel @Inject constructor(
         return _favoritesMovies.value?.any { it.id == movieId } == true
     }
 
-    fun seriesIsFavorite(seriesId:Int): Boolean {
+    fun seriesIsFavorite(seriesId: Int): Boolean {
         return _favoritesSeries.value?.any { it.id == seriesId } == true
     }
 
     fun onAddToWatchlist(mediaId: Int, mediaType: String, watchList: Boolean, accountId: Int = 0) {
         viewModelScope.launch(Dispatchers.IO) {
-            _watchListRequest.value = addToWatchlistUseCase(mediaId, mediaType, watchList, accountId)
+            _watchListRequest.value =
+                addToWatchlistUseCase(mediaId, mediaType, watchList, accountId)
         }
     }
 
-    fun clearWatchlistRequest(){
+    fun clearWatchlistRequest() {
         _watchListRequest.value = null
     }
 
-    fun movieIsInWatchlist(movieId:Int): Boolean{
+    fun movieIsInWatchlist(movieId: Int): Boolean {
         return _watchlistMovies.value?.any { it.id == movieId } == true
     }
 
-    fun seriesIsInWatchlist(seriesId: Int):Boolean{
+    fun seriesIsInWatchlist(seriesId: Int): Boolean {
         return _watchlistSeries.value?.any { it.id == seriesId } == true
     }
 
-    fun getWatchlistMovies(){
+    fun getWatchlistMovies() {
         viewModelScope.launch(Dispatchers.IO) {
             _watchlistMovies.value = getWatchlistMoviesUseCase(0)
         }
     }
 
-    fun getWatchlistSeries(){
+    fun getWatchlistSeries() {
         viewModelScope.launch(Dispatchers.IO) {
             _watchlistSeries.value = getWatchlistSeriesUseCase(0)
         }
@@ -672,8 +686,24 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun clearWatchListRequest(){
+    fun clearWatchListRequest() {
         _watchListRequest.value = null
+    }
+
+    fun createList(accountId: Int = 0, name: String, description: String, language: String = "es") {
+        viewModelScope.launch(Dispatchers.IO) {
+            _createListRequest.value = createListUseCase(accountId, name, description, language)
+        }
+    }
+
+    fun clearCreateListRequest() {
+        _createListRequest.value = null
+    }
+
+    fun getListDetails(listId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _listDetails.value = getListDetailsUseCase(listId)
+        }
     }
 
 }

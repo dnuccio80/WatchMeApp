@@ -3,6 +3,8 @@ package com.example.watchme.app.data.network
 import com.example.watchme.app.data.network.responses.AccountResponse
 import com.example.watchme.app.data.network.responses.CollectionResponse
 import com.example.watchme.app.data.network.responses.CollectionSearchResponse
+import com.example.watchme.app.data.network.responses.CreateListDto
+import com.example.watchme.app.data.network.responses.CreateListResponse
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
@@ -11,6 +13,7 @@ import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.FavoriteRequestDto
 import com.example.watchme.app.data.network.responses.FavoriteResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
+import com.example.watchme.app.data.network.responses.ListDetailsResponse
 import com.example.watchme.app.data.network.responses.ListsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.MovieSearchResponse
@@ -681,10 +684,21 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun addFavorite(mediaId: Int, mediaType: String, favorite: Boolean, accountId: Int ): FavoriteResponse {
+    suspend fun addFavorite(
+        mediaId: Int,
+        mediaType: String,
+        favorite: Boolean,
+        accountId: Int
+    ): FavoriteResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .addFavorite(FavoriteRequestDto(mediaId = mediaId, mediaType = mediaType, favorite = favorite), url = "account/$accountId/favorite")
+                .addFavorite(
+                    FavoriteRequestDto(
+                        mediaId = mediaId,
+                        mediaType = mediaType,
+                        favorite = favorite
+                    ), url = "account/$accountId/favorite"
+                )
             val body: FavoriteResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -735,10 +749,21 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun addToWatchList(mediaId: Int, mediaType: String, watchlist: Boolean, accountId: Int ): WatchListResponse {
+    suspend fun addToWatchList(
+        mediaId: Int,
+        mediaType: String,
+        watchlist: Boolean,
+        accountId: Int
+    ): WatchListResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .addToWatchList(WatchListRequestDto(mediaId = mediaId, mediaType = mediaType, watchlist = watchlist), url = "account/$accountId/watchlist")
+                .addToWatchList(
+                    WatchListRequestDto(
+                        mediaId = mediaId,
+                        mediaType = mediaType,
+                        watchlist = watchlist
+                    ), url = "account/$accountId/watchlist"
+                )
             val body: WatchListResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -825,7 +850,46 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
+    suspend fun createList(
+        accountId: Int,
+        name: String,
+        description: String,
+        language: String
+    ): CreateListResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .createList(CreateListDto(name = name, description = description, language = language))
+            val body: CreateListResponse? = response.body()
 
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to create the list: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun getListDetails(listId: Int): ListDetailsResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getListDetails("list/$listId")
+            val body: ListDetailsResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get list details: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
 
 
 }

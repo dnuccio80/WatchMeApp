@@ -3,6 +3,8 @@ package com.example.watchme.app.data.network
 import com.example.watchme.app.data.network.responses.AccountResponse
 import com.example.watchme.app.data.network.responses.CollectionResponse
 import com.example.watchme.app.data.network.responses.CollectionSearchResponse
+import com.example.watchme.app.data.network.responses.CreateListDto
+import com.example.watchme.app.data.network.responses.CreateListResponse
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
@@ -12,6 +14,7 @@ import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.FavoriteRequestDto
 import com.example.watchme.app.data.network.responses.FavoriteResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
+import com.example.watchme.app.data.network.responses.ListDetailsResponse
 import com.example.watchme.app.data.network.responses.ListsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.MovieSearchResponse
@@ -153,13 +156,13 @@ interface ApiClient {
 
     // ACCOUNT
 
-    @GET()
+    @GET
     suspend fun getRatedMovies(@Url url: String): Response<MovieResponse>
 
-    @GET()
+    @GET
     suspend fun getRatedSeries(@Url url: String): Response<SeriesResponse>
 
-    @GET()
+    @GET
     suspend fun getRatedSeriesEpisodes(@Url url: String): Response<EpisodesRatedResponse>
 
     @POST
@@ -191,6 +194,12 @@ interface ApiClient {
 
     @GET
     suspend fun getMyLists(@Url url: String): Response<ListsResponse>
+
+    @POST("list")
+    suspend fun createList(@Body createListDto: CreateListDto): Response<CreateListResponse>
+
+    @GET
+    suspend fun getListDetails(@Url url: String): Response<ListDetailsResponse>
 
 }
 

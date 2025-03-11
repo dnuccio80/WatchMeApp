@@ -25,6 +25,7 @@ import com.example.watchme.app.ui.screens.AccountScreen
 import com.example.watchme.app.ui.screens.CollectionDetailsScreen
 import com.example.watchme.app.ui.screens.EpisodesDetailsScreen
 import com.example.watchme.app.ui.screens.HomeScreen
+import com.example.watchme.app.ui.screens.ListDetailsScreen
 import com.example.watchme.app.ui.screens.ListsScreen
 import com.example.watchme.app.ui.screens.MovieDetailsScreen
 import com.example.watchme.app.ui.screens.PeopleDetailsScreen
@@ -63,115 +64,140 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) { innerPadding ->
-//                    NavHost(navController, startDestination = startDestination) {
-//                        composable(Routes.Home.route) {
-//                            HomeScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController
-//                            )
-//                        }
-//                        composable(
-//                            Routes.MovieDetails.route,
-//                            arguments = listOf(navArgument("movieId") {
-//                                type = NavType.IntType
-//                            }),
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }
-//                        ) { backStackEntry ->
-//                            MovieDetailsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController,
-//                                backStackEntry.arguments?.getInt("movieId") ?: 0
-//                            )
-//                        }
-//                        composable(
-//                            Routes.SeriesDetails.route,
-//                            arguments = listOf(navArgument("seriesId") {
-//                                type = NavType.IntType
-//                            }),
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }
-//                        ) { backStackEntry ->
-//                            SeriesDetailsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController,
-//                                backStackEntry.arguments?.getInt("seriesId") ?: 0
-//                            )
-//                        }
-//
-//                        composable(
-//                            Routes.PeopleDetails.route,
-//                            arguments = listOf(navArgument("personId") {
-//                                type = NavType.IntType
-//                            }),
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }
-//                        ) { backStackEntry ->
-//                            PeopleDetailsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController,
-//                                backStackEntry.arguments?.getInt("personId") ?: 0
-//                            )
-//                        }
-//
-//                        composable(
-//                            Routes.EpisodeDetails.route,
-//                            arguments = listOf(
-//                                navArgument("seriesId") { type = NavType.IntType },
-//                                navArgument("episodeId") { type = NavType.IntType },
-//                                navArgument("seasonNumber") { type = NavType.IntType }),
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }
-//                        ) { backStackEntry ->
-//                            EpisodesDetailsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController,
-//                                backStackEntry.arguments?.getInt("seriesId") ?: 0,
-//                                backStackEntry.arguments?.getInt("episodeId") ?: 0,
-//                                backStackEntry.arguments?.getInt("seasonNumber") ?: 0
-//                            )
-//                        }
-//
-//                        composable(
-//                            Routes.CollectionDetails.route,
-//                            arguments = listOf(navArgument("collectionId") {
-//                                type = NavType.IntType
-//                            })
-//                        ) { backStackEntry ->
-//                            CollectionDetailsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController,
-//                                backStackEntry.arguments?.getInt("collectionId") ?: 0
-//                            )
-//                        }
-//                        composable(
-//                            Routes.Search.route,
-//                        ) {
-//                            SearchScreen(innerPadding, viewModel, navController)
-//                        }
-//                        composable(Routes.Profile.route) {
-//                            AccountScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController
-//                            )
-//                        }
-//                        composable(Routes.Ratings.route) {
-//                            RatingScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController
-//                            )
-//                        }
-//
-//                    }
-                    ListsScreen(innerPadding, viewModel,navController)
+                    NavHost(navController, startDestination = startDestination) {
+                        composable(Routes.Home.route) {
+                            HomeScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(
+                            Routes.MovieDetails.route,
+                            arguments = listOf(navArgument("movieId") {
+                                type = NavType.IntType
+                            }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
+                        ) { backStackEntry ->
+                            MovieDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("movieId") ?: 0
+                            )
+                        }
+                        composable(
+                            Routes.SeriesDetails.route,
+                            arguments = listOf(navArgument("seriesId") {
+                                type = NavType.IntType
+                            }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
+                        ) { backStackEntry ->
+                            SeriesDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("seriesId") ?: 0
+                            )
+                        }
+
+                        composable(
+                            Routes.PeopleDetails.route,
+                            arguments = listOf(navArgument("personId") {
+                                type = NavType.IntType
+                            }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
+                        ) { backStackEntry ->
+                            PeopleDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("personId") ?: 0
+                            )
+                        }
+
+                        composable(
+                            Routes.EpisodeDetails.route,
+                            arguments = listOf(
+                                navArgument("seriesId") { type = NavType.IntType },
+                                navArgument("episodeId") { type = NavType.IntType },
+                                navArgument("seasonNumber") { type = NavType.IntType }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
+                        ) { backStackEntry ->
+                            EpisodesDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("seriesId") ?: 0,
+                                backStackEntry.arguments?.getInt("episodeId") ?: 0,
+                                backStackEntry.arguments?.getInt("seasonNumber") ?: 0
+                            )
+                        }
+
+                        composable(
+                            Routes.CollectionDetails.route,
+                            arguments = listOf(navArgument("collectionId") {
+                                type = NavType.IntType
+                            })
+                        ) { backStackEntry ->
+                            CollectionDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("collectionId") ?: 0
+                            )
+                        }
+                        composable(
+                            Routes.Search.route,
+                        ) {
+                            SearchScreen(innerPadding, viewModel, navController)
+                        }
+                        composable(Routes.Profile.route) {
+                            AccountScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(Routes.Ratings.route) {
+                            RatingScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(Routes.Lists.route) {
+                            ListsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(Routes.WatchList.route) {
+                            WatchListScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(
+                            Routes.ListDetails.route,
+                            arguments = listOf(navArgument("listId") {
+                                type = NavType.IntType
+                            })
+                        ) {
+                            ListDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                it.arguments?.getInt("listId") ?: 0,
+                                navController
+                            )
+                        }
+                    }
                 }
             }
         }

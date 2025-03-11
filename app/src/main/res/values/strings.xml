@@ -63,7 +63,10 @@
     <string name="see_lists">See all my lists</string>
     <string name="my_rating">My Ratings</string>
     <string name="my_lists">My Lists</string>
+    <string name="list_name">List name</string>
+    <string name="list_description">List description</string>
     <string name="new_list">New List</string>
+    <string name="create_list">Create List</string>
     <string name="watchlist">My Watchlist</string>
     <string name="see_watchlist">See my watchlist</string>
     <string name="passable">Passable</string>
@@ -84,8 +87,10 @@
     <string name="cast">Cast</string>
     <string name="crew">Crew</string>
     <string name="character">Character:</string>
+    <string name="list_added_successfully">The list have been added successfully</string>
     <string name="user">User</string>
     <string name="score">Score</string>
+    <string name="created_by">Created by</string>
     <string name="user_score">User score</string>
     <string name="biography">Biography</string>
     <string name="add_to_list">Add to list</string>
