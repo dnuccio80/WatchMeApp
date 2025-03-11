@@ -88,6 +88,7 @@ import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaButtonColor
 import com.example.watchme.ui.theme.CardContainerColor
 import com.example.watchme.ui.theme.DialogContainerColor
+import com.example.watchme.ui.theme.LightBlueColor
 import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.Pink40
 import com.example.watchme.ui.theme.ThumbColor
@@ -103,15 +104,20 @@ fun TitleTextItem(text: String) {
 }
 
 @Composable
-fun SecondTitleTextItem(text: String, textAlign: TextAlign = TextAlign.Center, hasMaxWidth: Boolean = true) {
+fun SecondTitleTextItem(
+    text: String,
+    textAlign: TextAlign = TextAlign.Center,
+    hasMaxWidth: Boolean = true
+) {
     Text(
         text,
-        modifier = if(hasMaxWidth)Modifier.fillMaxWidth() else Modifier,
+        modifier = if (hasMaxWidth) Modifier.fillMaxWidth() else Modifier,
         style = MaterialTheme.typography.titleLarge,
         color = Color.White,
         textAlign = textAlign
     )
 }
+
 
 @Composable
 fun ThirdTitleTextItem(
@@ -132,6 +138,25 @@ fun ThirdTitleTextItem(
         maxLines = maxLines,
         overflow = overflow,
     )
+}
+
+@Composable
+fun BigBodyItem(body: String, color: Color = Color.Cyan) {
+    Text(
+        body,
+        style = MaterialTheme.typography.bodyLarge,
+        fontWeight = FontWeight.ExtraBold,
+        fontSize = 48.sp,
+        color = color
+    )
+}
+
+@Composable
+fun SubtitleBigBodyTextItem(subtitle: String, body: String) {
+    Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+        ThirdTitleTextItem(subtitle, hasMaxWidth = false)
+        BigBodyItem(body)
+    }
 }
 
 @Composable
@@ -220,14 +245,14 @@ fun HeaderInfo(
 }
 
 @Composable
-fun BackButton(navController: NavHostController) {
+fun BackButton(onClick:() -> Unit) {
     Card(
         shape = CircleShape,
         modifier = Modifier
             .size(60.dp)
             .padding(16.dp)
             .clickable {
-                navController.popBackStack()
+                onClick()
             },
         colors = CardDefaults.cardColors(
             containerColor = AlphaButtonColor,
@@ -243,7 +268,7 @@ fun BackButton(navController: NavHostController) {
 }
 
 @Composable
-fun CircularButtonIcon(icon: ImageVector, tint:Color, onClick: () -> Unit) {
+fun CircularButtonIcon(icon: ImageVector, tint: Color, onClick: () -> Unit) {
     Button(
         onClick = { onClick() },
         shape = CircleShape,
@@ -903,10 +928,10 @@ fun RatingSectionWithLists(
     viewModel: AppViewModel,
     addedToFavorites: Boolean,
     addedToWatchLater: Boolean,
-    onFavoriteButtonClicked:() -> Unit,
-    onWatchlistButtonClicked:() -> Unit,
+    onFavoriteButtonClicked: () -> Unit,
+    onWatchlistButtonClicked: () -> Unit,
 
-) {
+    ) {
 
     val percentage = (mediaItem.voteAverage.times(10)).toInt()
     val context = LocalContext.current
@@ -962,8 +987,14 @@ fun RatingSectionWithLists(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             CircularButtonIcon(Icons.AutoMirrored.Filled.List, Color.White) { }
-            CircularButtonIcon(Icons.Filled.Favorite, if(addedToFavorites) Color.Red else Color.White) { onFavoriteButtonClicked() }
-            CircularButtonIcon(Icons.Filled.Star, if(addedToWatchLater) Color.Yellow else Color.White) { onWatchlistButtonClicked() }
+            CircularButtonIcon(
+                Icons.Filled.Favorite,
+                if (addedToFavorites) Color.Red else Color.White
+            ) { onFavoriteButtonClicked() }
+            CircularButtonIcon(
+                Icons.Filled.Star,
+                if (addedToWatchLater) Color.Yellow else Color.White
+            ) { onWatchlistButtonClicked() }
         }
 
         RateDialog(
@@ -998,7 +1029,10 @@ fun SimpleRatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.Absolute.SpaceEvenly
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
             PercentageVisualItem(
                 percentage = percentage,
                 cardColor = viewModel.getPercentageColor(percentage),
@@ -1025,4 +1059,69 @@ fun SimpleRatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
         mediaItem = mediaItem,
     ) { showDialog = false }
 
+}
+
+@Composable
+fun AccountHeader(viewModel: AppViewModel, onClick: () -> Unit) {
+
+    val accountDetails by viewModel.accountDetails.collectAsState()
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(180.dp)
+    ) {
+        Image(
+            modifier = Modifier
+                .fillMaxSize(),
+            painter = painterResource(R.drawable.background_account),
+            contentDescription = "account background",
+            contentScale = ContentScale.Crop
+        )
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween
+        ){
+            BackButton() { onClick() }
+        }
+
+        Row(
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Card(
+                modifier = Modifier.size(80.dp),
+                shape = CircleShape,
+                colors = CardDefaults.cardColors(
+                    containerColor = LightBlueColor
+                ),
+                elevation = CardDefaults.cardElevation(
+                    defaultElevation = 16.dp
+                ),
+            ) {
+                Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Text(
+                        accountDetails?.name?.first().toString(),
+                        textAlign = TextAlign.Center,
+                        color = Color.White,
+                        fontSize = 36.sp,
+                        fontWeight = FontWeight.ExtraBold
+                    )
+                }
+            }
+            Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                accountDetails?.name?.let { SecondTitleTextItem(it, hasMaxWidth = false) }
+                accountDetails?.username?.let {
+                    BodyTextItem(
+                        "Username: $it",
+                        color = Color.LightGray
+                    )
+                }
+            }
+        }
+    }
 }

@@ -74,7 +74,7 @@ fun EpisodesDetailsScreen(
                     .height(300.dp)
             ) {
                 BackdropImageItem(episodeDetails?.stillPath.toString())
-                BackButton(navController)
+                BackButton() { navController.popBackStack() }
             }
             Column(
                 Modifier

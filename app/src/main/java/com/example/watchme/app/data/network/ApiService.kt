@@ -1,5 +1,6 @@
 package com.example.watchme.app.data.network
 
+import com.example.watchme.app.data.network.responses.AccountResponse
 import com.example.watchme.app.data.network.responses.CollectionResponse
 import com.example.watchme.app.data.network.responses.CollectionSearchResponse
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
@@ -780,6 +781,24 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             } else {
                 throw Exception(
                     "Failed to get watchlist series: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun getAccountDetails(accountId: Int): AccountResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getAccountDetails("account/$accountId")
+            val body: AccountResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get account details: ${
                         response.errorBody()?.string()
                     }"
                 )

@@ -27,6 +27,7 @@ import com.example.watchme.app.ui.screens.EpisodesDetailsScreen
 import com.example.watchme.app.ui.screens.HomeScreen
 import com.example.watchme.app.ui.screens.MovieDetailsScreen
 import com.example.watchme.app.ui.screens.PeopleDetailsScreen
+import com.example.watchme.app.ui.screens.RatingScreen
 import com.example.watchme.app.ui.screens.SearchScreen
 import com.example.watchme.app.ui.screens.SeriesDetailsScreen
 import com.example.watchme.core.Routes
@@ -147,13 +148,27 @@ class MainActivity : ComponentActivity() {
                                 backStackEntry.arguments?.getInt("collectionId") ?: 0
                             )
                         }
-                        composable(Routes.Search.route,
+                        composable(
+                            Routes.Search.route,
                         ) {
                             SearchScreen(innerPadding, viewModel, navController)
                         }
-                        composable(Routes.Profile.route) { AccountScreen(innerPadding, viewModel, navController) }
-                    }
+                        composable(Routes.Profile.route) {
+                            AccountScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(Routes.Ratings.route) {
+                            RatingScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
 
+                    }
                 }
             }
         }

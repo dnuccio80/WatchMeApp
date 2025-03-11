@@ -27,5 +27,7 @@ sealed class Routes(val route: String) {
 
     data object Profile: Routes("profile")
 
+    data object Ratings: Routes("ratings")
+
 
 }

@@ -65,7 +65,7 @@ fun CollectionDetailsScreen(
                     .height(300.dp)
             ) {
                 BackdropImageItem(collectionDetails?.backdropPath.toString())
-                BackButton(navController)
+                BackButton() { navController.popBackStack() }
             }
             Column(
                 Modifier

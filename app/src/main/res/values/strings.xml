@@ -59,6 +59,12 @@
     <string name="series_added_watchlist">The series was added to your watch list</string>
     <string name="series_removed_watchlist">The series was removed from your watch list</string>
     <string name="not_good">Not good</string>
+    <string name="see_ratings">See all my ratings</string>
+    <string name="see_lists">See all my lists</string>
+    <string name="my_rating">My Ratings</string>
+    <string name="my_lists">My Lists</string>
+    <string name="watchlist">My Watchlist</string>
+    <string name="see_watchlist">See my watchlist</string>
     <string name="passable">Passable</string>
     <string name="rating_saved">Rating saved successfully!</string>
     <string name="its_alright">It´s alright</string>

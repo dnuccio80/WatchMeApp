@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.watchme.app.domain.account.AddFavoriteUseCase
 import com.example.watchme.app.domain.account.AddToWatchlistUseCase
+import com.example.watchme.app.domain.account.GetAccountDetailsUseCase
 import com.example.watchme.app.domain.account.GetFavoritesMoviesUseCase
 import com.example.watchme.app.domain.account.GetFavoritesSeriesUseCase
 import com.example.watchme.app.domain.account.GetRatedEpisodesUseCase
@@ -49,6 +50,7 @@ import com.example.watchme.app.domain.series.GetSeriesImageListByIdUseCase
 import com.example.watchme.app.domain.series.GetSeriesRecommendationsByIdUseCase
 import com.example.watchme.app.domain.series.GetSeriesVideosByIdUseCase
 import com.example.watchme.app.domain.series.GetTopRatedSeriesUseCase
+import com.example.watchme.app.ui.dataClasses.AccountDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.SearchDataClass
@@ -160,6 +162,7 @@ class AppViewModel @Inject constructor(
     private val addToWatchlistUseCase: AddToWatchlistUseCase,
     private val getWatchlistMoviesUseCase: GetWatchlistMoviesUseCase,
     private val getWatchlistSeriesUseCase: GetWatchlistSeriesUseCase,
+    private val getAccountDetailsUseCase: GetAccountDetailsUseCase,
 
     ) : ViewModel() {
 
@@ -322,6 +325,9 @@ class AppViewModel @Inject constructor(
     private val _watchlistSeries = MutableStateFlow<List<SeriesDataClass>?>(null)
     val watchlistSeries: StateFlow<List<SeriesDataClass>?> = _watchlistSeries
 
+    private val _accountDetails = MutableStateFlow<AccountDetailsDataClass?>(null)
+    val accountDetails: StateFlow<AccountDetailsDataClass?> = _accountDetails
+
     init {
         viewModelScope.launch(Dispatchers.IO) {
             _popularMovies.value = getPopularMoviesUseCase()
@@ -337,6 +343,7 @@ class AppViewModel @Inject constructor(
             _favoritesSeries.value = getFavoritesSeriesUseCase(0)
             _watchlistSeries.value = getWatchlistSeriesUseCase(0)
             _watchlistMovies.value = getWatchlistMoviesUseCase(0)
+            _accountDetails.value = getAccountDetailsUseCase(0)
         }
         observeSearchQuery()
     }

@@ -158,7 +158,7 @@ fun SeriesDetailsScreen(
                     .height(300.dp)
             ) {
                 BackdropImageItem(seriesDetails?.backdropPath.toString())
-                BackButton(navController)
+                BackButton() { navController.popBackStack() }
             }
             Column(
                 Modifier

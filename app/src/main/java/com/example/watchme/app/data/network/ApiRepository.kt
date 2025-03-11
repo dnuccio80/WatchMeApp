@@ -1,5 +1,6 @@
 package com.example.watchme.app.data.network
 
+import com.example.watchme.app.data.network.responses.toAccountDetailsDataClass
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
 import com.example.watchme.app.data.network.responses.toCollectionDataClass
 import com.example.watchme.app.data.network.responses.toSearchDataClass
@@ -20,6 +21,7 @@ import com.example.watchme.app.data.network.responses.toSeriesDataClass
 import com.example.watchme.app.data.network.responses.toSeriesDetailsDataClass
 import com.example.watchme.app.data.network.responses.toVideoDataClass
 import com.example.watchme.app.data.network.responses.toWatchListDataClass
+import com.example.watchme.app.ui.dataClasses.AccountDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.SearchDataClass
@@ -245,8 +247,18 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getRatedSeriesEpisodes(accountId = accountId).toEpisodesRatedDataClass()
     }
 
-    suspend fun addFavorites(mediaId: Int, mediaType: String, favorite: Boolean, accountId: Int): FavoriteDataClass {
-        return apiService.addFavorite(mediaId = mediaId, mediaType = mediaType, favorite = favorite, accountId = accountId).toFavoriteDataClass()
+    suspend fun addFavorites(
+        mediaId: Int,
+        mediaType: String,
+        favorite: Boolean,
+        accountId: Int
+    ): FavoriteDataClass {
+        return apiService.addFavorite(
+            mediaId = mediaId,
+            mediaType = mediaType,
+            favorite = favorite,
+            accountId = accountId
+        ).toFavoriteDataClass()
     }
 
     suspend fun getFavoritesMovies(accountId: Int): List<MovieDataClass> {
@@ -257,8 +269,18 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getFavoritesSeries(accountId).toSeriesDataClass()
     }
 
-    suspend fun addToWatchlist(mediaId: Int, mediaType: String, watchlist: Boolean, accountId: Int): WatchListDataClass {
-        return apiService.addToWatchList(mediaId = mediaId, mediaType = mediaType, watchlist = watchlist, accountId = accountId).toWatchListDataClass()
+    suspend fun addToWatchlist(
+        mediaId: Int,
+        mediaType: String,
+        watchlist: Boolean,
+        accountId: Int
+    ): WatchListDataClass {
+        return apiService.addToWatchList(
+            mediaId = mediaId,
+            mediaType = mediaType,
+            watchlist = watchlist,
+            accountId = accountId
+        ).toWatchListDataClass()
     }
 
     suspend fun getWatchlistMovies(accountId: Int): List<MovieDataClass> {
@@ -267,6 +289,10 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun getWatchlistSeries(accountId: Int): List<SeriesDataClass> {
         return apiService.getWatchListSeries(accountId).toSeriesDataClass()
+    }
+
+    suspend fun getAccountDetails(accountId: Int): AccountDetailsDataClass {
+        return apiService.getAccountDetails(accountId).toAccountDetailsDataClass()
     }
 
 

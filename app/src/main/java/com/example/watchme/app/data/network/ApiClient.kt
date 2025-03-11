@@ -1,5 +1,6 @@
 package com.example.watchme.app.data.network
 
+import com.example.watchme.app.data.network.responses.AccountResponse
 import com.example.watchme.app.data.network.responses.CollectionResponse
 import com.example.watchme.app.data.network.responses.CollectionSearchResponse
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
@@ -183,6 +184,9 @@ interface ApiClient {
 
     @GET
     suspend fun getWatchlistSeries(@Url url: String): Response<SeriesResponse>
+
+    @GET
+    suspend fun getAccountDetails(@Url url: String): Response<AccountResponse>
 
 }
 

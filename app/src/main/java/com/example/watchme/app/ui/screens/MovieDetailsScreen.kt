@@ -146,7 +146,7 @@ fun MovieDetailsScreen(
                     .height(300.dp)
             ) {
                 movieDetails?.backdropImage?.let { BackdropImageItem(it) }
-                BackButton(navController)
+                BackButton() { navController.popBackStack() }
             }
             Column(
                 Modifier
