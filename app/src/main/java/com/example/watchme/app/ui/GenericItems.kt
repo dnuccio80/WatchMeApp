@@ -1079,16 +1079,21 @@ fun AccountHeader(viewModel: AppViewModel, onClick: () -> Unit) {
             contentScale = ContentScale.Crop
         )
         Row(
-            Modifier.fillMaxWidth(),
+            Modifier.fillMaxWidth().align(Alignment.TopStart).padding(end = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
         ){
             BackButton() { onClick() }
+            Image(
+                painterResource(R.drawable.ic_logo),
+                contentDescription = stringResource(R.string.app_logo),
+                Modifier.width(128.dp)
+            )
         }
 
         Row(
             Modifier
-                .fillMaxSize()
+                .align(Alignment.BottomStart)
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(16.dp)
