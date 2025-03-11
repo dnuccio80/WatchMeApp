@@ -105,7 +105,7 @@ fun SeriesDetailsScreen(
     var sectionSelected by rememberSaveable { mutableStateOf(Sections.Episodes.title) }
 
     var isFavorite by rememberSaveable { mutableStateOf(viewModel.seriesIsFavorite(seriesId)) }
-    var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.movieIsInWatchlist(seriesId)) }
+    var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.seriesIsInWatchlist(seriesId)) }
 
     viewModel.getSeriesDetailsById(seriesId)
     viewModel.getSeasonDetailsById(seriesId, seasonSelected)
@@ -128,7 +128,7 @@ fun SeriesDetailsScreen(
         if(watchlistRequest != null && watchlistRequest?.success == true) {
             Toast.makeText(context, if(isInWatchlist) context.getString(R.string.series_added_watchlist) else context.getString(R.string.series_removed_watchlist), Toast.LENGTH_SHORT).show()
             viewModel.clearWatchlistRequest()
-            viewModel.updateWatchlistSeries()
+            viewModel.getWatchlistSeries()
         }
     }
 

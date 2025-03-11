@@ -648,13 +648,13 @@ class AppViewModel @Inject constructor(
         return _watchlistSeries.value?.any { it.id == seriesId } == true
     }
 
-    fun updateWatchlistMovies(){
+    fun getWatchlistMovies(){
         viewModelScope.launch(Dispatchers.IO) {
             _watchlistMovies.value = getWatchlistMoviesUseCase(0)
         }
     }
 
-    fun updateWatchlistSeries(){
+    fun getWatchlistSeries(){
         viewModelScope.launch(Dispatchers.IO) {
             _watchlistSeries.value = getWatchlistSeriesUseCase(0)
         }

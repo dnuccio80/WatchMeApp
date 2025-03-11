@@ -81,19 +81,18 @@ fun AccountScreen(
                      onClick = { navController.navigate(Routes.Ratings.route) }
                 )
                 ListSection(
+                    stringResource(R.string.watchlist),
+                    stringResource(R.string.see_watchlist),
+                    painterResource(R.drawable.watchlist_background),
+                    onClick = { }
+                )
+                ListSection(
                     stringResource(R.string.my_lists),
                     stringResource(R.string.see_lists),
                     painterResource(R.drawable.lists_background),
                      onClick = { }
 
                 )
-                ListSection(
-                    stringResource(R.string.watchlist),
-                    stringResource(R.string.see_watchlist),
-                    painterResource(R.drawable.watchlist_background),
-                    onClick = { }
-                )
-
             }
         }
     }

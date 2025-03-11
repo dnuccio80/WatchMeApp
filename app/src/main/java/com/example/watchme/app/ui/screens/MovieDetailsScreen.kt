@@ -124,7 +124,7 @@ fun MovieDetailsScreen(
         if(watchlistRequest != null && watchlistRequest?.success == true) {
             Toast.makeText(context, if(isInWatchlist) context.getString(R.string.movie_added_watchlist) else context.getString(R.string.movie_removed_watchlist), Toast.LENGTH_SHORT).show()
             viewModel.clearWatchlistRequest()
-            viewModel.updateWatchlistMovies()
+            viewModel.getWatchlistMovies()
         }
     }
 
