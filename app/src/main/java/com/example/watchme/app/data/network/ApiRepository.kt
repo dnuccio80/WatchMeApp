@@ -9,6 +9,7 @@ import com.example.watchme.app.data.network.responses.toCreditsDataClass
 import com.example.watchme.app.data.network.responses.toEpisodesDetailsDataClass
 import com.example.watchme.app.data.network.responses.toEpisodesRatedDataClass
 import com.example.watchme.app.data.network.responses.toFavoriteDataClass
+import com.example.watchme.app.data.network.responses.toListDataClass
 import com.example.watchme.app.data.network.responses.toMovieDataClass
 import com.example.watchme.app.data.network.responses.toPeopleDetailsDataClass
 import com.example.watchme.app.data.network.responses.toPeopleMoviesInterpretationDataClass
@@ -31,6 +32,7 @@ import com.example.watchme.app.ui.dataClasses.CreditsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
 import com.example.watchme.app.ui.dataClasses.FavoriteDataClass
+import com.example.watchme.app.ui.dataClasses.ListDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
@@ -295,5 +297,8 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getAccountDetails(accountId).toAccountDetailsDataClass()
     }
 
+    suspend fun getMyLists(accountId: Int): List<ListDataClass> {
+        return apiService.getMyLists(accountId).toListDataClass()
+    }
 
 }

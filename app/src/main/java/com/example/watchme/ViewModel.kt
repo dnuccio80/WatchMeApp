@@ -8,6 +8,7 @@ import com.example.watchme.app.domain.account.AddToWatchlistUseCase
 import com.example.watchme.app.domain.account.GetAccountDetailsUseCase
 import com.example.watchme.app.domain.account.GetFavoritesMoviesUseCase
 import com.example.watchme.app.domain.account.GetFavoritesSeriesUseCase
+import com.example.watchme.app.domain.account.GetMyListsUseCase
 import com.example.watchme.app.domain.account.GetRatedEpisodesUseCase
 import com.example.watchme.app.domain.account.GetRatedMoviesUseCase
 import com.example.watchme.app.domain.account.GetRatedSeriesUseCase
@@ -60,6 +61,7 @@ import com.example.watchme.app.ui.dataClasses.CreditsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
 import com.example.watchme.app.ui.dataClasses.FavoriteDataClass
+import com.example.watchme.app.ui.dataClasses.ListDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
@@ -163,6 +165,7 @@ class AppViewModel @Inject constructor(
     private val getWatchlistMoviesUseCase: GetWatchlistMoviesUseCase,
     private val getWatchlistSeriesUseCase: GetWatchlistSeriesUseCase,
     private val getAccountDetailsUseCase: GetAccountDetailsUseCase,
+    private val getMyListsUseCase: GetMyListsUseCase,
 
     ) : ViewModel() {
 
@@ -327,6 +330,9 @@ class AppViewModel @Inject constructor(
 
     private val _accountDetails = MutableStateFlow<AccountDetailsDataClass?>(null)
     val accountDetails: StateFlow<AccountDetailsDataClass?> = _accountDetails
+
+    private val _myLists = MutableStateFlow<List<ListDataClass>?>(null)
+    val myLists: StateFlow<List<ListDataClass>?> = _myLists
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -657,6 +663,12 @@ class AppViewModel @Inject constructor(
     fun getWatchlistSeries(){
         viewModelScope.launch(Dispatchers.IO) {
             _watchlistSeries.value = getWatchlistSeriesUseCase(0)
+        }
+    }
+
+    fun getMyLists(accountId: Int = 0) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _myLists.value = getMyListsUseCase(accountId)
         }
     }
 

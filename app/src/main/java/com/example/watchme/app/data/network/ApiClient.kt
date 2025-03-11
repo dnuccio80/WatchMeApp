@@ -12,6 +12,7 @@ import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.FavoriteRequestDto
 import com.example.watchme.app.data.network.responses.FavoriteResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
+import com.example.watchme.app.data.network.responses.ListsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.MovieSearchResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
@@ -187,6 +188,9 @@ interface ApiClient {
 
     @GET
     suspend fun getAccountDetails(@Url url: String): Response<AccountResponse>
+
+    @GET
+    suspend fun getMyLists(@Url url: String): Response<ListsResponse>
 
 }
 

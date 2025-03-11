@@ -11,6 +11,7 @@ import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.FavoriteRequestDto
 import com.example.watchme.app.data.network.responses.FavoriteResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
+import com.example.watchme.app.data.network.responses.ListsResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.MovieSearchResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
@@ -799,6 +800,24 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             } else {
                 throw Exception(
                     "Failed to get account details: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun getMyLists(accountId: Int): ListsResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getMyLists("account/$accountId/lists")
+            val body: ListsResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get my lists: ${
                         response.errorBody()?.string()
                     }"
                 )

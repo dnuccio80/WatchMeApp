@@ -25,6 +25,7 @@ import com.example.watchme.app.ui.screens.AccountScreen
 import com.example.watchme.app.ui.screens.CollectionDetailsScreen
 import com.example.watchme.app.ui.screens.EpisodesDetailsScreen
 import com.example.watchme.app.ui.screens.HomeScreen
+import com.example.watchme.app.ui.screens.ListsScreen
 import com.example.watchme.app.ui.screens.MovieDetailsScreen
 import com.example.watchme.app.ui.screens.PeopleDetailsScreen
 import com.example.watchme.app.ui.screens.RatingScreen
@@ -170,7 +171,7 @@ class MainActivity : ComponentActivity() {
 //                        }
 //
 //                    }
-                    WatchListScreen(innerPadding, viewModel,navController)
+                    ListsScreen(innerPadding, viewModel,navController)
                 }
             }
         }
