@@ -33,6 +33,8 @@ sealed class Routes(val route: String) {
 
     data object Lists: Routes("lists")
 
+    data object Favorites: Routes("favorites")
+
     data object ListDetails: Routes("listDetails/{listId}"){
         fun createRoute(listId:Int) = "listDetails/$listId"
     }

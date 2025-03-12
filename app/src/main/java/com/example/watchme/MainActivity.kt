@@ -24,6 +24,7 @@ import com.example.watchme.app.ui.TopBar
 import com.example.watchme.app.ui.screens.AccountScreen
 import com.example.watchme.app.ui.screens.CollectionDetailsScreen
 import com.example.watchme.app.ui.screens.EpisodesDetailsScreen
+import com.example.watchme.app.ui.screens.FavoritesScreen
 import com.example.watchme.app.ui.screens.HomeScreen
 import com.example.watchme.app.ui.screens.ListDetailsScreen
 import com.example.watchme.app.ui.screens.ListsScreen
@@ -197,7 +198,15 @@ class MainActivity : ComponentActivity() {
                                 navController
                             )
                         }
+                        composable(Routes.Favorites.route) {
+                            FavoritesScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
                     }
+
                 }
             }
         }

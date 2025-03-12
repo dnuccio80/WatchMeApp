@@ -75,7 +75,7 @@ fun AccountScreen(
                     stringResource(R.string.my_favorites),
                     stringResource(R.string.see_favorites),
                     painterResource(R.drawable.favorite_background),
-                    onClick = { navController.navigate(Routes.WatchList.route) }
+                    onClick = { navController.navigate(Routes.Favorites.route) }
                 )
                 ListSection(
                     stringResource(R.string.watchlist),
