@@ -20,7 +20,6 @@ import androidx.compose.material3.Button
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -28,11 +27,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.AccountHeader
-import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SubtitleBigBodyTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
@@ -75,10 +72,10 @@ fun AccountScreen(
                     SubtitleBigBodyTextItem("Total Ratings", "35")
                 }
                 ListSection(
-                    stringResource(R.string.my_ratings),
-                    stringResource(R.string.see_ratings),
-                    painterResource(R.drawable.ratings_background),
-                    onClick = { navController.navigate(Routes.Ratings.route) }
+                    stringResource(R.string.my_favorites),
+                    stringResource(R.string.see_favorites),
+                    painterResource(R.drawable.favorite_background),
+                    onClick = { navController.navigate(Routes.WatchList.route) }
                 )
                 ListSection(
                     stringResource(R.string.watchlist),
@@ -91,6 +88,12 @@ fun AccountScreen(
                     stringResource(R.string.see_lists),
                     painterResource(R.drawable.lists_background),
                     onClick = { navController.navigate(Routes.Lists.route) }
+                )
+                ListSection(
+                    stringResource(R.string.my_ratings),
+                    stringResource(R.string.see_ratings),
+                    painterResource(R.drawable.ratings_background),
+                    onClick = { navController.navigate(Routes.Ratings.route) }
                 )
             }
         }

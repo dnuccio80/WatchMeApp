@@ -90,6 +90,8 @@
     <string name="list_added_successfully">The list have been added successfully</string>
     <string name="user">User</string>
     <string name="score">Score</string>
+    <string name="my_favorites">My Favorites</string>
+    <string name="see_favorites">See all my Favorites</string>
     <string name="created_by">Created by</string>
     <string name="user_score">User score</string>
     <string name="biography">Biography</string>
