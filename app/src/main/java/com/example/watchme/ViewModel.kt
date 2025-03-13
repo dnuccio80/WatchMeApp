@@ -92,6 +92,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -363,6 +364,8 @@ class AppViewModel @Inject constructor(
             _watchlistSeries.value = getWatchlistSeriesUseCase(0)
             _watchlistMovies.value = getWatchlistMoviesUseCase(0)
             _accountDetails.value = getAccountDetailsUseCase(0)
+            _ratedMovies.value = getRatedMoviesUseCase(0)
+            _ratedSeries.value = getRatedSeriesUseCase(0)
         }
         observeSearchQuery()
     }
@@ -526,7 +529,7 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun getSeriesName(seriesId:Int): String {
+    fun getSeriesName(seriesId: Int): String {
         viewModelScope.launch(Dispatchers.IO) {
             _seriesDetails.value = getSeriesDetailsByIdUseCase(seriesId)
         }
@@ -604,6 +607,22 @@ class AppViewModel @Inject constructor(
                 seasonNumber = seasonNumber
             )
         }
+    }
+
+    fun isMovieRated(movieId: Int): Boolean {
+        return _ratedMovies.value?.any { it.id == movieId } == true
+    }
+
+    fun isSeriesRated(seriesId: Int): Boolean {
+        return _ratedSeries.value?.any { it.id == seriesId } == true
+    }
+
+    fun updateRatedMovies(){
+        getRatedMovies()
+    }
+
+    fun updateRatedSeries(){
+        getRatedSeries()
     }
 
     // ACCOUNT

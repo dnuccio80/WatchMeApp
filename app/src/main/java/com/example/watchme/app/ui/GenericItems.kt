@@ -249,7 +249,7 @@ fun HeaderInfo(
 }
 
 @Composable
-fun BackButton(onClick:() -> Unit) {
+fun BackButton(onClick: () -> Unit) {
     Card(
         shape = CircleShape,
         modifier = Modifier
@@ -288,7 +288,9 @@ fun RateDialog(
     percentage: Int,
     mediaItem: MediaItem,
     viewModel: AppViewModel,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    onRatedButtonClicked: () -> Unit,
+    onDeleteRateButtonClicked: () -> Unit
 ) {
 
     var sliderValue by rememberSaveable { mutableStateOf(7.0f) }
@@ -407,6 +409,7 @@ fun RateDialog(
                             } else {
                                 rateCall(sliderValue, mediaItem.id)
                             }
+                            onRatedButtonClicked()
                             onDismiss()
                         },
                         shape = RoundedCornerShape(4.dp),
@@ -428,6 +431,7 @@ fun RateDialog(
                             } else {
                                 deleteRateCall(mediaItem.id)
                             }
+                            onDeleteRateButtonClicked()
                             onDismiss()
                         },
                         colors = ButtonDefaults.buttonColors(
@@ -930,12 +934,14 @@ fun LazyHorizontalDividerItem(textWidth: Int, xPos: Float) {
 fun RatingSectionWithLists(
     mediaItem: MediaItem,
     viewModel: AppViewModel,
+    isRated: Boolean,
     addedToFavorites: Boolean,
     addedToWatchLater: Boolean,
     onFavoriteButtonClicked: () -> Unit,
     onWatchlistButtonClicked: () -> Unit,
-
-    ) {
+    onRatedButtonClicked: () -> Unit,
+    onDeleteRateButtonClicked: () -> Unit,
+) {
 
     val percentage = (mediaItem.voteAverage.times(10)).toInt()
     val context = LocalContext.current
@@ -944,6 +950,8 @@ fun RatingSectionWithLists(
     val ratingResponse by viewModel.rating.collectAsState()
 
     LaunchedEffect(ratingResponse) {
+        viewModel.updateRatedMovies()
+        viewModel.updateRatedSeries()
         ratingResponse?.let {
             if (it.success) {
                 Toast.makeText(context, it.statusMessage, Toast.LENGTH_SHORT).show()
@@ -975,16 +983,22 @@ fun RatingSectionWithLists(
                     ThirdTitleTextItem(stringResource(R.string.score), hasMaxWidth = false)
                 }
             }
-            Button(
-                onClick = { showDialog = true },
-                elevation = ButtonDefaults.elevatedButtonElevation(16.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = CardContainerColor
-                ),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                BodyTextItem(stringResource(R.string.rate).uppercase())
+            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Button(
+                    onClick = { showDialog = true },
+                    elevation = ButtonDefaults.elevatedButtonElevation(16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = if (isRated) ThumbColor else CardContainerColor
+                    ),
+                    shape = RoundedCornerShape(8.dp)
+                ) {
+                    BodyTextItem(if(isRated) stringResource(R.string.rated) else stringResource(R.string.rate).uppercase())
+                }
+                if(isRated) {
+                    BodyTextItem(stringResource(R.string.your_rate))
+                }
             }
+
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -1006,7 +1020,10 @@ fun RatingSectionWithLists(
             percentage = percentage,
             viewModel = viewModel,
             mediaItem = mediaItem,
-        ) { showDialog = false }
+            onRatedButtonClicked = { onRatedButtonClicked() },
+            onDeleteRateButtonClicked = { onDeleteRateButtonClicked() },
+            onDismiss = { showDialog = false },
+        )
     }
 }
 
@@ -1061,7 +1078,10 @@ fun SimpleRatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
         percentage = percentage,
         viewModel = viewModel,
         mediaItem = mediaItem,
-    ) { showDialog = false }
+        onRatedButtonClicked = {},
+        onDeleteRateButtonClicked = {},
+        onDismiss = { showDialog = false },
+    )
 
 }
 
@@ -1083,10 +1103,13 @@ fun AccountHeader(viewModel: AppViewModel, onClick: () -> Unit) {
             contentScale = ContentScale.Crop
         )
         Row(
-            Modifier.fillMaxWidth().align(Alignment.TopStart).padding(end = 16.dp),
+            Modifier
+                .fillMaxWidth()
+                .align(Alignment.TopStart)
+                .padding(end = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceBetween
-        ){
+        ) {
             BackButton() { onClick() }
             Image(
                 painterResource(R.drawable.ic_logo),

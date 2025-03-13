@@ -1,5 +1,6 @@
 package com.example.watchme.app.ui.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -103,9 +104,13 @@ fun SeriesDetailsScreen(
     val verticalScrollState = rememberScrollState()
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
     var sectionSelected by rememberSaveable { mutableStateOf(Sections.Episodes.title) }
+    val ratedSeries by viewModel.ratedSeries.collectAsState()
+
 
     var isFavorite by rememberSaveable { mutableStateOf(viewModel.seriesIsFavorite(seriesId)) }
     var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.seriesIsInWatchlist(seriesId)) }
+    var isRated by rememberSaveable { mutableStateOf(viewModel.isSeriesRated(seriesId)) }
+
 
     viewModel.getSeriesDetailsById(seriesId)
     viewModel.getSeasonDetailsById(seriesId, seasonSelected)
@@ -116,17 +121,33 @@ fun SeriesDetailsScreen(
 
     val context = LocalContext.current
 
+    LaunchedEffect(ratedSeries) {
+
+    }
+
     LaunchedEffect(addFavoritesRequest) {
-        if(addFavoritesRequest != null && addFavoritesRequest?.success == true) {
-            Toast.makeText(context, if(isFavorite) context.getString(R.string.series_added_favorites) else context.getString(R.string.series_removed_favorites) , Toast.LENGTH_SHORT).show()
+        if (addFavoritesRequest != null && addFavoritesRequest?.success == true) {
+            Toast.makeText(
+                context,
+                if (isFavorite) context.getString(R.string.series_added_favorites) else context.getString(
+                    R.string.series_removed_favorites
+                ),
+                Toast.LENGTH_SHORT
+            ).show()
             viewModel.clearFavoriteRequest()
             viewModel.updateFavoritesSeries()
         }
     }
 
     LaunchedEffect(watchlistRequest) {
-        if(watchlistRequest != null && watchlistRequest?.success == true) {
-            Toast.makeText(context, if(isInWatchlist) context.getString(R.string.series_added_watchlist) else context.getString(R.string.series_removed_watchlist), Toast.LENGTH_SHORT).show()
+        if (watchlistRequest != null && watchlistRequest?.success == true) {
+            Toast.makeText(
+                context,
+                if (isInWatchlist) context.getString(R.string.series_added_watchlist) else context.getString(
+                    R.string.series_removed_watchlist
+                ),
+                Toast.LENGTH_SHORT
+            ).show()
             viewModel.clearWatchlistRequest()
             viewModel.getWatchlistSeries()
         }
@@ -172,25 +193,36 @@ fun SeriesDetailsScreen(
                     Modifier.align(Alignment.CenterHorizontally)
                 )
                 seriesDetails?.name?.let { SecondTitleTextItem(it) }
-                if(seriesDetails != null) {
+                if (seriesDetails != null) {
                     RatingSectionWithLists(
                         MediaItem(
                             id = seriesId,
                             title = seriesDetails!!.name,
-                            voteAverage = seriesDetails!!.voteAverage?:0f,
+                            voteAverage = seriesDetails!!.voteAverage ?: 0f,
                             category = Categories.TvSeries
                         ),
                         viewModel = viewModel,
+                        isRated = isRated,
                         addedToFavorites = isFavorite,
                         addedToWatchLater = isInWatchlist,
                         onFavoriteButtonClicked = {
                             isFavorite = !isFavorite
-                            viewModel.onAddFavorite(mediaId = seriesId, mediaType = Categories.TvSeries.mediaType, favorite = isFavorite)
+                            viewModel.onAddFavorite(
+                                mediaId = seriesId,
+                                mediaType = Categories.TvSeries.mediaType,
+                                favorite = isFavorite
+                            )
                         },
                         onWatchlistButtonClicked = {
                             isInWatchlist = !isInWatchlist
-                            viewModel.onAddToWatchlist(mediaId = seriesId, mediaType = Categories.TvSeries.mediaType, watchList = isInWatchlist)
-                        }
+                            viewModel.onAddToWatchlist(
+                                mediaId = seriesId,
+                                mediaType = Categories.TvSeries.mediaType,
+                                watchList = isInWatchlist
+                            )
+                        },
+                        onRatedButtonClicked = { isRated = true },
+                        onDeleteRateButtonClicked = { isRated = false }
                     )
                 }
                 SeriesOverviewSection(seriesDetails)
@@ -363,7 +395,10 @@ fun SeriesDetailsSection(seriesDetails: SeriesDetailsDataClass?) {
                 if (it.isNotEmpty()) {
                     TitleSubtitleItem(stringResource(R.string.genre), it)
                 } else {
-                    TitleSubtitleItem(stringResource(R.string.genre), stringResource(R.string.no_results_found))
+                    TitleSubtitleItem(
+                        stringResource(R.string.genre),
+                        stringResource(R.string.no_results_found)
+                    )
                 }
             }
         TitleSubtitleItem(
@@ -526,7 +561,7 @@ fun SeasonsDialogItem(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 items(seasonList) {
-                    ThirdTitleTextItem(it.name,  modifier = Modifier.clickable {
+                    ThirdTitleTextItem(it.name, modifier = Modifier.clickable {
                         onClick(it.seasonNumber ?: 1)
                     })
                 }

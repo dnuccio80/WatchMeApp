@@ -1,5 +1,6 @@
 package com.example.watchme.app.ui.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -86,6 +87,7 @@ fun MovieDetailsScreen(
     viewModel.getRecommendationsById(movieId)
     viewModel.getReviewsById(movieId)
     viewModel.getVideosById(movieId)
+    viewModel.getRatedMovies()
 
     val movieDetails by viewModel.movieDetails.collectAsState()
     val movieCredits by viewModel.movieCredits.collectAsState()
@@ -95,6 +97,7 @@ fun MovieDetailsScreen(
     val videos by viewModel.movieVideos.collectAsState()
     val addFavoritesRequest by viewModel.addFavoriteRequest.collectAsState()
     val watchlistRequest by viewModel.watchListRequest.collectAsState()
+    val ratedMovies by viewModel.ratedMovies.collectAsState()
 
     val runTime = viewModel.getRunTimeInHours(movieDetails?.runtime ?: 0)
     val scrollState = rememberScrollState()
@@ -102,6 +105,8 @@ fun MovieDetailsScreen(
 
     var isFavorite by rememberSaveable { mutableStateOf(viewModel.movieIsFavorite(movieId)) }
     var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.movieIsInWatchlist(movieId)) }
+    var isRated by rememberSaveable { mutableStateOf(viewModel.isMovieRated(movieId)) }
+
 
     val sectionList = listOf(
         Sections.Details.title,
@@ -111,6 +116,10 @@ fun MovieDetailsScreen(
     )
 
     val context = LocalContext.current
+
+    LaunchedEffect(ratedMovies) {
+        isRated = viewModel.isMovieRated(movieId)
+    }
 
     LaunchedEffect(addFavoritesRequest) {
         if(addFavoritesRequest != null && addFavoritesRequest?.success == true) {
@@ -168,6 +177,7 @@ fun MovieDetailsScreen(
                             voteAverage = movieDetails!!.voteAverage,
                             category = Categories.Movies
                         ), viewModel,
+                        isRated = isRated,
                         addedToFavorites = isFavorite,
                         addedToWatchLater = isInWatchlist,
                         onFavoriteButtonClicked = {
@@ -177,7 +187,9 @@ fun MovieDetailsScreen(
                         onWatchlistButtonClicked = {
                             isInWatchlist = !isInWatchlist
                             viewModel.onAddToWatchlist(mediaId = movieId, mediaType = Categories.Movies.mediaType, watchList = isInWatchlist)
-                        }
+                        },
+                        onRatedButtonClicked = { isRated = true},
+                        onDeleteRateButtonClicked = { isRated = false }
                     )
                 }
                 Spacer(Modifier.size(0.dp))

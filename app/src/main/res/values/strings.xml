@@ -44,6 +44,8 @@
     <string name="number_of_seasons">Number of seasons:</string>
     <string name="first_air_date">First air date:</string>
     <string name="rate">Rate!</string>
+    <string name="rated">Rated!</string>
+    <string name="your_rate">Your rate:</string>
     <string name="clear_rating">Clear my rating</string>
     <string name="absolute_trash">Absolute trash</string>
     <string name="dumpster_fire">Dumpster fire</string>

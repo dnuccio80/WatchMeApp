@@ -19,3 +19,7 @@ fun RatingResponse.toRatingDataClass(): RatingDataClass {
 data class RatingRequestDto(
     val value:Float
 )
+
+//data class RatedMovieReponse(
+//    @SerializedName("id")
+//)
