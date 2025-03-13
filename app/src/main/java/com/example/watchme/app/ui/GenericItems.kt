@@ -935,6 +935,7 @@ fun RatingSectionWithLists(
     mediaItem: MediaItem,
     viewModel: AppViewModel,
     isRated: Boolean,
+    myRate:Float,
     addedToFavorites: Boolean,
     addedToWatchLater: Boolean,
     onFavoriteButtonClicked: () -> Unit,
@@ -995,7 +996,8 @@ fun RatingSectionWithLists(
                     BodyTextItem(if(isRated) stringResource(R.string.rated) else stringResource(R.string.rate).uppercase())
                 }
                 if(isRated) {
-                    BodyTextItem(stringResource(R.string.your_rate))
+                    val intRate = (myRate * 10).toInt()
+                    BodyTextItem("${stringResource(R.string.your_rate)} $intRate%", color = ThumbColor)
                 }
             }
 

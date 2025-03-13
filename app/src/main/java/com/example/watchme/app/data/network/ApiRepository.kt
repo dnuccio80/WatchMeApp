@@ -17,7 +17,8 @@ import com.example.watchme.app.data.network.responses.toPeopleDetailsDataClass
 import com.example.watchme.app.data.network.responses.toPeopleMoviesInterpretationDataClass
 import com.example.watchme.app.data.network.responses.toPeopleSeriesInterpretationDataClass
 import com.example.watchme.app.data.network.responses.toProvidersDataClass
-import com.example.watchme.app.data.network.responses.toRatingDataClass
+import com.example.watchme.app.data.network.responses.toRatedItemDataClass
+import com.example.watchme.app.data.network.responses.toRatingRequestDataClass
 import com.example.watchme.app.data.network.responses.toReviewDataClass
 import com.example.watchme.app.data.network.responses.toSeasonDetailsDataClass
 import com.example.watchme.app.data.network.responses.toSeriesDataClass
@@ -42,7 +43,8 @@ import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleSeriesInterpretationDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
-import com.example.watchme.app.ui.dataClasses.RatingDataClass
+import com.example.watchme.app.ui.dataClasses.RatedItemDataClass
+import com.example.watchme.app.ui.dataClasses.RatingRequestDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
@@ -199,20 +201,20 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     // RATING
 
-    suspend fun rateMovie(rating: Float, movieId: Int): RatingDataClass {
-        return apiService.rateMovie(rating = rating, movieId = movieId).toRatingDataClass()
+    suspend fun rateMovie(rating: Float, movieId: Int): RatingRequestDataClass {
+        return apiService.rateMovie(rating = rating, movieId = movieId).toRatingRequestDataClass()
     }
 
-    suspend fun deleteRateMovie(movieId: Int): RatingDataClass {
-        return apiService.deleteRateMovie(movieId).toRatingDataClass()
+    suspend fun deleteRateMovie(movieId: Int): RatingRequestDataClass {
+        return apiService.deleteRateMovie(movieId).toRatingRequestDataClass()
     }
 
-    suspend fun rateSeries(rating: Float, seriesId: Int): RatingDataClass {
-        return apiService.rateSeries(rating = rating, seriesId = seriesId).toRatingDataClass()
+    suspend fun rateSeries(rating: Float, seriesId: Int): RatingRequestDataClass {
+        return apiService.rateSeries(rating = rating, seriesId = seriesId).toRatingRequestDataClass()
     }
 
-    suspend fun deleteRateSeries(seriesId: Int): RatingDataClass {
-        return apiService.deleteRateSeries(seriesId = seriesId).toRatingDataClass()
+    suspend fun deleteRateSeries(seriesId: Int): RatingRequestDataClass {
+        return apiService.deleteRateSeries(seriesId = seriesId).toRatingRequestDataClass()
     }
 
     suspend fun rateSeriesEpisodes(
@@ -220,33 +222,33 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         seriesId: Int,
         episodeNumber: Int,
         seasonNumber: Int
-    ): RatingDataClass {
+    ): RatingRequestDataClass {
         return apiService.rateSeriesEpisodes(
             rating = rating,
             seriesId = seriesId,
             episodeNumber = episodeNumber,
             seasonNumber = seasonNumber
-        ).toRatingDataClass()
+        ).toRatingRequestDataClass()
     }
 
     suspend fun deleteRateSeriesEpisodes(
         seriesId: Int,
         episodeNumber: Int,
         seasonNumber: Int
-    ): RatingDataClass {
+    ): RatingRequestDataClass {
         return apiService.deleteRateSeriesEpisodes(
             seriesId = seriesId,
             seasonNumber = seasonNumber,
             episodeNumber = episodeNumber
-        ).toRatingDataClass()
+        ).toRatingRequestDataClass()
     }
 
-    suspend fun getRatedMovies(accountId: Int = 0): List<MovieDataClass> {
-        return apiService.getRatedMovies(accountId = accountId).toMovieDataClass()
+    suspend fun getRatedMovies(accountId: Int = 0): List<RatedItemDataClass> {
+        return apiService.getRatedMovies(accountId = accountId).toRatedItemDataClass()
     }
 
-    suspend fun getRatedSeries(accountId: Int = 0): List<SeriesDataClass> {
-        return apiService.getRatedSeries(accountId = accountId).toSeriesDataClass()
+    suspend fun getRatedSeries(accountId: Int = 0): List<RatedItemDataClass> {
+        return apiService.getRatedSeries(accountId = accountId).toRatedItemDataClass()
     }
 
     suspend fun getRatedSeriesEpisodes(accountId: Int = 0): List<EpisodesRatedDataClass> {

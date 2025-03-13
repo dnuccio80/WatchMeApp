@@ -9,7 +9,6 @@ import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
 import com.example.watchme.app.data.network.responses.EpisodeResponse
-import com.example.watchme.app.data.network.responses.EpisodesRated
 import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.FavoriteRequestDto
 import com.example.watchme.app.data.network.responses.FavoriteResponse
@@ -23,8 +22,9 @@ import com.example.watchme.app.data.network.responses.PeopleMovieInterpretationR
 import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretationResponse
 import com.example.watchme.app.data.network.responses.PersonSearchResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
+import com.example.watchme.app.data.network.responses.RatedResponse
 import com.example.watchme.app.data.network.responses.RatingRequestDto
-import com.example.watchme.app.data.network.responses.RatingResponse
+import com.example.watchme.app.data.network.responses.RatingRequestResponse
 import com.example.watchme.app.data.network.responses.ReviewsResponse
 import com.example.watchme.app.data.network.responses.SeasonDetails
 import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
@@ -149,18 +149,18 @@ interface ApiClient {
     suspend fun rateItem(
         @Body ratingRequest: RatingRequestDto,
         @Url url: String
-    ): Response<RatingResponse>
+    ): Response<RatingRequestResponse>
 
     @DELETE
-    suspend fun deleteRate(@Url url: String): Response<RatingResponse>
+    suspend fun deleteRate(@Url url: String): Response<RatingRequestResponse>
 
     // ACCOUNT
 
     @GET
-    suspend fun getRatedMovies(@Url url: String): Response<MovieResponse>
+    suspend fun getRatedMovies(@Url url: String): Response<RatedResponse>
 
     @GET
-    suspend fun getRatedSeries(@Url url: String): Response<SeriesResponse>
+    suspend fun getRatedSeries(@Url url: String): Response<RatedResponse>
 
     @GET
     suspend fun getRatedSeriesEpisodes(@Url url: String): Response<EpisodesRatedResponse>

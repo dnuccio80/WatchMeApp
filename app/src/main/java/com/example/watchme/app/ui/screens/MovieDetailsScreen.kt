@@ -29,6 +29,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -106,7 +107,7 @@ fun MovieDetailsScreen(
     var isFavorite by rememberSaveable { mutableStateOf(viewModel.movieIsFavorite(movieId)) }
     var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.movieIsInWatchlist(movieId)) }
     var isRated by rememberSaveable { mutableStateOf(viewModel.isMovieRated(movieId)) }
-
+    var myRate by rememberSaveable { mutableFloatStateOf(viewModel.getMyMovieRate(movieId)) }
 
     val sectionList = listOf(
         Sections.Details.title,
@@ -119,6 +120,7 @@ fun MovieDetailsScreen(
 
     LaunchedEffect(ratedMovies) {
         isRated = viewModel.isMovieRated(movieId)
+        myRate = viewModel.getMyMovieRate(movieId)
     }
 
     LaunchedEffect(addFavoritesRequest) {
@@ -178,6 +180,7 @@ fun MovieDetailsScreen(
                             category = Categories.Movies
                         ), viewModel,
                         isRated = isRated,
+                        myRate = myRate,
                         addedToFavorites = isFavorite,
                         addedToWatchLater = isInWatchlist,
                         onFavoriteButtonClicked = {

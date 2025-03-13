@@ -37,6 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -100,17 +101,17 @@ fun SeriesDetailsScreen(
     val seriesCredits by viewModel.seriesCredits.collectAsState()
     val addFavoritesRequest by viewModel.addFavoriteRequest.collectAsState()
     val watchlistRequest by viewModel.watchListRequest.collectAsState()
+    val ratedSeries by viewModel.ratedSeries.collectAsState()
 
     val verticalScrollState = rememberScrollState()
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
     var sectionSelected by rememberSaveable { mutableStateOf(Sections.Episodes.title) }
-    val ratedSeries by viewModel.ratedSeries.collectAsState()
 
 
     var isFavorite by rememberSaveable { mutableStateOf(viewModel.seriesIsFavorite(seriesId)) }
     var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.seriesIsInWatchlist(seriesId)) }
     var isRated by rememberSaveable { mutableStateOf(viewModel.isSeriesRated(seriesId)) }
-
+    var myRate by rememberSaveable { mutableFloatStateOf(viewModel.getMySeriesRate(seriesId)) }
 
     viewModel.getSeriesDetailsById(seriesId)
     viewModel.getSeasonDetailsById(seriesId, seasonSelected)
@@ -122,7 +123,8 @@ fun SeriesDetailsScreen(
     val context = LocalContext.current
 
     LaunchedEffect(ratedSeries) {
-
+        isRated = viewModel.isSeriesRated(seriesId)
+        myRate = viewModel.getMySeriesRate(seriesId)
     }
 
     LaunchedEffect(addFavoritesRequest) {
@@ -203,6 +205,7 @@ fun SeriesDetailsScreen(
                         ),
                         viewModel = viewModel,
                         isRated = isRated,
+                        myRate = myRate,
                         addedToFavorites = isFavorite,
                         addedToWatchLater = isInWatchlist,
                         onFavoriteButtonClicked = {

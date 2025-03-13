@@ -1,9 +1,9 @@
 package com.example.watchme.app.domain.rating
 
 import com.example.watchme.app.data.network.ApiRepository
-import com.example.watchme.app.ui.dataClasses.RatingDataClass
+import com.example.watchme.app.ui.dataClasses.RatingRequestDataClass
 import javax.inject.Inject
 
 class DeleteRateSeriesUseCase @Inject constructor(private val apiRepository: ApiRepository) {
-    suspend operator fun invoke(seriesId: Int) : RatingDataClass = apiRepository.deleteRateSeries(seriesId)
+    suspend operator fun invoke(seriesId: Int) : RatingRequestDataClass = apiRepository.deleteRateSeries(seriesId)
 }

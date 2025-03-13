@@ -1,6 +1,6 @@
 package com.example.watchme.app.ui.dataClasses
 
-data class RatingDataClass (
+data class RatingRequestDataClass (
     val success: Boolean,
     val statusMessage: String
 )

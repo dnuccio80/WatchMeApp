@@ -71,7 +71,8 @@ import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleSeriesInterpretationDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
-import com.example.watchme.app.ui.dataClasses.RatingDataClass
+import com.example.watchme.app.ui.dataClasses.RatedItemDataClass
+import com.example.watchme.app.ui.dataClasses.RatingRequestDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
@@ -92,11 +93,9 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOn
-import kotlinx.coroutines.flow.forEach
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
-import org.intellij.lang.annotations.Language
 import java.text.NumberFormat
 import java.util.Locale
 import javax.inject.Inject
@@ -304,16 +303,16 @@ class AppViewModel @Inject constructor(
 
     // RATING
 
-    private val _rating = MutableStateFlow<RatingDataClass?>(null)
-    val rating: StateFlow<RatingDataClass?> = _rating
+    private val _rating = MutableStateFlow<RatingRequestDataClass?>(null)
+    val rating: StateFlow<RatingRequestDataClass?> = _rating
 
     // ACCOUNT
 
-    private val _ratedMovies = MutableStateFlow<List<MovieDataClass>?>(null)
-    val ratedMovies: StateFlow<List<MovieDataClass>?> = _ratedMovies
+    private val _ratedMovies = MutableStateFlow<List<RatedItemDataClass>?>(null)
+    val ratedMovies: StateFlow<List<RatedItemDataClass>?> = _ratedMovies
 
-    private val _ratedSeries = MutableStateFlow<List<SeriesDataClass>?>(null)
-    val ratedSeries: StateFlow<List<SeriesDataClass>?> = _ratedSeries
+    private val _ratedSeries = MutableStateFlow<List<RatedItemDataClass>?>(null)
+    val ratedSeries: StateFlow<List<RatedItemDataClass>?> = _ratedSeries
 
     private val _ratedSeriesEpisodes = MutableStateFlow<List<EpisodesRatedDataClass>?>(null)
     val ratedSeriesEpisodes: StateFlow<List<EpisodesRatedDataClass>?> = _ratedSeriesEpisodes
@@ -617,12 +616,20 @@ class AppViewModel @Inject constructor(
         return _ratedSeries.value?.any { it.id == seriesId } == true
     }
 
-    fun updateRatedMovies(){
+    fun updateRatedMovies() {
         getRatedMovies()
     }
 
-    fun updateRatedSeries(){
+    fun updateRatedSeries() {
         getRatedSeries()
+    }
+
+    fun getMyMovieRate(movieId: Int): Float {
+        return _ratedMovies.value?.find { it.id == movieId }?.rating ?: 0f
+    }
+
+    fun getMySeriesRate(seriesId: Int): Float {
+        return _ratedSeries.value?.find { it.id == seriesId }?.rating ?: 0f
     }
 
     // ACCOUNT

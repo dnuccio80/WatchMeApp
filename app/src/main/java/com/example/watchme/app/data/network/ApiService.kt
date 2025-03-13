@@ -22,8 +22,9 @@ import com.example.watchme.app.data.network.responses.PeopleMovieInterpretationR
 import com.example.watchme.app.data.network.responses.PeopleSeriesInterpretationResponse
 import com.example.watchme.app.data.network.responses.PersonSearchResponse
 import com.example.watchme.app.data.network.responses.ProvidersResponse
+import com.example.watchme.app.data.network.responses.RatedResponse
 import com.example.watchme.app.data.network.responses.RatingRequestDto
-import com.example.watchme.app.data.network.responses.RatingResponse
+import com.example.watchme.app.data.network.responses.RatingRequestResponse
 import com.example.watchme.app.data.network.responses.ReviewsResponse
 import com.example.watchme.app.data.network.responses.SeasonDetails
 import com.example.watchme.app.data.network.responses.SeriesDetailsResponse
@@ -508,11 +509,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
 
     // RATING MOVIE
 
-    suspend fun rateMovie(movieId: Int, rating: Float): RatingResponse {
+    suspend fun rateMovie(movieId: Int, rating: Float): RatingRequestResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .rateItem(RatingRequestDto(rating), "movie/$movieId/rating")
-            val body: RatingResponse? = response.body()
+            val body: RatingRequestResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
                 body
@@ -526,11 +527,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun deleteRateMovie(movieId: Int): RatingResponse {
+    suspend fun deleteRateMovie(movieId: Int): RatingRequestResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .deleteRate("movie/$movieId/rating")
-            val body: RatingResponse? = response.body()
+            val body: RatingRequestResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
                 body
@@ -545,11 +546,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     }
 
 
-    suspend fun rateSeries(seriesId: Int, rating: Float): RatingResponse {
+    suspend fun rateSeries(seriesId: Int, rating: Float): RatingRequestResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .rateItem(RatingRequestDto(rating), "tv/$seriesId/rating")
-            val body: RatingResponse? = response.body()
+            val body: RatingRequestResponse? = response.body()
             if (response.isSuccessful && body != null) {
                 body
             } else {
@@ -562,11 +563,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun deleteRateSeries(seriesId: Int): RatingResponse {
+    suspend fun deleteRateSeries(seriesId: Int): RatingRequestResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .deleteRate("tv/$seriesId/rating")
-            val body: RatingResponse? = response.body()
+            val body: RatingRequestResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
                 body
@@ -585,14 +586,14 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         seasonNumber: Int,
         episodeNumber: Int,
         rating: Float
-    ): RatingResponse {
+    ): RatingRequestResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .rateItem(
                     RatingRequestDto(rating),
                     "tv/$seriesId/season/$seasonNumber/episode/$episodeNumber/rating"
                 )
-            val body: RatingResponse? = response.body()
+            val body: RatingRequestResponse? = response.body()
             if (response.isSuccessful && body != null) {
                 body
             } else {
@@ -609,11 +610,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         seriesId: Int,
         seasonNumber: Int,
         episodeNumber: Int
-    ): RatingResponse {
+    ): RatingRequestResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .deleteRate("tv/$seriesId/season/$seasonNumber/episode/$episodeNumber/rating")
-            val body: RatingResponse? = response.body()
+            val body: RatingRequestResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
                 body
@@ -629,11 +630,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
 
     // ACCOUNT
 
-    suspend fun getRatedMovies(accountId: Int = 0): MovieResponse {
+    suspend fun getRatedMovies(accountId: Int = 0): RatedResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .getRatedMovies("account/$accountId/rated/movies")
-            val body: MovieResponse? = response.body()
+            val body: RatedResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
                 body
@@ -648,11 +649,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     }
 
 
-    suspend fun getRatedSeries(accountId: Int = 0): SeriesResponse {
+    suspend fun getRatedSeries(accountId: Int = 0): RatedResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .getRatedSeries("account/$accountId/rated/tv")
-            val body: SeriesResponse? = response.body()
+            val body: RatedResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
                 body
