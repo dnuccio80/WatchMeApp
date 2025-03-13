@@ -526,6 +526,13 @@ class AppViewModel @Inject constructor(
         }
     }
 
+    fun getSeriesName(seriesId:Int): String {
+        viewModelScope.launch(Dispatchers.IO) {
+            _seriesDetails.value = getSeriesDetailsByIdUseCase(seriesId)
+        }
+        return _seriesDetails.value?.name.toString()
+    }
+
     // PEOPLE
 
     fun getPeopleDetailsById(personId: Int) {

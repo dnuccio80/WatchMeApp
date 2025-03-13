@@ -315,7 +315,7 @@ fun EpisodesSection(
         }
     }
 
-    SeasonsDropdownMenuItem(
+    SeasonsDialogItem(
         show = showDialog,
         seasonList = seasons,
         onClick = { seasonNumber ->
@@ -505,7 +505,7 @@ fun EpisodesListItem(seasonDetails: List<EpisodeDetailsDataClass>?) {
 }
 
 @Composable
-fun SeasonsDropdownMenuItem(
+fun SeasonsDialogItem(
     show: Boolean,
     seasonList: List<SeasonDataClass>,
     onClick: (Int) -> Unit,
@@ -526,7 +526,7 @@ fun SeasonsDropdownMenuItem(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             ) {
                 items(seasonList) {
-                    ThirdTitleTextItem(it.name, modifier = Modifier.clickable {
+                    ThirdTitleTextItem(it.name,  modifier = Modifier.clickable {
                         onClick(it.seasonNumber ?: 1)
                     })
                 }

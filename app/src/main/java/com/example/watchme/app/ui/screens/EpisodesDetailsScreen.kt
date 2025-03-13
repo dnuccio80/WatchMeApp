@@ -1,6 +1,7 @@
 package com.example.watchme.app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
@@ -18,6 +20,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -48,12 +51,13 @@ fun EpisodesDetailsScreen(
 ) {
 
     val episodeDetails by viewModel.episodeDetails.collectAsState()
+    val seriesName = viewModel.getSeriesName(seriesId)
 
     viewModel.getEpisodeDetailsById(seriesId, seasonNumber, episodeNumber)
 
     val runtime = episodeDetails?.runtime?.let { viewModel.getRunTimeInHours(it) }
 
-    if(episodeDetails == null) return
+    if (episodeDetails == null) return
 
     Box(
         Modifier
@@ -91,11 +95,19 @@ fun EpisodesDetailsScreen(
                         )
                     } ${episodeDetails?.episodeNumber} - $runtime"
                 )
+                BodyTextItem(
+                    seriesName,
+                    textAlign = TextAlign.Center,
+                    color = Color.Gray,
+                    modifier = Modifier.clickable {
+                        navController.navigate(Routes.SeriesDetails.createRoute(seriesId))
+                    })
+                Spacer(Modifier.size(0.dp)) // Gives me an extra 16.dp vertical space
                 SimpleRatingSection(
                     mediaItem = MediaItem(
                         id = seriesId,
                         title = episodeDetails!!.name,
-                        voteAverage = episodeDetails!!.voteAverage?:0f,
+                        voteAverage = episodeDetails!!.voteAverage ?: 0f,
                         seasonNumber = seasonNumber,
                         episodeNumber = episodeDetails!!.episodeNumber,
                         category = Categories.TvEpisodes
@@ -103,12 +115,15 @@ fun EpisodesDetailsScreen(
                     viewModel = viewModel
                 )
 
-                if(episodeDetails?.overview.isNullOrEmpty() && episodeDetails?.guestStars?.isEmpty() == true && episodeDetails?.crew?.isEmpty() == true){
+                if (episodeDetails?.overview.isNullOrEmpty() && episodeDetails?.guestStars?.isEmpty() == true && episodeDetails?.crew?.isEmpty() == true) {
                     BodyTextItem(stringResource(R.string.no_results_found))
                 }
 
-                if(episodeDetails?.overview?.isNotEmpty() == true){
-                    SecondTitleTextItem(stringResource(R.string.overview), textAlign = TextAlign.Start)
+                if (episodeDetails?.overview?.isNotEmpty() == true) {
+                    SecondTitleTextItem(
+                        stringResource(R.string.overview),
+                        textAlign = TextAlign.Start
+                    )
                     episodeDetails?.overview?.let { BodyTextItem(it) }
                     Spacer(modifier = Modifier.height(0.dp)) // It gives an extra 16.dp space because of verticalArrangement
                 }
