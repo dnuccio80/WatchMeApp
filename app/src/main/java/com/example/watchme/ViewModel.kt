@@ -36,6 +36,7 @@ import com.example.watchme.app.domain.providers.GetProvidersUseCase
 import com.example.watchme.app.domain.rating.DeleteRateMovieUseCase
 import com.example.watchme.app.domain.rating.DeleteRateSeriesEpisodeUseCase
 import com.example.watchme.app.domain.rating.DeleteRateSeriesUseCase
+import com.example.watchme.app.domain.rating.GetRatedCountUseCase
 import com.example.watchme.app.domain.rating.RateMovieUseCase
 import com.example.watchme.app.domain.rating.RateSeriesEpisodeUseCase
 import com.example.watchme.app.domain.rating.RateSeriesUseCase
@@ -76,6 +77,7 @@ import com.example.watchme.app.ui.dataClasses.RatingRequestDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.TotalRatedResultsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.app.ui.dataClasses.WatchListDataClass
 import com.example.watchme.core.Categories
@@ -157,6 +159,7 @@ class AppViewModel @Inject constructor(
     private val deleteRateSeriesUseCase: DeleteRateSeriesUseCase,
     private val rateSeriesEpisodeUseCase: RateSeriesEpisodeUseCase,
     private val deleteRateSeriesEpisodeUseCase: DeleteRateSeriesEpisodeUseCase,
+    private val getRatedCountUseCase: GetRatedCountUseCase,
 
     // ACCOUNT
 
@@ -305,6 +308,9 @@ class AppViewModel @Inject constructor(
 
     private val _rating = MutableStateFlow<RatingRequestDataClass?>(null)
     val rating: StateFlow<RatingRequestDataClass?> = _rating
+
+    private val _totalRatingCount = MutableStateFlow<TotalRatedResultsDataClass?>(null)
+    val totalRatingCount: StateFlow<TotalRatedResultsDataClass?> = _totalRatingCount
 
     // ACCOUNT
 
@@ -630,6 +636,12 @@ class AppViewModel @Inject constructor(
 
     fun getMySeriesRate(seriesId: Int): Float {
         return _ratedSeries.value?.find { it.id == seriesId }?.rating ?: 0f
+    }
+
+    fun getTotalRatingCount() {
+        viewModelScope.launch(Dispatchers.IO) {
+            _totalRatingCount.value = getRatedCountUseCase()
+        }
     }
 
     // ACCOUNT

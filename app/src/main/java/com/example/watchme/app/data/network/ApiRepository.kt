@@ -23,6 +23,7 @@ import com.example.watchme.app.data.network.responses.toReviewDataClass
 import com.example.watchme.app.data.network.responses.toSeasonDetailsDataClass
 import com.example.watchme.app.data.network.responses.toSeriesDataClass
 import com.example.watchme.app.data.network.responses.toSeriesDetailsDataClass
+import com.example.watchme.app.data.network.responses.toTotalResults
 import com.example.watchme.app.data.network.responses.toVideoDataClass
 import com.example.watchme.app.data.network.responses.toWatchListDataClass
 import com.example.watchme.app.ui.dataClasses.AccountDetailsDataClass
@@ -48,6 +49,7 @@ import com.example.watchme.app.ui.dataClasses.RatingRequestDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.TotalRatedResultsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.app.ui.dataClasses.WatchListDataClass
 import javax.inject.Inject
@@ -253,6 +255,14 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun getRatedSeriesEpisodes(accountId: Int = 0): List<EpisodesRatedDataClass> {
         return apiService.getRatedSeriesEpisodes(accountId = accountId).toEpisodesRatedDataClass()
+    }
+
+    suspend fun getRatedMoviesCount(accountId: Int = 0): TotalRatedResultsDataClass {
+        return apiService.getRatedMovies(accountId).toTotalResults()
+    }
+
+    suspend fun getRatedSeriesCount(accountId: Int = 0): TotalRatedResultsDataClass {
+        return apiService.getRatedSeries(accountId).toTotalResults()
     }
 
     suspend fun addFavorites(
