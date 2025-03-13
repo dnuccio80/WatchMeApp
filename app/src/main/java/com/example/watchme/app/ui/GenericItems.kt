@@ -86,6 +86,7 @@ import com.example.watchme.core.Categories
 import com.example.watchme.core.MediaItem
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaButtonColor
+import com.example.watchme.ui.theme.ButtonContainerColor
 import com.example.watchme.ui.theme.CardContainerColor
 import com.example.watchme.ui.theme.DialogContainerColor
 import com.example.watchme.ui.theme.LightBlueColor
@@ -275,8 +276,12 @@ fun BackButton(onClick: () -> Unit) {
 fun CircularButtonIcon(icon: ImageVector, tint: Color, onClick: () -> Unit) {
     Button(
         onClick = { onClick() },
-        shape = CircleShape,
+        shape = RoundedCornerShape(16.dp),
         contentPadding = PaddingValues(0.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = ButtonContainerColor
+        ),
+        elevation = ButtonDefaults.elevatedButtonElevation(16.dp)
     ) {
         Icon(icon, contentDescription = "icon button", tint = tint)
     }
@@ -989,7 +994,7 @@ fun RatingSectionWithLists(
                     onClick = { showDialog = true },
                     elevation = ButtonDefaults.elevatedButtonElevation(16.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = if (isRated) ThumbColor else CardContainerColor
+                        containerColor = if (isRated) ThumbColor else ButtonContainerColor
                     ),
                     shape = RoundedCornerShape(8.dp)
                 ) {

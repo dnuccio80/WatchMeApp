@@ -23,6 +23,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
@@ -72,6 +74,7 @@ import com.example.watchme.core.MediaItem
 import com.example.watchme.core.Routes
 import com.example.watchme.core.Sections
 import com.example.watchme.core.constants.Constants
+import com.example.watchme.ui.theme.ButtonContainerColor
 import com.example.watchme.ui.theme.CardContainerColor
 import com.example.watchme.ui.theme.PurpleGrey40
 
@@ -408,7 +411,12 @@ fun CollectionItem(collection: CollectionDataClass?, onCollectionButtonClick: (I
         ) {
             SecondTitleTextItem(collection.nameCollection, TextAlign.Start)
             Button(
-                onClick = { onCollectionButtonClick(collection.idCollection) }
+                onClick = { onCollectionButtonClick(collection.idCollection) },
+                shape = RoundedCornerShape(8.dp),
+                elevation = ButtonDefaults.elevatedButtonElevation(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = ButtonContainerColor
+                )
             ) {
                 BodyTextItem(stringResource(R.string.view_collection).uppercase())
             }

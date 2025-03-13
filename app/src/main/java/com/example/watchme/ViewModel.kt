@@ -7,6 +7,7 @@ import com.example.watchme.app.domain.account.AddFavoriteUseCase
 import com.example.watchme.app.domain.account.AddToWatchlistUseCase
 import com.example.watchme.app.domain.account.CreateListUseCase
 import com.example.watchme.app.domain.account.GetAccountDetailsUseCase
+import com.example.watchme.app.domain.account.GetFavoritesCountUseCase
 import com.example.watchme.app.domain.account.GetFavoritesMoviesUseCase
 import com.example.watchme.app.domain.account.GetFavoritesSeriesUseCase
 import com.example.watchme.app.domain.account.GetListDetailsUseCase
@@ -176,6 +177,7 @@ class AppViewModel @Inject constructor(
     private val getMyListsUseCase: GetMyListsUseCase,
     private val createListUseCase: CreateListUseCase,
     private val getListDetailsUseCase: GetListDetailsUseCase,
+    private val getFavoritesCountUseCase: GetFavoritesCountUseCase,
 
     ) : ViewModel() {
 
@@ -352,6 +354,9 @@ class AppViewModel @Inject constructor(
 
     private val _listDetails = MutableStateFlow<ListDetailsDataClass?>(null)
     val listDetails: StateFlow<ListDetailsDataClass?> = _listDetails
+
+    private val _favoritesCount = MutableStateFlow<Int?>(null)
+    val favoritesCount: StateFlow<Int?> = _favoritesCount
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -692,6 +697,12 @@ class AppViewModel @Inject constructor(
 
     fun seriesIsFavorite(seriesId: Int): Boolean {
         return _favoritesSeries.value?.any { it.id == seriesId } == true
+    }
+
+    fun getFavoritesCount(accountId: Int = 0) {
+        viewModelScope.launch (Dispatchers.IO){
+            _favoritesCount.value = getFavoritesCountUseCase(accountId)
+        }
     }
 
     fun onAddToWatchlist(mediaId: Int, mediaType: String, watchList: Boolean, accountId: Int = 0) {

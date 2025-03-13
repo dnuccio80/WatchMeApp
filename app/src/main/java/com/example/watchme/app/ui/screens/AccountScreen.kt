@@ -17,6 +17,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -37,6 +38,7 @@ import com.example.watchme.app.ui.SubtitleBigBodyTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.core.Routes
 import com.example.watchme.ui.theme.AppBackground
+import com.example.watchme.ui.theme.ButtonContainerColor
 
 @Composable
 fun AccountScreen(
@@ -47,8 +49,10 @@ fun AccountScreen(
 
 
     val ratingCount by viewModel.totalRatingCount.collectAsState()
+    val favoritesCount by viewModel.favoritesCount.collectAsState()
 
     viewModel.getTotalRatingCount()
+    viewModel.getFavoritesCount()
 
     Box(
         Modifier
@@ -69,15 +73,18 @@ fun AccountScreen(
                     .padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                SecondTitleTextItem("Stats")
                 Row(
                     Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.SpaceEvenly
                 )
                 {
-                    SubtitleBigBodyTextItem("Total Edits", "20")
-                    SubtitleBigBodyTextItem("Total Ratings", ratingCount?.totalResults.toString())
+                    favoritesCount?.let { SubtitleBigBodyTextItem(stringResource(R.string.total_favorites),
+                        favoritesCount.toString()
+                    ) }
+                    ratingCount?.totalResults?.let {
+                        SubtitleBigBodyTextItem(stringResource(R.string.total_ratings), ratingCount?.totalResults.toString())
+                    }
 
                 }
                 ListSection(
@@ -140,7 +147,11 @@ fun ImageBackgroundWithButtonItem(imageUrl: Painter, buttonText: String, onClick
             shape = RoundedCornerShape(4.dp),
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(16.dp)
+                .padding(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ButtonContainerColor
+            ),
+            elevation = ButtonDefaults.elevatedButtonElevation(16.dp)
         ) {
             ThirdTitleTextItem(buttonText.uppercase(), hasMaxWidth = false)
         }
