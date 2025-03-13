@@ -3,6 +3,7 @@ package com.example.watchme.app.data.network.responses
 import com.example.watchme.app.ui.dataClasses.EpisodesDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
+import com.example.watchme.app.ui.dataClasses.TotalEpisodesRatedDataClass
 import com.google.gson.annotations.SerializedName
 
 data class EpisodeResponse(
@@ -38,7 +39,8 @@ fun EpisodeResponse.toEpisodesDetailsDataClass(): EpisodesDetailsDataClass {
 }
 
 data class EpisodesRatedResponse(
-    @SerializedName("results") val results: List<EpisodesRated>
+    @SerializedName("results") val results: List<EpisodesRated>,
+    @SerializedName("total_results") val totalResults: Int
 )
 
 fun EpisodesRatedResponse.toEpisodesRatedDataClass(): List<EpisodesRatedDataClass> {
@@ -52,6 +54,12 @@ fun EpisodesRatedResponse.toEpisodesRatedDataClass(): List<EpisodesRatedDataClas
             stillPath = it.stillPath
         )
     }
+}
+
+fun EpisodesRatedResponse.toTotalEpisodesRatedDataClass(): TotalEpisodesRatedDataClass {
+    return TotalEpisodesRatedDataClass(
+        totalResults = totalResults
+    )
 }
 
 data class EpisodesRated(

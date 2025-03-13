@@ -26,3 +26,7 @@ data class EpisodesRatedDataClass(
     val episodeNumber: Int,
     val stillPath: String?,
 )
+
+data class TotalEpisodesRatedDataClass(
+    val totalResults: Int
+)

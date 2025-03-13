@@ -8,8 +8,8 @@ class GetRatedCountUseCase @Inject constructor(private val apiRepository: ApiRep
     suspend operator fun invoke(accountId: Int = 0): TotalRatedResultsDataClass {
         val moviesCount: Int = apiRepository.getRatedMoviesCount(accountId).totalResults
         val seriesCount = apiRepository.getRatedSeriesCount(accountId).totalResults
-//        val episodesCount = apiRepository.getRatedSeriesEpisodes(accountId)
-        val totalResult = seriesCount + moviesCount
+        val episodesCount: Int = apiRepository.getRatedEpisodesCount(accountId).totalResults
+        val totalResult = seriesCount + moviesCount + episodesCount
 
         return TotalRatedResultsDataClass(
             totalResults = totalResult
