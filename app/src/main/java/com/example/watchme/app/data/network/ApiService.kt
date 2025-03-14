@@ -938,5 +938,23 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
+    suspend fun clearList(listId: Int): RequestResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .clearList(url = "list/$listId/clear")
+            val body: RequestResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to clear list: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
 
 }

@@ -206,7 +206,7 @@ class MainActivity : ComponentActivity() {
 //                            )
 //                        }
 //                    }
-                    ListDetailsScreen(innerPadding,viewModel, 8518432, navController)
+                    ListDetailsScreen(innerPadding,viewModel, 8518573, navController)
                 }
             }
         }

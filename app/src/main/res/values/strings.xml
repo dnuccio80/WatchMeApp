@@ -96,8 +96,11 @@
     <string name="list_added_successfully">The list have been added successfully</string>
     <string name="list_removed_successfully">The list have been removed successfully</string>
     <string name="item_removed_successfully">The item have been removed successfully</string>
+    <string name="all_item_removed_successfully">All items have been removed successfully</string>
     <string name="user">User</string>
     <string name="score">Score</string>
+    <string name="clear_list">Clear list</string>
+    <string name="confirm_clear_list">Are you sure you want to clear all list?</string>
     <string name="my_favorites">My Favorites</string>
     <string name="see_favorites">See all my Favorites</string>
     <string name="created_by">Created by</string>

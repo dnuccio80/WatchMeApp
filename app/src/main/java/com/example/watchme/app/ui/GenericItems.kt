@@ -2,7 +2,6 @@ package com.example.watchme.app.ui
 
 import android.content.Intent
 import android.net.Uri
-import android.widget.Button
 import android.widget.Toast
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
@@ -37,7 +36,6 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -75,7 +73,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
-import androidx.navigation.NavHostController
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
@@ -286,6 +283,20 @@ fun CircularButtonIcon(icon: ImageVector, tint: Color, onClick: () -> Unit) {
         elevation = ButtonDefaults.elevatedButtonElevation(16.dp)
     ) {
         Icon(icon, contentDescription = "icon button", tint = tint)
+    }
+}
+
+@Composable
+fun RoundedButtonWithText(text: String, onClick: () -> Unit) {
+    Button(
+        onClick = { onClick() },
+        shape = RoundedCornerShape(4.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = ButtonContainerColor
+        ),
+        elevation = ButtonDefaults.elevatedButtonElevation(16.dp)
+    ) {
+        BodyTextItem(text, color = Color.White)
     }
 }
 
@@ -747,7 +758,7 @@ fun ConfirmDeclineButtons(onDecline: () -> Unit, onConfirm: () -> Unit) {
 }
 
 @Composable
-fun RedCloseButton(modifier: Modifier, onClick: () -> Unit){
+fun RedCloseButton(modifier: Modifier, onClick: () -> Unit) {
     Card(
         colors = CardDefaults.cardColors(
             containerColor = NegativeVoteColor,
@@ -969,7 +980,7 @@ fun RatingSectionWithLists(
     mediaItem: MediaItem,
     viewModel: AppViewModel,
     isRated: Boolean,
-    myRate:Float,
+    myRate: Float,
     addedToFavorites: Boolean,
     addedToWatchLater: Boolean,
     onFavoriteButtonClicked: () -> Unit,
@@ -1027,11 +1038,14 @@ fun RatingSectionWithLists(
                     ),
                     shape = RoundedCornerShape(8.dp)
                 ) {
-                    BodyTextItem(if(isRated) stringResource(R.string.rated) else stringResource(R.string.rate).uppercase())
+                    BodyTextItem(if (isRated) stringResource(R.string.rated) else stringResource(R.string.rate).uppercase())
                 }
-                if(isRated) {
+                if (isRated) {
                     val intRate = (myRate * 10).toInt()
-                    BodyTextItem("${stringResource(R.string.your_rate)} $intRate%", color = ThumbColor)
+                    BodyTextItem(
+                        "${stringResource(R.string.your_rate)} $intRate%",
+                        color = ThumbColor
+                    )
                 }
             }
 

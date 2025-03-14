@@ -203,7 +203,16 @@ interface ApiClient {
     suspend fun deleteList(@Url url: String): Response<RequestResponse>
 
     @POST
-    suspend fun deleteItemFromList(@Url url: String, @Body deleteItemFromList: DeleteItemFromListDto): Response<RequestResponse>
+    suspend fun deleteItemFromList(
+        @Url url: String,
+        @Body deleteItemFromList: DeleteItemFromListDto
+    ): Response<RequestResponse>
+
+    @POST
+    suspend fun clearList(
+        @Url url: String,
+        @Query("confirm") confirm: Boolean = true
+    ): Response<RequestResponse>
 
     @GET
     suspend fun getListDetails(@Url url: String): Response<ListDetailsResponse>

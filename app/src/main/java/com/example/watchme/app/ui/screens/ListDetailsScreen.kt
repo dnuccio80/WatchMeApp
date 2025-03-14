@@ -54,6 +54,7 @@ import com.example.watchme.R
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.RoundedButtonWithText
 import com.example.watchme.app.ui.ConfirmDeclineDialog
 import com.example.watchme.app.ui.RedCloseButton
 import com.example.watchme.app.ui.SecondTitleTextItem
@@ -61,7 +62,6 @@ import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.dataClasses.ItemsListDetailDataClass
 import com.example.watchme.core.Categories
 import com.example.watchme.core.Routes
-import com.example.watchme.core.ShowListType
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.ui.theme.CardContainerColor
@@ -78,16 +78,30 @@ fun ListDetailsScreen(
 
     val listDetails by viewModel.listDetails.collectAsState()
     val deleteItemFromListRequest by viewModel.deleteItemFromListRequest.collectAsState()
+    val clearListRequest by viewModel.clearListRequest.collectAsState()
 
     viewModel.getListDetails(listId)
 
     val context = LocalContext.current
+
+    var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(deleteItemFromListRequest) {
         if (deleteItemFromListRequest?.success == true) {
             Toast.makeText(
                 context,
                 context.getString(R.string.item_removed_successfully),
+                Toast.LENGTH_SHORT
+            ).show()
+            viewModel.clearDeleteItemFromListRequest()
+        }
+    }
+
+    LaunchedEffect(clearListRequest) {
+        if (clearListRequest?.success == true) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.all_item_removed_successfully),
                 Toast.LENGTH_SHORT
             ).show()
             viewModel.clearDeleteItemFromListRequest()
@@ -153,6 +167,7 @@ fun ListDetailsScreen(
                         )
                     }
                 }
+                RoundedButtonWithText(stringResource(R.string.clear_list), onClick = { showConfirmDialog = true })
                 Spacer(Modifier.size(0.dp))
                 if (listDetails?.items?.isEmpty() == true) {
                     BodyTextItem(stringResource(R.string.no_results_found))
@@ -178,6 +193,15 @@ fun ListDetailsScreen(
                 }
             }
         }
+        ConfirmDeclineDialog(
+            show = showConfirmDialog,
+            text = stringResource(R.string.confirm_clear_list),
+            onDismiss = { showConfirmDialog = false },
+            onConfirm = {
+                showConfirmDialog = false
+                viewModel.clearList(listId)
+            }
+        )
     }
 }
 

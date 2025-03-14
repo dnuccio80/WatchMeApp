@@ -349,4 +349,8 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.deleteItemFromList( listId =  listId, itemId = itemId).toRequestResponseDataClass()
     }
 
+    suspend fun clearList(listId: Int): RequestResponseDataClass {
+        return apiService.clearList(listId).toRequestResponseDataClass()
+    }
+
 }

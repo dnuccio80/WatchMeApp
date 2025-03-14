@@ -22,6 +22,7 @@ import com.example.watchme.app.domain.lists.GetWatchlistMoviesUseCase
 import com.example.watchme.app.domain.lists.GetWatchlistSeriesUseCase
 import com.example.watchme.app.domain.collections.GetCollectionDetailsByIdUseCase
 import com.example.watchme.app.domain.episodes.GetEpisodeDetailsByIdUseCase
+import com.example.watchme.app.domain.lists.ClearListUseCase
 import com.example.watchme.app.domain.lists.DeleteItemFromListUseCase
 import com.example.watchme.app.domain.lists.DeleteListUseCase
 import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
@@ -185,6 +186,7 @@ class AppViewModel @Inject constructor(
     private val getFavoritesCountUseCase: GetFavoritesCountUseCase,
     private val deleteListUseCase: DeleteListUseCase,
     private val deleteItemFromListUseCase: DeleteItemFromListUseCase,
+    private val clearListUseCase: ClearListUseCase,
 
     ) : ViewModel() {
 
@@ -370,6 +372,9 @@ class AppViewModel @Inject constructor(
 
     private val _deleteItemFromListRequest = MutableStateFlow<RequestResponseDataClass?>(null)
     val deleteItemFromListRequest: StateFlow<RequestResponseDataClass?> = _deleteItemFromListRequest
+
+    private val _clearListRequest = MutableStateFlow<RequestResponseDataClass?>(null)
+    val clearListRequest: StateFlow<RequestResponseDataClass?> = _clearListRequest
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -713,7 +718,7 @@ class AppViewModel @Inject constructor(
     }
 
     fun getFavoritesCount(accountId: Int = 0) {
-        viewModelScope.launch (Dispatchers.IO){
+        viewModelScope.launch(Dispatchers.IO) {
             _favoritesCount.value = getFavoritesCountUseCase(accountId)
         }
     }
@@ -769,7 +774,7 @@ class AppViewModel @Inject constructor(
         _createListRequest.value = null
     }
 
-    fun deleteList(listId: Int){
+    fun deleteList(listId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _deleteListRequest.value = deleteListUseCase(listId)
         }
@@ -780,14 +785,24 @@ class AppViewModel @Inject constructor(
     }
 
     fun deleteItemFromList(listId: Int, itemId: Int) {
-            Log.i("Damian", "listId: $listId, itemId: $itemId")
         viewModelScope.launch(Dispatchers.IO) {
-            _deleteItemFromListRequest.value = deleteItemFromListUseCase(listId =  listId, itemId =  itemId)
+            _deleteItemFromListRequest.value =
+                deleteItemFromListUseCase(listId = listId, itemId = itemId)
         }
     }
 
-    fun clearDeleteItemFromListRequest(){
+    fun clearDeleteItemFromListRequest() {
         _deleteItemFromListRequest.value = null
+    }
+
+    fun clearList(listId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _clearListRequest.value = clearListUseCase(listId)
+        }
+    }
+
+    fun clearListRequest(){
+        _clearListRequest.value = null
     }
 
     fun getListDetails(listId: Int) {
