@@ -46,6 +46,8 @@
     <string name="number_of_seasons">Number of seasons:</string>
     <string name="first_air_date">First air date:</string>
     <string name="rate">Rate!</string>
+    <string name="delete_list">Are you sure you want to delete this list?</string>
+    <string name="delete_item">Are you sure you want to delete this item?</string>
     <string name="rated">Rated!</string>
     <string name="your_rate">Your rate:</string>
     <string name="clear_rating">Clear my rating</string>
@@ -92,6 +94,8 @@
     <string name="crew">Crew</string>
     <string name="character">Character:</string>
     <string name="list_added_successfully">The list have been added successfully</string>
+    <string name="list_removed_successfully">The list have been removed successfully</string>
+    <string name="item_removed_successfully">The item have been removed successfully</string>
     <string name="user">User</string>
     <string name="score">Score</string>
     <string name="my_favorites">My Favorites</string>

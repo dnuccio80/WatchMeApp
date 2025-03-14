@@ -8,6 +8,7 @@ import com.example.watchme.app.data.network.responses.CreateListResponse
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
+import com.example.watchme.app.data.network.responses.Dtos.DeleteItemFromListDto
 import com.example.watchme.app.data.network.responses.EpisodeResponse
 import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.FavoriteRequestDto
@@ -32,7 +33,7 @@ import com.example.watchme.app.data.network.responses.SeriesResponse
 import com.example.watchme.app.data.network.responses.SeriesSearchResponse
 import com.example.watchme.app.data.network.responses.VideoResponse
 import com.example.watchme.app.data.network.responses.WatchListRequestDto
-import com.example.watchme.app.data.network.responses.WatchListResponse
+import com.example.watchme.app.data.network.responses.RequestResponse
 import com.example.watchme.core.constants.Constants
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -755,7 +756,7 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         mediaType: String,
         watchlist: Boolean,
         accountId: Int
-    ): WatchListResponse {
+    ): RequestResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .addToWatchList(
@@ -765,7 +766,7 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
                         watchlist = watchlist
                     ), url = "account/$accountId/watchlist"
                 )
-            val body: WatchListResponse? = response.body()
+            val body: RequestResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
                 body
@@ -859,7 +860,13 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     ): CreateListResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .createList(CreateListDto(name = name, description = description, language = language))
+                .createList(
+                    CreateListDto(
+                        name = name,
+                        description = description,
+                        language = language
+                    )
+                )
             val body: CreateListResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -867,6 +874,24 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             } else {
                 throw Exception(
                     "Failed to create the list: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun deleteList(listId: Int): RequestResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .deleteList("list/$listId")
+            val body: RequestResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to delete list: ${
                         response.errorBody()?.string()
                     }"
                 )
@@ -885,6 +910,27 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             } else {
                 throw Exception(
                     "Failed to get list details: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    suspend fun deleteItemFromList(listId: Int, itemId: Int): RequestResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .deleteItemFromList(
+                    url = "list/$listId/remove_item",
+                    DeleteItemFromListDto(itemId)
+                )
+            val body: RequestResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to delete list item: ${
                         response.errorBody()?.string()
                     }"
                 )

@@ -2,6 +2,7 @@ package com.example.watchme.app.ui
 
 import android.content.Intent
 import android.net.Uri
+import android.widget.Button
 import android.widget.Toast
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
@@ -36,6 +37,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -724,17 +726,44 @@ fun ConfirmDeclineButtons(onDecline: () -> Unit, onConfirm: () -> Unit) {
     Row(Modifier.fillMaxWidth(), horizontalArrangement = (Arrangement.Center)) {
         Button(
             onClick = { onDecline() },
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ButtonContainerColor
+            )
         ) {
             BodyTextItem(stringResource(R.string.decline))
         }
         Spacer(Modifier.size(16.dp))
         Button(
             onClick = { onConfirm() },
-            shape = RoundedCornerShape(8.dp)
+            shape = RoundedCornerShape(8.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = ButtonContainerColor
+            )
         ) {
             BodyTextItem(stringResource(R.string.confirm))
         }
+    }
+}
+
+@Composable
+fun RedCloseButton(modifier: Modifier, onClick: () -> Unit){
+    Card(
+        colors = CardDefaults.cardColors(
+            containerColor = NegativeVoteColor,
+            contentColor = Color.White
+        ),
+        modifier = modifier.clickable {
+            onClick()
+        },
+        elevation = CardDefaults.cardElevation(16.dp)
+    ) {
+        Icon(
+            Icons.Filled.Close,
+            tint = Color.White,
+            contentDescription = "Delete list button",
+            modifier = Modifier.size(20.dp)
+        )
     }
 }
 

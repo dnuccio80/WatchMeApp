@@ -26,7 +26,7 @@ import com.example.watchme.app.data.network.responses.toSeriesDetailsDataClass
 import com.example.watchme.app.data.network.responses.toTotalEpisodesRatedDataClass
 import com.example.watchme.app.data.network.responses.toTotalResults
 import com.example.watchme.app.data.network.responses.toVideoDataClass
-import com.example.watchme.app.data.network.responses.toWatchListDataClass
+import com.example.watchme.app.data.network.responses.toRequestResponseDataClass
 import com.example.watchme.app.ui.dataClasses.AccountDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CollectionDetailsDataClass
@@ -53,7 +53,7 @@ import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.TotalEpisodesRatedDataClass
 import com.example.watchme.app.ui.dataClasses.TotalRatedResultsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
-import com.example.watchme.app.ui.dataClasses.WatchListDataClass
+import com.example.watchme.app.ui.dataClasses.RequestResponseDataClass
 import javax.inject.Inject
 
 class ApiRepository @Inject constructor(private val apiService: ApiService) {
@@ -298,13 +298,13 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         mediaType: String,
         watchlist: Boolean,
         accountId: Int
-    ): WatchListDataClass {
+    ): RequestResponseDataClass {
         return apiService.addToWatchList(
             mediaId = mediaId,
             mediaType = mediaType,
             watchlist = watchlist,
             accountId = accountId
-        ).toWatchListDataClass()
+        ).toRequestResponseDataClass()
     }
 
     suspend fun getWatchlistMovies(accountId: Int): List<MovieDataClass> {
@@ -337,8 +337,16 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         ).toCreateListDataClass()
     }
 
+    suspend fun deleteList(listId: Int): RequestResponseDataClass {
+        return apiService.deleteList(listId).toRequestResponseDataClass()
+    }
+
     suspend fun getListDetails(listId: Int): ListDetailsDataClass {
         return apiService.getListDetails(listId).toListDetailsDataClass()
+    }
+
+    suspend fun deleteItemFromList(listId: Int, itemId: Int): RequestResponseDataClass {
+        return apiService.deleteItemFromList( listId =  listId, itemId = itemId).toRequestResponseDataClass()
     }
 
 }

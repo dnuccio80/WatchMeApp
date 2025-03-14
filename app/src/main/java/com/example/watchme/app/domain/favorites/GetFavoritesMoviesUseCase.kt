@@ -1,6 +1,5 @@
-package com.example.watchme.app.domain.account
+package com.example.watchme.app.domain.favorites
 
-import android.accounts.Account
 import com.example.watchme.app.data.network.ApiRepository
 import javax.inject.Inject
 

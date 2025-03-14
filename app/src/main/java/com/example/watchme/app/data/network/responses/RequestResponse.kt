@@ -1,16 +1,15 @@
 package com.example.watchme.app.data.network.responses
 
-import android.text.BoringLayout
-import com.example.watchme.app.ui.dataClasses.WatchListDataClass
+import com.example.watchme.app.ui.dataClasses.RequestResponseDataClass
 import com.google.gson.annotations.SerializedName
 
-data class WatchListResponse (
+data class RequestResponse (
     @SerializedName("success") val success:Boolean,
     @SerializedName("status_message") val statusMessage:String
 )
 
-fun WatchListResponse.toWatchListDataClass() : WatchListDataClass {
-    return WatchListDataClass(
+fun RequestResponse.toRequestResponseDataClass() : RequestResponseDataClass {
+    return RequestResponseDataClass(
             success = success,
             statusMessage = statusMessage
         )

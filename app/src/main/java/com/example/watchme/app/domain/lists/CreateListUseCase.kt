@@ -1,4 +1,4 @@
-package com.example.watchme.app.domain.account
+package com.example.watchme.app.domain.lists
 
 import com.example.watchme.app.data.network.ApiRepository
 import javax.inject.Inject

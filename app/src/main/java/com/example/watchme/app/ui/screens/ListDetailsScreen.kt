@@ -1,5 +1,6 @@
 package com.example.watchme.app.ui.screens
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +30,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +41,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -51,6 +54,8 @@ import com.example.watchme.R
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.ConfirmDeclineDialog
+import com.example.watchme.app.ui.RedCloseButton
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.dataClasses.ItemsListDetailDataClass
@@ -72,23 +77,21 @@ fun ListDetailsScreen(
 ) {
 
     val listDetails by viewModel.listDetails.collectAsState()
+    val deleteItemFromListRequest by viewModel.deleteItemFromListRequest.collectAsState()
 
     viewModel.getListDetails(listId)
 
-    val filterList = listOf(
-        ShowListType.All.type,
-        ShowListType.Movies.type,
-        ShowListType.Series.type
-    )
+    val context = LocalContext.current
 
-    var showMenu by rememberSaveable { mutableStateOf(false) }
-    var filterButtonText by rememberSaveable { mutableStateOf(filterList[0]) }
-
-    val filteredList = when(filterButtonText){
-        ShowListType.All.type -> listDetails?.items
-        ShowListType.Movies.type -> listDetails?.items?.filter { it.mediaType == Categories.Movies.mediaType }
-        ShowListType.Series.type -> listDetails?.items?.filter { it.mediaType == Categories.TvSeries.mediaType }
-        else -> listDetails?.items
+    LaunchedEffect(deleteItemFromListRequest) {
+        if (deleteItemFromListRequest?.success == true) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.item_removed_successfully),
+                Toast.LENGTH_SHORT
+            ).show()
+            viewModel.clearDeleteItemFromListRequest()
+        }
     }
 
     Box(
@@ -150,18 +153,8 @@ fun ListDetailsScreen(
                         )
                     }
                 }
-                ListFilterButton(
-                    showMenu,
-                    filterButtonText,
-                    filterList,
-                    onDismiss = { showMenu = false },
-                    onButtonClick = { showMenu = true },
-                    onClick = {
-                        showMenu = false
-                        filterButtonText = it
-                    })
                 Spacer(Modifier.size(0.dp))
-                if (filteredList?.isEmpty() == true) {
+                if (listDetails?.items?.isEmpty() == true) {
                     BodyTextItem(stringResource(R.string.no_results_found))
                 } else {
                     FlowRow(
@@ -169,14 +162,17 @@ fun ListDetailsScreen(
                         verticalArrangement = Arrangement.spacedBy(16.dp),
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        filteredList?.forEach {
-                            ListDetailCardItem(it) { id, mediaType ->
+                        listDetails?.items?.forEach {
+                            ListDetailCardItem(it, onClick = { id, mediaType ->
                                 if (mediaType == Categories.Movies.mediaType) {
                                     navController.navigate(Routes.MovieDetails.createRoute(id))
                                 } else if (mediaType == Categories.TvSeries.mediaType) {
                                     navController.navigate(Routes.SeriesDetails.createRoute(id))
                                 }
+                            }, onDeleteButtonClicked = { itemId ->
+                                viewModel.deleteItemFromList(listId, itemId)
                             }
+                            )
                         }
                     }
                 }
@@ -186,8 +182,14 @@ fun ListDetailsScreen(
 }
 
 @Composable
-fun ListDetailCardItem(listItem: ItemsListDetailDataClass, onClick: (Int, String) -> Unit) {
+fun ListDetailCardItem(
+    listItem: ItemsListDetailDataClass,
+    onClick: (Int, String) -> Unit,
+    onDeleteButtonClicked: (Int) -> Unit
+) {
     val imageUrl = Constants.IMAGE_BASE_URL + listItem.posterPath
+
+    var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
@@ -201,16 +203,38 @@ fun ListDetailCardItem(listItem: ItemsListDetailDataClass, onClick: (Int, String
         shape = RoundedCornerShape(4.dp),
         elevation = CardDefaults.cardElevation(15.dp)
     ) {
-        AsyncImage(
-            model = imageUrl,
-            contentDescription = stringResource(R.string.movie_image),
-            modifier = Modifier
-                .fillMaxSize(),
-            contentScale = ContentScale.Crop,
-            error = painterResource(R.drawable.backdrop_path_not_found),
+        Box(Modifier.fillMaxSize()) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = stringResource(R.string.movie_image),
+                modifier = Modifier
+                    .fillMaxSize(),
+                contentScale = ContentScale.Crop,
+                error = painterResource(R.drawable.backdrop_path_not_found),
+            )
+            RedCloseButton(
+                Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(4.dp),
+                onClick = { showConfirmDialog = true }
+            )
+        }
+
+        ConfirmDeclineDialog(
+            show = showConfirmDialog,
+            text = stringResource(R.string.delete_item),
+            onDismiss = { showConfirmDialog = false },
+            onConfirm = {
+                showConfirmDialog = false
+                onDeleteButtonClicked(listItem.id)
+            }
         )
+
     }
 }
+
+
+// USES FOR V4 IF WE CAN ADD FILTER BUTTON FOR LISTS
 
 @Composable
 fun ListFilterButton(

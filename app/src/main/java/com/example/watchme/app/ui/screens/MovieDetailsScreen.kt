@@ -431,7 +431,7 @@ fun MoviesRecommendationsSection(
     onClick: (Int) -> Unit
 ) {
 
-    if (moviesRecommendations == null) {
+    if (moviesRecommendations.isNullOrEmpty()) {
         BodyTextItem(stringResource(R.string.no_results_found))
         return
     }

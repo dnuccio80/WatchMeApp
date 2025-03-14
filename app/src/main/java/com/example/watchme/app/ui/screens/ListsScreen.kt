@@ -55,6 +55,8 @@ import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.AccountHeader
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.ConfirmDeclineDialog
+import com.example.watchme.app.ui.RedCloseButton
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.dataClasses.ListDataClass
@@ -63,6 +65,7 @@ import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaContrastColor
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.ui.theme.CardContainerColor
+import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.ThumbColor
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -75,6 +78,7 @@ fun ListsScreen(
 
     val lists by viewModel.myLists.collectAsState()
     val listRequest by viewModel.createListRequest.collectAsState()
+    val deleteListRequest by viewModel.deleteListRequest.collectAsState()
 
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
@@ -92,6 +96,17 @@ fun ListsScreen(
                 Toast.LENGTH_SHORT
             ).show()
             viewModel.clearCreateListRequest()
+        }
+    }
+
+    LaunchedEffect(deleteListRequest) {
+        if (deleteListRequest?.success == true) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.list_removed_successfully),
+                Toast.LENGTH_SHORT
+            ).show()
+            viewModel.clearDeleteListRequest()
         }
     }
 
@@ -149,13 +164,19 @@ fun ListsScreen(
                         horizontalArrangement = Arrangement.SpaceEvenly
                     ) {
                         lists?.forEach {
-                            ListsCardItem(it) { listId ->
-                                navController.navigate(
-                                    Routes.ListDetails.createRoute(
-                                        listId
+                            ListsCardItem(
+                                it,
+                                onClickList = { listId ->
+                                    navController.navigate(
+                                        Routes.ListDetails.createRoute(
+                                            listId
+                                        )
                                     )
-                                )
-                            }
+                                },
+                                onDeleteButtonClick = { listId ->
+                                    viewModel.deleteList(listId)
+                                }
+                            )
                         }
                     }
                 }
@@ -273,15 +294,21 @@ fun ListTextField(value: String, label: String, onValueChange: (String) -> Unit)
 }
 
 @Composable
-fun ListsCardItem(listItem: ListDataClass, onClick: (Int) -> Unit) {
+fun ListsCardItem(
+    listItem: ListDataClass,
+    onClickList: (Int) -> Unit,
+    onDeleteButtonClick: (Int) -> Unit
+) {
     val imageUrl = Constants.IMAGE_BASE_URL + listItem.posterPath
+
+    var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
 
     Card(
         modifier = Modifier
             .width(120.dp)
             .height(160.dp)
             .clickable {
-                onClick(listItem.id)
+                onClickList(listItem.id)
             }, colors = CardDefaults.cardColors(
             containerColor = Color.Black
         ),
@@ -296,6 +323,11 @@ fun ListsCardItem(listItem: ListDataClass, onClick: (Int) -> Unit) {
                     .fillMaxSize(),
                 contentScale = ContentScale.Crop,
                 error = painterResource(R.drawable.backdrop_path_not_found),
+            )
+            RedCloseButton(modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(4.dp),
+                onClick = { showConfirmDialog = true }
             )
             Card(
                 modifier = Modifier.fillMaxWidth(), colors = CardDefaults.cardColors(
@@ -313,5 +345,15 @@ fun ListsCardItem(listItem: ListDataClass, onClick: (Int) -> Unit) {
             }
         }
 
+        ConfirmDeclineDialog(
+            show = showConfirmDialog,
+            text = stringResource(R.string.delete_list),
+            onDismiss = { showConfirmDialog = false },
+            onConfirm = {
+                showConfirmDialog = false
+                onDeleteButtonClick(listItem.id)
+            }
+        )
     }
 }
+

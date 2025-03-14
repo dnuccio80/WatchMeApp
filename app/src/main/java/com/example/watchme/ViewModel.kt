@@ -1,24 +1,29 @@
 package com.example.watchme
 
+import android.util.Log
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.watchme.app.domain.account.AddFavoriteUseCase
-import com.example.watchme.app.domain.account.AddToWatchlistUseCase
-import com.example.watchme.app.domain.account.CreateListUseCase
+import com.example.watchme.app.data.network.responses.Dtos.DeleteItemFromListDto
+import com.example.watchme.app.domain.favorites.AddFavoriteUseCase
+import com.example.watchme.app.domain.lists.AddToWatchlistUseCase
+import com.example.watchme.app.domain.lists.CreateListUseCase
 import com.example.watchme.app.domain.account.GetAccountDetailsUseCase
-import com.example.watchme.app.domain.account.GetFavoritesCountUseCase
-import com.example.watchme.app.domain.account.GetFavoritesMoviesUseCase
-import com.example.watchme.app.domain.account.GetFavoritesSeriesUseCase
-import com.example.watchme.app.domain.account.GetListDetailsUseCase
-import com.example.watchme.app.domain.account.GetMyListsUseCase
+import com.example.watchme.app.domain.favorites.GetFavoritesCountUseCase
+import com.example.watchme.app.domain.favorites.GetFavoritesMoviesUseCase
+import com.example.watchme.app.domain.favorites.GetFavoritesSeriesUseCase
+import com.example.watchme.app.domain.lists.GetListDetailsUseCase
+import com.example.watchme.app.domain.lists.GetMyListsUseCase
 import com.example.watchme.app.domain.account.GetRatedEpisodesUseCase
 import com.example.watchme.app.domain.account.GetRatedMoviesUseCase
 import com.example.watchme.app.domain.account.GetRatedSeriesUseCase
-import com.example.watchme.app.domain.account.GetWatchlistMoviesUseCase
-import com.example.watchme.app.domain.account.GetWatchlistSeriesUseCase
+import com.example.watchme.app.domain.lists.GetWatchlistMoviesUseCase
+import com.example.watchme.app.domain.lists.GetWatchlistSeriesUseCase
 import com.example.watchme.app.domain.collections.GetCollectionDetailsByIdUseCase
 import com.example.watchme.app.domain.episodes.GetEpisodeDetailsByIdUseCase
+import com.example.watchme.app.domain.lists.DeleteItemFromListUseCase
+import com.example.watchme.app.domain.lists.DeleteListUseCase
 import com.example.watchme.app.domain.movies.GetImageListByIdUseCase
 import com.example.watchme.app.domain.movies.GetMovieCreditsByIdUseCase
 import com.example.watchme.app.domain.movies.GetMovieDetailsByIdUseCase
@@ -80,7 +85,7 @@ import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.TotalRatedResultsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
-import com.example.watchme.app.ui.dataClasses.WatchListDataClass
+import com.example.watchme.app.ui.dataClasses.RequestResponseDataClass
 import com.example.watchme.core.Categories
 import com.example.watchme.ui.theme.IntermediateVoteColor
 import com.example.watchme.ui.theme.NegativeVoteColor
@@ -178,6 +183,8 @@ class AppViewModel @Inject constructor(
     private val createListUseCase: CreateListUseCase,
     private val getListDetailsUseCase: GetListDetailsUseCase,
     private val getFavoritesCountUseCase: GetFavoritesCountUseCase,
+    private val deleteListUseCase: DeleteListUseCase,
+    private val deleteItemFromListUseCase: DeleteItemFromListUseCase,
 
     ) : ViewModel() {
 
@@ -334,8 +341,8 @@ class AppViewModel @Inject constructor(
     private val _favoritesSeries = MutableStateFlow<List<SeriesDataClass>?>(null)
     val favoritesSeries: StateFlow<List<SeriesDataClass>?> = _favoritesSeries
 
-    private val _watchListRequest = MutableStateFlow<WatchListDataClass?>(null)
-    val watchListRequest: StateFlow<WatchListDataClass?> = _watchListRequest
+    private val _watchListRequest = MutableStateFlow<RequestResponseDataClass?>(null)
+    val watchListRequest: StateFlow<RequestResponseDataClass?> = _watchListRequest
 
     private val _watchlistMovies = MutableStateFlow<List<MovieDataClass>?>(null)
     val watchlistMovies: StateFlow<List<MovieDataClass>?> = _watchlistMovies
@@ -357,6 +364,12 @@ class AppViewModel @Inject constructor(
 
     private val _favoritesCount = MutableStateFlow<Int?>(null)
     val favoritesCount: StateFlow<Int?> = _favoritesCount
+
+    private val _deleteListRequest = MutableStateFlow<RequestResponseDataClass?>(null)
+    val deleteListRequest: StateFlow<RequestResponseDataClass?> = _deleteListRequest
+
+    private val _deleteItemFromListRequest = MutableStateFlow<RequestResponseDataClass?>(null)
+    val deleteItemFromListRequest: StateFlow<RequestResponseDataClass?> = _deleteItemFromListRequest
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -754,6 +767,27 @@ class AppViewModel @Inject constructor(
 
     fun clearCreateListRequest() {
         _createListRequest.value = null
+    }
+
+    fun deleteList(listId: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            _deleteListRequest.value = deleteListUseCase(listId)
+        }
+    }
+
+    fun clearDeleteListRequest() {
+        _deleteListRequest.value = null
+    }
+
+    fun deleteItemFromList(listId: Int, itemId: Int) {
+            Log.i("Damian", "listId: $listId, itemId: $itemId")
+        viewModelScope.launch(Dispatchers.IO) {
+            _deleteItemFromListRequest.value = deleteItemFromListUseCase(listId =  listId, itemId =  itemId)
+        }
+    }
+
+    fun clearDeleteItemFromListRequest(){
+        _deleteItemFromListRequest.value = null
     }
 
     fun getListDetails(listId: Int) {

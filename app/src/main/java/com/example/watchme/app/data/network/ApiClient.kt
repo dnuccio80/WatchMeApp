@@ -8,6 +8,7 @@ import com.example.watchme.app.data.network.responses.CreateListResponse
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
+import com.example.watchme.app.data.network.responses.Dtos.DeleteItemFromListDto
 import com.example.watchme.app.data.network.responses.EpisodeResponse
 import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.FavoriteRequestDto
@@ -32,7 +33,7 @@ import com.example.watchme.app.data.network.responses.SeriesResponse
 import com.example.watchme.app.data.network.responses.SeriesSearchResponse
 import com.example.watchme.app.data.network.responses.VideoResponse
 import com.example.watchme.app.data.network.responses.WatchListRequestDto
-import com.example.watchme.app.data.network.responses.WatchListResponse
+import com.example.watchme.app.data.network.responses.RequestResponse
 import com.example.watchme.core.constants.Constants
 import retrofit2.Response
 import retrofit2.http.Body
@@ -181,7 +182,7 @@ interface ApiClient {
     suspend fun addToWatchList(
         @Body watchListRequest: WatchListRequestDto,
         @Url url: String
-    ) : Response<WatchListResponse>
+    ): Response<RequestResponse>
 
     @GET
     suspend fun getWatchlistMovies(@Url url: String): Response<MovieResponse>
@@ -197,6 +198,12 @@ interface ApiClient {
 
     @POST("list")
     suspend fun createList(@Body createListDto: CreateListDto): Response<CreateListResponse>
+
+    @DELETE
+    suspend fun deleteList(@Url url: String): Response<RequestResponse>
+
+    @POST
+    suspend fun deleteItemFromList(@Url url: String, @Body deleteItemFromList: DeleteItemFromListDto): Response<RequestResponse>
 
     @GET
     suspend fun getListDetails(@Url url: String): Response<ListDetailsResponse>
