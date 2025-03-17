@@ -5,5 +5,5 @@ import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import javax.inject.Inject
 
 class GetUpcomingMoviesUseCase @Inject constructor(private val apiRepository: ApiRepository) {
-    suspend operator fun invoke(): List<MovieDataClass> = apiRepository.getUpcomingMovies()
+    suspend operator fun invoke(language: String, region: String): List<MovieDataClass> = apiRepository.getUpcomingMovies(language, region)
 }

@@ -44,9 +44,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
 
     // MOVIES
 
-    suspend fun getPopularMovies(): MovieResponse {
+    suspend fun getPopularMovies(language: String, country: String): MovieResponse {
         return withContext(Dispatchers.IO) {
-            val response = retrofit.create(ApiClient::class.java).getPopularMovies()
+            val response =
+                retrofit.create(ApiClient::class.java).getPopularMovies(language, country)
             val body: MovieResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -57,9 +58,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getNowPlayingMovies(): MovieResponse {
+    suspend fun getNowPlayingMovies(language: String, region: String): MovieResponse {
         return withContext(Dispatchers.IO) {
-            val response = retrofit.create(ApiClient::class.java).getNowPlayingMovies()
+            val response =
+                retrofit.create(ApiClient::class.java).getNowPlayingMovies(language, region)
             val body: MovieResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -70,9 +72,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getTopRatedMovies(): MovieResponse {
+    suspend fun getTopRatedMovies(language: String, region: String): MovieResponse {
         return withContext(Dispatchers.IO) {
-            val response = retrofit.create(ApiClient::class.java).getTopRatedMovies()
+            val response =
+                retrofit.create(ApiClient::class.java).getTopRatedMovies(language, region)
             val body: MovieResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -83,9 +86,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getUpcomingMovies(): MovieResponse {
+    suspend fun getUpcomingMovies(language: String, region: String): MovieResponse {
         return withContext(Dispatchers.IO) {
-            val response = retrofit.create(ApiClient::class.java).getUpcomingMovies()
+            val response =
+                retrofit.create(ApiClient::class.java).getUpcomingMovies(language, region)
             val body: MovieResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -96,9 +100,9 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getProviders(): ProvidersResponse {
+    suspend fun getProviders(language: String, region: String): ProvidersResponse {
         return withContext(Dispatchers.IO) {
-            val response = retrofit.create(ApiClient::class.java).getProviders()
+            val response = retrofit.create(ApiClient::class.java).getProviders(language, region)
             val body: ProvidersResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -109,10 +113,14 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getMovieDetailsById(movieId: Int): DetailsMovieResponse {
+    suspend fun getMovieDetailsById(
+        movieId: Int,
+        language: String,
+        region: String
+    ): DetailsMovieResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getMovieDetailsById("movie/$movieId${Constants.SPANISH_AR}")
+                .getMovieDetailsById("movie/$movieId", language, region)
             val body: DetailsMovieResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -151,10 +159,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getRecommendationsById(movieId: Int): MovieResponse {
+    suspend fun getRecommendationsById(movieId: Int, language: String): MovieResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getRecommendationsById("movie/${movieId}/recommendations")
+                .getMoviesRecommendationsById("movie/${movieId}/recommendations", language)
             val body: MovieResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -183,10 +191,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getMovieVideosById(movieId: Int): VideoResponse {
+    suspend fun getMovieVideosById(movieId: Int, language: String): VideoResponse {
         return withContext(Dispatchers.IO) {
             val response =
-                retrofit.create(ApiClient::class.java).getVideosById("movie/${movieId}/videos")
+                retrofit.create(ApiClient::class.java).getVideosById("movie/${movieId}/videos", language)
             val body: VideoResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -199,11 +207,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
 
     // COLLECTIONS
 
-    suspend fun getCollectionDetailsById(collectionId: Int): CollectionResponse {
+    suspend fun getCollectionDetailsById(collectionId: Int, language: String): CollectionResponse {
         return withContext(Dispatchers.IO) {
             val response =
                 retrofit.create(ApiClient::class.java)
-                    .getCollectionDetailsById("collection/$collectionId")
+                    .getCollectionDetailsById("collection/$collectionId", language)
             val body: CollectionResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -216,9 +224,9 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
 
     // SERIES
 
-    suspend fun getPopularSeries(): SeriesResponse {
+    suspend fun getPopularSeries(language: String): SeriesResponse {
         return withContext(Dispatchers.IO) {
-            val response = retrofit.create(ApiClient::class.java).getPopularSeries()
+            val response = retrofit.create(ApiClient::class.java).getPopularSeries(language)
             val body: SeriesResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -229,9 +237,9 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getAiringSeriesToday(): SeriesResponse {
+    suspend fun getAiringSeriesToday(language: String): SeriesResponse {
         return withContext(Dispatchers.IO) {
-            val response = retrofit.create(ApiClient::class.java).getAiringTodaySeries()
+            val response = retrofit.create(ApiClient::class.java).getAiringTodaySeries(language)
             val body: SeriesResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -242,23 +250,9 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getOnTheAirSeries(): SeriesResponse {
+    suspend fun getOnTheAirSeries(language: String): SeriesResponse {
         return withContext(Dispatchers.IO) {
-            val response = retrofit.create(ApiClient::class.java).getOnTheAirSeries()
-            val body: SeriesResponse? = response.body()
-
-            if (response.isSuccessful && body != null) {
-                body
-
-            } else {
-                SeriesResponse(emptyList())
-            }
-        }
-    }
-
-    suspend fun getTopRatedSeries(): SeriesResponse {
-        return withContext(Dispatchers.IO) {
-            val response = retrofit.create(ApiClient::class.java).getTopRatedSeries()
+            val response = retrofit.create(ApiClient::class.java).getOnTheAirSeries(language)
             val body: SeriesResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -270,10 +264,25 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSeriesDetailsById(seriesId: Int): SeriesDetailsResponse {
+    suspend fun getTopRatedSeries(language: String): SeriesResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java).getTopRatedSeries(language)
+            val body: SeriesResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+
+            } else {
+                SeriesResponse(emptyList())
+            }
+        }
+    }
+
+    suspend fun getSeriesDetailsById(seriesId: Int, language: String): SeriesDetailsResponse {
         return withContext(Dispatchers.IO) {
             val response =
-                retrofit.create(ApiClient::class.java).getSeriesDetailsById("tv/${seriesId}")
+                retrofit.create(ApiClient::class.java)
+                    .getSeriesDetailsById("tv/${seriesId}", language)
             val body: SeriesDetailsResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -284,10 +293,14 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSeasonDetailsById(seriesId: Int, seasonNumber: Int): SeasonDetails {
+    suspend fun getSeasonDetailsById(
+        seriesId: Int,
+        seasonNumber: Int,
+        language: String
+    ): SeasonDetails {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getSeasonsDetailsById("tv/$seriesId/season/$seasonNumber")
+                .getSeasonsDetailsById("tv/$seriesId/season/$seasonNumber", language)
             val body: SeasonDetails? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -326,10 +339,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSeriesVideosById(seriesId: Int): VideoResponse {
+    suspend fun getSeriesVideosById(seriesId: Int, language: String): VideoResponse {
         return withContext(Dispatchers.IO) {
             val response =
-                retrofit.create(ApiClient::class.java).getVideosById("tv/${seriesId}/videos")
+                retrofit.create(ApiClient::class.java).getVideosById("tv/${seriesId}/videos", language)
             val body: VideoResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -356,10 +369,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
 
     // PEOPLE
 
-    suspend fun getPeopleDetails(personId: Int): PeopleDetailsResponse {
+    suspend fun getPeopleDetails(personId: Int, language: String): PeopleDetailsResponse {
         return withContext(Dispatchers.IO) {
             val response =
-                retrofit.create(ApiClient::class.java).getPeopleDetailsById("person/$personId")
+                retrofit.create(ApiClient::class.java).getPeopleDetailsById("person/$personId", language)
             val body: PeopleDetailsResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -370,10 +383,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getPeopleMovieInterpretationsById(personId: Int): PeopleMovieInterpretationResponse {
+    suspend fun getPeopleMovieInterpretationsById(personId: Int, language: String): PeopleMovieInterpretationResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getPeopleMovieInterpretationsById("person/$personId/movie_credits")
+                .getPeopleMovieInterpretationsById("person/$personId/movie_credits", language)
             val body: PeopleMovieInterpretationResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -384,10 +397,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getPeopleSeriesInterpretationsById(personId: Int): PeopleSeriesInterpretationResponse {
+    suspend fun getPeopleSeriesInterpretationsById(personId: Int, language: String): PeopleSeriesInterpretationResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getPeopleSeriesInterpretationsById("person/$personId/tv_credits")
+                .getPeopleSeriesInterpretationsById("person/$personId/tv_credits", language)
             val body: PeopleSeriesInterpretationResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -415,11 +428,15 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
     suspend fun getEpisodesDetailsById(
         seriesId: Int,
         seasonNumber: Int,
-        episodeNumber: Int
+        episodeNumber: Int,
+        language: String
     ): EpisodeResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getEpisodesDetailsById("tv/$seriesId/season/$seasonNumber/episode/$episodeNumber")
+                .getEpisodesDetailsById(
+                    "tv/$seriesId/season/$seasonNumber/episode/$episodeNumber",
+                    language
+                )
             val body: EpisodeResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -436,10 +453,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
 
     // SEARCHES
 
-    suspend fun getSearchCollection(query: String): CollectionSearchResponse {
+    suspend fun getSearchCollection(query: String, language: String, region: String): CollectionSearchResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getCollectionSearch(query)
+                .getCollectionSearch(query, language, region)
             val body: CollectionSearchResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -454,10 +471,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSearchMovies(query: String): MovieSearchResponse {
+    suspend fun getSearchMovies(query: String, language: String, region: String): MovieSearchResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getMoviesSearch(query)
+                .getMoviesSearch(query, language, region)
             val body: MovieSearchResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -472,10 +489,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSearchSeries(query: String): SeriesSearchResponse {
+    suspend fun getSearchSeries(query: String, language: String, region: String): SeriesSearchResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getSeriesSearch(query)
+                .getSeriesSearch(query, language, region)
             val body: SeriesSearchResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
@@ -490,10 +507,10 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun getSearchPeople(query: String): PersonSearchResponse {
+    suspend fun getSearchPeople(query: String, language: String, region: String): PersonSearchResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
-                .getPeopleSearch(query)
+                .getPeopleSearch(query, language, region)
             val body: PersonSearchResponse? = response.body()
 
             if (response.isSuccessful && body != null) {

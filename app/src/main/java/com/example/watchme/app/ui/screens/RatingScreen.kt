@@ -71,9 +71,9 @@ fun RatingScreen(
     viewModel.getRatedSeriesEpisodes()
 
     val rateList = listOf(
-        Categories.Movies.title,
-        Categories.TvSeries.title,
-        Categories.TvEpisodes.title
+        stringResource(Categories.Movies.title),
+        stringResource(Categories.TvSeries.title),
+        stringResource(Categories.TvEpisodes.title),
     )
 
     var selectedOption by rememberSaveable { mutableStateOf(rateList[0]) }
@@ -149,7 +149,7 @@ fun RatingScreen(
                 ) {
 
                     when (selectedOption) {
-                        Categories.TvSeries.title -> {
+                        stringResource(Categories.TvSeries.title) -> {
                             if (ratedSeries == null) {
                                 BodyTextItem(stringResource(R.string.no_results_found))
                             } else {
@@ -168,7 +168,7 @@ fun RatingScreen(
                             }
                         }
 
-                        Categories.Movies.title -> {
+                        stringResource(Categories.Movies.title) -> {
                             if (ratedMovies == null) {
                                 BodyTextItem(stringResource(R.string.no_results_found))
                             } else {
@@ -189,8 +189,7 @@ fun RatingScreen(
                                 }
                             }
                         }
-
-                        Categories.TvEpisodes.title -> {
+                        stringResource(Categories.TvEpisodes.title) -> {
                             if (ratedEpisodes == null) {
                                 BodyTextItem(stringResource(R.string.no_results_found))
                             } else {

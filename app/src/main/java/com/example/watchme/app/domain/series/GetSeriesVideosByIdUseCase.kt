@@ -4,5 +4,5 @@ import com.example.watchme.app.data.network.ApiRepository
 import javax.inject.Inject
 
 class GetSeriesVideosByIdUseCase @Inject constructor(private val apiRepository: ApiRepository) {
-    suspend operator fun invoke(seriesId: Int) = apiRepository.getSeriesVideosById(seriesId)
+    suspend operator fun invoke(seriesId: Int, language: String) = apiRepository.getSeriesVideosById(seriesId, language)
 }

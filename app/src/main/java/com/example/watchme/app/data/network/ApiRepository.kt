@@ -1,5 +1,6 @@
 package com.example.watchme.app.data.network
 
+import android.graphics.Region
 import com.example.watchme.app.data.network.responses.toAccountDetailsDataClass
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
 import com.example.watchme.app.data.network.responses.toCollectionDataClass
@@ -60,28 +61,32 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     // MOVIES
 
-    suspend fun getPopularMovies(): List<MovieDataClass> {
-        return apiService.getPopularMovies().toMovieDataClass()
+    suspend fun getPopularMovies(language: String, region: String): List<MovieDataClass> {
+        return apiService.getPopularMovies(language, region).toMovieDataClass()
     }
 
-    suspend fun getNowPlayingMovies(): List<MovieDataClass> {
-        return apiService.getNowPlayingMovies().toMovieDataClass()
+    suspend fun getNowPlayingMovies(language: String, region: String): List<MovieDataClass> {
+        return apiService.getNowPlayingMovies(language, region).toMovieDataClass()
     }
 
-    suspend fun getTopRatedMovies(): List<MovieDataClass> {
-        return apiService.getTopRatedMovies().toMovieDataClass()
+    suspend fun getTopRatedMovies(language: String, region: String): List<MovieDataClass> {
+        return apiService.getTopRatedMovies(language, region).toMovieDataClass()
     }
 
-    suspend fun getUpcomingMovies(): List<MovieDataClass> {
-        return apiService.getUpcomingMovies().toMovieDataClass()
+    suspend fun getUpcomingMovies(language: String, region: String): List<MovieDataClass> {
+        return apiService.getUpcomingMovies(language, region).toMovieDataClass()
     }
 
-    suspend fun getProviders(): List<ProvidersDataClass> {
-        return apiService.getProviders().toProvidersDataClass()
+    suspend fun getProviders(language: String, region: String): List<ProvidersDataClass> {
+        return apiService.getProviders(language, region).toProvidersDataClass()
     }
 
-    suspend fun getMovieDetailsById(movieId: Int): DetailsMovieDataClass {
-        return apiService.getMovieDetailsById(movieId).toDetailsMovieDataClass()
+    suspend fun getMovieDetailsById(
+        movieId: Int,
+        language: String,
+        region: String
+    ): DetailsMovieDataClass {
+        return apiService.getMovieDetailsById(movieId, language, region).toDetailsMovieDataClass()
     }
 
     suspend fun getMovieCreditsById(movieId: Int): CreditsDataClass {
@@ -92,52 +97,56 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getMovieImageListById(movieId).toBackdropImageDataClass()
     }
 
-    suspend fun getRecommendationsById(movieId: Int): List<MovieDataClass> {
-        return apiService.getRecommendationsById(movieId).toMovieDataClass()
+    suspend fun getRecommendationsById(movieId: Int, language: String): List<MovieDataClass> {
+        return apiService.getRecommendationsById(movieId, language).toMovieDataClass()
     }
 
     suspend fun getReviewsById(movieId: Int): List<ReviewDataClass> {
         return apiService.getReviewsById(movieId).toReviewDataClass()
     }
 
-    suspend fun getMovieVideosById(movieId: Int): List<VideoDataClass> {
-        return apiService.getMovieVideosById(movieId).toVideoDataClass()
+    suspend fun getMovieVideosById(movieId: Int, language: String): List<VideoDataClass> {
+        return apiService.getMovieVideosById(movieId, language).toVideoDataClass()
     }
 
     // COLLECTIONS
 
-    suspend fun getCollectionDetailsById(collectionId: Int): CollectionDetailsDataClass {
-        return apiService.getCollectionDetailsById(collectionId).toCollectionDataClass()
+    suspend fun getCollectionDetailsById(
+        collectionId: Int,
+        language: String
+    ): CollectionDetailsDataClass {
+        return apiService.getCollectionDetailsById(collectionId, language).toCollectionDataClass()
     }
 
 
     // SERIES
 
-    suspend fun getPopularSeries(): List<SeriesDataClass> {
-        return apiService.getPopularSeries().toSeriesDataClass()
+    suspend fun getPopularSeries(language: String): List<SeriesDataClass> {
+        return apiService.getPopularSeries(language).toSeriesDataClass()
     }
 
-    suspend fun getAiringSeriesToday(): List<SeriesDataClass> {
-        return apiService.getAiringSeriesToday().toSeriesDataClass()
+    suspend fun getAiringSeriesToday(language: String): List<SeriesDataClass> {
+        return apiService.getAiringSeriesToday(language).toSeriesDataClass()
     }
 
-    suspend fun getOnTheAirSeries(): List<SeriesDataClass> {
-        return apiService.getOnTheAirSeries().toSeriesDataClass()
+    suspend fun getOnTheAirSeries(language: String): List<SeriesDataClass> {
+        return apiService.getOnTheAirSeries(language).toSeriesDataClass()
     }
 
-    suspend fun getTopRatedSeries(): List<SeriesDataClass> {
-        return apiService.getTopRatedSeries().toSeriesDataClass()
+    suspend fun getTopRatedSeries(language: String): List<SeriesDataClass> {
+        return apiService.getTopRatedSeries(language).toSeriesDataClass()
     }
 
-    suspend fun getSeriesDetailsById(seriesId: Int): SeriesDetailsDataClass {
-        return apiService.getSeriesDetailsById(seriesId).toSeriesDetailsDataClass()
+    suspend fun getSeriesDetailsById(seriesId: Int, language: String): SeriesDetailsDataClass {
+        return apiService.getSeriesDetailsById(seriesId, language).toSeriesDetailsDataClass()
     }
 
     suspend fun getSeasonsDetailsById(
         seriesId: Int,
-        seasonNumber: Int
+        seasonNumber: Int, language: String
     ): List<EpisodeDetailsDataClass> {
-        return apiService.getSeasonDetailsById(seriesId, seasonNumber).toSeasonDetailsDataClass()
+        return apiService.getSeasonDetailsById(seriesId, seasonNumber, language)
+            .toSeasonDetailsDataClass()
     }
 
     suspend fun getSeriesRecommendationsById(seriesId: Int): List<SeriesDataClass> {
@@ -148,8 +157,8 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getSeriesImageListById(seriesId).toBackdropImageDataClass()
     }
 
-    suspend fun getSeriesVideosById(seriesId: Int): List<VideoDataClass> {
-        return apiService.getSeriesVideosById(seriesId).toVideoDataClass()
+    suspend fun getSeriesVideosById(seriesId: Int, language: String): List<VideoDataClass> {
+        return apiService.getSeriesVideosById(seriesId, language).toVideoDataClass()
     }
 
     suspend fun getSeriesCreditsById(seriesId: Int): CreditsDataClass {
@@ -158,17 +167,17 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     // PEOPLE
 
-    suspend fun getPeopleDetailsById(personId: Int): PeopleDetailsDataClass {
-        return apiService.getPeopleDetails(personId).toPeopleDetailsDataClass()
+    suspend fun getPeopleDetailsById(personId: Int, language: String): PeopleDetailsDataClass {
+        return apiService.getPeopleDetails(personId, language).toPeopleDetailsDataClass()
     }
 
-    suspend fun getPeopleMovieInterpretationsById(personId: Int): PeopleMovieInterpretationDataClass {
-        return apiService.getPeopleMovieInterpretationsById(personId)
+    suspend fun getPeopleMovieInterpretationsById(personId: Int, language: String): PeopleMovieInterpretationDataClass {
+        return apiService.getPeopleMovieInterpretationsById(personId, language)
             .toPeopleMoviesInterpretationDataClass()
     }
 
-    suspend fun getPeopleSeriesInterpretationsById(personId: Int): PeopleSeriesInterpretationDataClass {
-        return apiService.getPeopleSeriesInterpretationsById(personId)
+    suspend fun getPeopleSeriesInterpretationsById(personId: Int, language: String): PeopleSeriesInterpretationDataClass {
+        return apiService.getPeopleSeriesInterpretationsById(personId, language)
             .toPeopleSeriesInterpretationDataClass()
     }
 
@@ -179,28 +188,29 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
     suspend fun getEpisodesDetailsById(
         seriesId: Int,
         seasonNumber: Int,
-        episodeNumber: Int
+        episodeNumber: Int,
+        language: String
     ): EpisodesDetailsDataClass {
-        return apiService.getEpisodesDetailsById(seriesId, seasonNumber, episodeNumber)
+        return apiService.getEpisodesDetailsById(seriesId, seasonNumber, episodeNumber, language)
             .toEpisodesDetailsDataClass()
     }
 
     // SEARCHES
 
-    suspend fun getSearchCollection(query: String): List<SearchDataClass> {
-        return apiService.getSearchCollection(query).toSearchDataClass()
+    suspend fun getSearchCollection(query: String, language: String, region: String): List<SearchDataClass> {
+        return apiService.getSearchCollection(query, language, region).toSearchDataClass()
     }
 
-    suspend fun getSearchMovies(query: String): List<SearchDataClass> {
-        return apiService.getSearchMovies(query).toSearchDataClass()
+    suspend fun getSearchMovies(query: String, language: String, region: String): List<SearchDataClass> {
+        return apiService.getSearchMovies(query, language, region).toSearchDataClass()
     }
 
-    suspend fun getSearchSeries(query: String): List<SearchDataClass> {
-        return apiService.getSearchSeries(query).toSearchDataClass()
+    suspend fun getSearchSeries(query: String, language: String, region: String): List<SearchDataClass> {
+        return apiService.getSearchSeries(query, language, region).toSearchDataClass()
     }
 
-    suspend fun getSearchPeople(query: String): List<SearchDataClass> {
-        return apiService.getSearchPeople(query).toSearchDataClass()
+    suspend fun getSearchPeople(query: String, language: String, region: String): List<SearchDataClass> {
+        return apiService.getSearchPeople(query, language, region).toSearchDataClass()
     }
 
     // RATING
@@ -214,7 +224,8 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
     }
 
     suspend fun rateSeries(rating: Float, seriesId: Int): RatingRequestDataClass {
-        return apiService.rateSeries(rating = rating, seriesId = seriesId).toRatingRequestDataClass()
+        return apiService.rateSeries(rating = rating, seriesId = seriesId)
+            .toRatingRequestDataClass()
     }
 
     suspend fun deleteRateSeries(seriesId: Int): RatingRequestDataClass {
@@ -346,7 +357,8 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
     }
 
     suspend fun deleteItemFromList(listId: Int, itemId: Int): RequestResponseDataClass {
-        return apiService.deleteItemFromList( listId =  listId, itemId = itemId).toRequestResponseDataClass()
+        return apiService.deleteItemFromList(listId = listId, itemId = itemId)
+            .toRequestResponseDataClass()
     }
 
     suspend fun clearList(listId: Int): RequestResponseDataClass {

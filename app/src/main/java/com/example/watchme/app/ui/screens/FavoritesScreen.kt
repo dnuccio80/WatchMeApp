@@ -59,8 +59,8 @@ fun FavoritesScreen(
     val favoritesSeries by viewModel.favoritesSeries.collectAsState()
 
     val rateList = listOf(
-        Categories.Movies.title,
-        Categories.TvSeries.title,
+        stringResource(Categories.Movies.title),
+        stringResource(Categories.TvSeries.title),
     )
 
     var selectedOption by rememberSaveable { mutableStateOf(rateList[0]) }
@@ -135,7 +135,7 @@ fun FavoritesScreen(
                 ) {
 
                     when (selectedOption) {
-                        Categories.TvSeries.title -> {
+                        stringResource(Categories.TvSeries.title) -> {
                             if (favoritesSeries == null) {
                                 BodyTextItem(stringResource(R.string.no_results_found))
                             } else {
@@ -154,7 +154,7 @@ fun FavoritesScreen(
                             }
                         }
 
-                        Categories.Movies.title -> {
+                        stringResource(Categories.Movies.title) -> {
                             if (favoritesMovies == null) {
                                 BodyTextItem(stringResource(R.string.no_results_found))
                             } else {

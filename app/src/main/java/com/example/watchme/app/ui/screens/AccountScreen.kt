@@ -90,11 +90,6 @@ fun AccountScreen(
                     }
 
                 }
-//                Button(
-//                    onClick = { viewModel.changeLanguage(context,"es")}
-//                ) {
-//                    ThirdTitleTextItem(stringResource(R.string.change_language).uppercase())
-//                }
                 ListSection(
                     stringResource(R.string.my_favorites),
                     stringResource(R.string.see_favorites),

@@ -5,6 +5,6 @@ import com.example.watchme.app.ui.dataClasses.SearchDataClass
 import javax.inject.Inject
 
 class GetSearchPeopleUseCase @Inject constructor(private val apiRepository: ApiRepository) {
-    suspend operator fun invoke(query: String): List<SearchDataClass> =
-        apiRepository.getSearchPeople(query)
+    suspend operator fun invoke(query: String, language: String, region: String): List<SearchDataClass> =
+        apiRepository.getSearchPeople(query, language, region)
 }

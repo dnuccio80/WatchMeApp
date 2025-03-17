@@ -1,12 +1,14 @@
 package com.example.watchme.core
 
+import androidx.annotation.StringRes
+import androidx.compose.ui.res.stringResource
 import com.example.watchme.R
 
 
-sealed class Categories(val title: String, val icon: Int, val mediaType:String = "null") {
-    data object Collections : Categories("Collections", R.drawable.ic_collections)
-    data object TvSeries : Categories("Tv Series", R.drawable.ic_tv, "tv")
-    data object Movies : Categories("Movies", R.drawable.ic_movie, "movie")
-    data object People : Categories("People", R.drawable.ic_star)
-    data object TvEpisodes : Categories("Tv Episodes", R.drawable.ic_star)
+sealed class Categories(@StringRes val title: Int, val icon: Int, val mediaType:String = "null") {
+    data object Collections : Categories(R.string.collections, R.drawable.ic_collections)
+    data object TvSeries : Categories(R.string.tv_series, R.drawable.ic_tv, "tv")
+    data object Movies : Categories(R.string.movies, R.drawable.ic_movie, "movie")
+    data object People : Categories(R.string.people, R.drawable.ic_star)
+    data object TvEpisodes : Categories(R.string.tv_episodes, R.drawable.ic_star)
 }

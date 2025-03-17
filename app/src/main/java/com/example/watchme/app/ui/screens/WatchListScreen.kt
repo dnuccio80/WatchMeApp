@@ -62,8 +62,8 @@ fun WatchListScreen(
     viewModel.getWatchlistSeries()
 
     val watchListOptions = listOf(
-        Categories.Movies.title,
-        Categories.TvSeries.title
+        stringResource(Categories.Movies.title),
+        stringResource(Categories.TvSeries.title)
     )
 
     var selectedOption by rememberSaveable { mutableStateOf(watchListOptions[0]) }
@@ -138,7 +138,7 @@ fun WatchListScreen(
                 ) {
 
                     when (selectedOption) {
-                        Categories.TvSeries.title -> {
+                        stringResource(Categories.TvSeries.title) -> {
                             if (watchListSeries == null) {
                                 BodyTextItem(stringResource(R.string.no_results_found))
                             } else {
@@ -157,7 +157,7 @@ fun WatchListScreen(
                             }
                         }
 
-                        Categories.Movies.title -> {
+                        stringResource(Categories.Movies.title) -> {
                             if (watchListMovies == null) {
                                 BodyTextItem(stringResource(R.string.no_results_found))
                             } else {

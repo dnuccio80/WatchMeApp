@@ -5,5 +5,5 @@ import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import javax.inject.Inject
 
 class GetRecommendationsByIdUseCase @Inject constructor(private val apiRepository: ApiRepository) {
-    suspend operator fun invoke(movieId: Int): List<MovieDataClass> = apiRepository.getRecommendationsById(movieId)
+    suspend operator fun invoke(movieId: Int, language: String): List<MovieDataClass> = apiRepository.getRecommendationsById(movieId, language)
 }

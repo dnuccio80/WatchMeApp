@@ -34,7 +34,6 @@ import com.example.watchme.app.data.network.responses.SeriesSearchResponse
 import com.example.watchme.app.data.network.responses.VideoResponse
 import com.example.watchme.app.data.network.responses.WatchListRequestDto
 import com.example.watchme.app.data.network.responses.RequestResponse
-import com.example.watchme.core.constants.Constants
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.DELETE
@@ -48,26 +47,48 @@ interface ApiClient {
     // MOVIES
 
     @GET("movie/popular")
-    suspend fun getPopularMovies(): Response<MovieResponse>
+    suspend fun getPopularMovies(
+        @Query("language") language: String,
+        @Query("region") country: String
+    ): Response<MovieResponse>
 
     @GET("movie/now_playing")
-    suspend fun getNowPlayingMovies(): Response<MovieResponse>
+    suspend fun getNowPlayingMovies(
+        @Query("language") language: String,
+        @Query("region") country: String
+    ): Response<MovieResponse>
 
     @GET("movie/top_rated")
-    suspend fun getTopRatedMovies(): Response<MovieResponse>
+    suspend fun getTopRatedMovies(
+        @Query("language") language: String,
+        @Query("region") country: String
+    ): Response<MovieResponse>
 
     @GET("movie/upcoming")
-    suspend fun getUpcomingMovies(): Response<MovieResponse>
+    suspend fun getUpcomingMovies(
+        @Query("language") language: String,
+        @Query("region") country: String
+    ): Response<MovieResponse>
 
-    @GET("watch/providers/movie${Constants.SPANISH_AR}${Constants.AR_REGION}")
-    suspend fun getProviders(): Response<ProvidersResponse>
+    @GET("watch/providers/movie")
+    suspend fun getProviders(
+        @Query("language") language: String,
+        @Query("region") country: String
+    ): Response<ProvidersResponse>
 
     @GET
-    suspend fun getMovieDetailsById(@Url url: String): Response<DetailsMovieResponse>
+    suspend fun getMovieDetailsById(
+        @Url url: String,
+        @Query("language") language: String,
+        @Query("region") region: String
+    ): Response<DetailsMovieResponse>
 
 
     @GET
-    suspend fun getRecommendationsById(@Url url: String): Response<MovieResponse>
+    suspend fun getMoviesRecommendationsById(
+        @Url url: String,
+        @Query("language") language: String,
+    ): Response<MovieResponse>
 
     @GET
     suspend fun getReviewsById(@Url url: String): Response<ReviewsResponse>
@@ -75,27 +96,44 @@ interface ApiClient {
     // COLLECTIONS
 
     @GET
-    suspend fun getCollectionDetailsById(@Url url: String): Response<CollectionResponse>
+    suspend fun getCollectionDetailsById(
+        @Url url: String,
+        @Query("language") language: String,
+    ): Response<CollectionResponse>
 
     // SERIES
 
     @GET("tv/popular")
-    suspend fun getPopularSeries(): Response<SeriesResponse>
+    suspend fun getPopularSeries(
+        @Query("language") language: String
+    ): Response<SeriesResponse>
 
     @GET("tv/airing_today")
-    suspend fun getAiringTodaySeries(): Response<SeriesResponse>
+    suspend fun getAiringTodaySeries(
+        @Query("language") language: String
+    ): Response<SeriesResponse>
 
     @GET("tv/on_the_air")
-    suspend fun getOnTheAirSeries(): Response<SeriesResponse>
+    suspend fun getOnTheAirSeries(
+        @Query("language") language: String
+    ): Response<SeriesResponse>
 
     @GET("tv/top_rated")
-    suspend fun getTopRatedSeries(): Response<SeriesResponse>
+    suspend fun getTopRatedSeries(
+        @Query("language") language: String
+    ): Response<SeriesResponse>
 
     @GET()
-    suspend fun getSeriesDetailsById(@Url url: String): Response<SeriesDetailsResponse>
+    suspend fun getSeriesDetailsById(
+        @Url url: String,
+        @Query("language") language: String,
+    ): Response<SeriesDetailsResponse>
 
     @GET()
-    suspend fun getSeasonsDetailsById(@Url url: String): Response<SeasonDetails>
+    suspend fun getSeasonsDetailsById(
+        @Url url: String,
+        @Query("language") language: String,
+    ): Response<SeasonDetails>
 
     @GET()
     suspend fun getSeriesRecommendationsById(@Url url: String): Response<SeriesResponse>
@@ -103,7 +141,10 @@ interface ApiClient {
     // EPISODES
 
     @GET()
-    suspend fun getEpisodesDetailsById(@Url url: String): Response<EpisodeResponse>
+    suspend fun getEpisodesDetailsById(
+        @Url url: String,
+        @Query("language") language: String,
+    ): Response<EpisodeResponse>
 
     // SERIES & MOVIES
 
@@ -111,7 +152,10 @@ interface ApiClient {
     suspend fun getImageListById(@Url url: String): Response<ImageBackdrop>
 
     @GET
-    suspend fun getVideosById(@Url url: String): Response<VideoResponse>
+    suspend fun getVideosById(
+        @Url url: String,
+        @Query("language") language: String,
+    ): Response<VideoResponse>
 
     @GET
     suspend fun getCreditsById(@Url url: String): Response<CreditsResponse>
@@ -119,13 +163,23 @@ interface ApiClient {
     // PEOPLE
 
     @GET
-    suspend fun getPeopleDetailsById(@Url url: String): Response<PeopleDetailsResponse>
+    suspend fun getPeopleDetailsById(
+        @Url url: String,
+        @Query("language") language: String
+    ): Response<PeopleDetailsResponse>
 
     @GET
-    suspend fun getPeopleMovieInterpretationsById(@Url url: String): Response<PeopleMovieInterpretationResponse>
+    suspend fun getPeopleMovieInterpretationsById(
+        @Url url: String,
+        @Query("language") language: String
+
+    ): Response<PeopleMovieInterpretationResponse>
 
     @GET
-    suspend fun getPeopleSeriesInterpretationsById(@Url url: String): Response<PeopleSeriesInterpretationResponse>
+    suspend fun getPeopleSeriesInterpretationsById(
+        @Url url: String,
+        @Query("language") language: String
+    ): Response<PeopleSeriesInterpretationResponse>
 
     @GET
     suspend fun getPeopleMediaById(@Url url: String): Response<ImagePeopleResponse>
@@ -133,16 +187,32 @@ interface ApiClient {
     // SEARCHES
 
     @GET("search/collection")
-    suspend fun getCollectionSearch(@Query("query") query: String): Response<CollectionSearchResponse>
+    suspend fun getCollectionSearch(
+        @Query("query") query: String,
+        @Query("language") language: String,
+        @Query("region") region: String
+    ): Response<CollectionSearchResponse>
 
     @GET("search/movie")
-    suspend fun getMoviesSearch(@Query("query") query: String): Response<MovieSearchResponse>
+    suspend fun getMoviesSearch(
+        @Query("query") query: String,
+        @Query("language") language: String,
+        @Query("region") region: String
+    ): Response<MovieSearchResponse>
 
     @GET("search/tv")
-    suspend fun getSeriesSearch(@Query("query") query: String): Response<SeriesSearchResponse>
+    suspend fun getSeriesSearch(
+        @Query("query") query: String,
+        @Query("language") language: String,
+        @Query("region") region: String
+    ): Response<SeriesSearchResponse>
 
     @GET("search/person")
-    suspend fun getPeopleSearch(@Query("query") query: String): Response<PersonSearchResponse>
+    suspend fun getPeopleSearch(
+        @Query("query") query: String,
+        @Query("language") language: String,
+        @Query("region") region: String
+    ): Response<PersonSearchResponse>
 
     // RATING - MOVIES
 

@@ -6,7 +6,7 @@ import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import javax.inject.Inject
 
 class GetProvidersUseCase @Inject constructor(private val apiRepository: ApiRepository) {
-    suspend operator fun invoke(): List<ProvidersDataClass> {
-        return apiRepository.getProviders()
+    suspend operator fun invoke(language: String, region: String): List<ProvidersDataClass> {
+        return apiRepository.getProviders(language, region)
     }
 }

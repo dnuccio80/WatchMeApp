@@ -5,5 +5,5 @@ import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import javax.inject.Inject
 
 class GetOnTheAirSeriesUseCase @Inject constructor(private val apiRepository: ApiRepository) {
-    suspend operator fun invoke(): List<SeriesDataClass> = apiRepository.getOnTheAirSeries()
+    suspend operator fun invoke(language: String): List<SeriesDataClass> = apiRepository.getOnTheAirSeries(language)
 }

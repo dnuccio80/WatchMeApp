@@ -132,4 +132,8 @@
     <string name="open_youtube">Your Youtube app will be open</string>
     <string name="open_website">App will open your browser to this website</string>
     <string name="change_language">Change language</string>
+    <string name="collections">Collections</string>
+    <string name="people">People</string>
+    <string name="tv_episodes">Tv Episodes</string>
+    <string name="username">Username</string>
 </resources>

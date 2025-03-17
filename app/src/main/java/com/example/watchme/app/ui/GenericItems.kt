@@ -1217,7 +1217,7 @@ fun AccountHeader(viewModel: AppViewModel, onClick: () -> Unit) {
                 accountDetails?.name?.let { SecondTitleTextItem(it, hasMaxWidth = false) }
                 accountDetails?.username?.let {
                     BodyTextItem(
-                        "Username: $it",
+                        "${stringResource(R.string.username)}: $it",
                         color = Color.LightGray
                     )
                 }

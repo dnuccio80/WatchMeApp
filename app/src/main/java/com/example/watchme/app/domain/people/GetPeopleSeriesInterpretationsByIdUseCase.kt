@@ -7,5 +7,5 @@ import com.example.watchme.app.ui.dataClasses.PeopleSeriesInterpretationDataClas
 import javax.inject.Inject
 
 class GetPeopleSeriesInterpretationsByIdUseCase @Inject constructor(private val apiRepository: ApiRepository)  {
-    suspend operator fun invoke(personId:Int) : PeopleSeriesInterpretationDataClass = apiRepository.getPeopleSeriesInterpretationsById(personId)
+    suspend operator fun invoke(personId:Int, language: String) : PeopleSeriesInterpretationDataClass = apiRepository.getPeopleSeriesInterpretationsById(personId, language)
 }

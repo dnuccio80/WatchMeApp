@@ -2,9 +2,11 @@ package com.example.watchme
 
 import android.content.Context
 import android.util.Log
+import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -321,8 +323,8 @@ class AppViewModel @Inject constructor(
     private val _query = MutableStateFlow("")
     val query: StateFlow<String> = _query
 
-    private val _searchTypeSelected = MutableStateFlow(Categories.Collections.title)
-    val searchTypeSelected: StateFlow<String> = _searchTypeSelected
+    private val _searchTypeSelected = MutableStateFlow((Categories.Collections.title))
+    val searchTypeSelected: StateFlow<Int> = _searchTypeSelected
 
     // RATING
 
@@ -388,15 +390,15 @@ class AppViewModel @Inject constructor(
     init {
         viewModelScope.launch(Dispatchers.IO) {
             getDefaultLanguage()
-            _popularMovies.value = getPopularMoviesUseCase()
-            _nowPlayingMovies.value = getNowPlayingMoviesUseCase()
-            _topRatedMovies.value = getTopRatedMoviesUseCase()
-            _providers.value = getProvidersUseCase()
-            _upcomingMovies.value = getUpcomingMoviesUseCase()
-            _popularSeries.value = getPopularSeriesUseCase()
-            _airingSeriesToday.value = getAiringSeriesTodayUseCase()
-            _onTheAirSeries.value = getOnTheAirSeriesUseCase()
-            _topRatedSeries.value = getTopRatedSeriesUseCase()
+            _popularMovies.value = getPopularMoviesUseCase(defaultLanguage, defaultCountry)
+            _nowPlayingMovies.value = getNowPlayingMoviesUseCase(defaultLanguage, defaultCountry)
+            _topRatedMovies.value = getTopRatedMoviesUseCase(defaultLanguage, defaultCountry)
+            _providers.value = getProvidersUseCase(defaultLanguage, defaultCountry)
+            _upcomingMovies.value = getUpcomingMoviesUseCase(defaultLanguage, defaultCountry)
+            _popularSeries.value = getPopularSeriesUseCase(defaultLanguage)
+            _airingSeriesToday.value = getAiringSeriesTodayUseCase(defaultLanguage)
+            _onTheAirSeries.value = getOnTheAirSeriesUseCase(defaultLanguage)
+            _topRatedSeries.value = getTopRatedSeriesUseCase(defaultLanguage)
             _favoritesMovies.value = getFavoritesMoviesUseCase(0)
             _favoritesSeries.value = getFavoritesSeriesUseCase(0)
             _watchlistSeries.value = getWatchlistSeriesUseCase(0)
@@ -417,10 +419,10 @@ class AppViewModel @Inject constructor(
     private fun observeSearchQuery() {
 
         val useCase: suspend (String) -> List<SearchDataClass> = when (_searchTypeSelected.value) {
-            Categories.Collections.title -> { query -> getSearchCollectionUseCase(query) }
-            Categories.Movies.title -> { query -> getSearchMovieUseCase(query) }
-            Categories.TvSeries.title -> { query -> getSearchSeriesUseCase(query) }
-            else -> { query -> getSearchPeopleUseCase(query) }
+            Categories.Collections.title -> { query -> getSearchCollectionUseCase(query, defaultLanguage, defaultCountry) }
+            Categories.Movies.title -> { query -> getSearchMovieUseCase(query, defaultLanguage, defaultCountry) }
+            Categories.TvSeries.title -> { query -> getSearchSeriesUseCase(query, defaultLanguage, defaultCountry) }
+            else -> { query -> getSearchPeopleUseCase(query, defaultLanguage, defaultCountry) }
         }
 
         val searchType = when (_searchTypeSelected.value) {
@@ -450,7 +452,7 @@ class AppViewModel @Inject constructor(
         _query.value = newQuery
     }
 
-    fun onSearchTypeSelectedChange(newType: String) {
+    fun onSearchTypeSelectedChange(newType: Int) {
         _searchTypeSelected.value = newType
         observeSearchQuery()
     }
@@ -483,7 +485,7 @@ class AppViewModel @Inject constructor(
 
     fun getMovieDetailsById(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _movieDetails.value = getMovieDetailsByIdUseCase(movieId)
+            _movieDetails.value = getMovieDetailsByIdUseCase(movieId, defaultLanguage, defaultCountry)
         }
     }
 
@@ -501,7 +503,7 @@ class AppViewModel @Inject constructor(
 
     fun getRecommendationsById(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _movieRecommendations.value = getRecommendationsByIdUseCase(movieId)
+            _movieRecommendations.value = getRecommendationsByIdUseCase(movieId, defaultLanguage)
         }
     }
 
@@ -513,7 +515,7 @@ class AppViewModel @Inject constructor(
 
     fun getVideosById(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _movieVideos.value = getVideosByIdUseCase(movieId)
+            _movieVideos.value = getVideosByIdUseCase(movieId, defaultLanguage)
         }
     }
 
@@ -521,7 +523,7 @@ class AppViewModel @Inject constructor(
 
     fun getCollectionDetailsById(collectionId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _collectionDetails.value = getCollectionDetailsByIdUseCase(collectionId)
+            _collectionDetails.value = getCollectionDetailsByIdUseCase(collectionId, defaultLanguage)
         }
     }
 
@@ -529,13 +531,13 @@ class AppViewModel @Inject constructor(
 
     fun getSeriesDetailsById(seriesId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _seriesDetails.value = getSeriesDetailsByIdUseCase(seriesId)
+            _seriesDetails.value = getSeriesDetailsByIdUseCase(seriesId, defaultLanguage)
         }
     }
 
     fun getSeasonDetailsById(seriesId: Int, seasonNumber: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _seasonsDetails.value = getSeasonDetailsUseCase(seriesId, seasonNumber)
+            _seasonsDetails.value = getSeasonDetailsUseCase(seriesId, seasonNumber, defaultLanguage)
         }
     }
 
@@ -553,7 +555,7 @@ class AppViewModel @Inject constructor(
 
     fun getSeriesVideosListById(seriesId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _seriesVideos.value = getSeriesVideosByIdUseCase(seriesId)
+            _seriesVideos.value = getSeriesVideosByIdUseCase(seriesId, defaultLanguage)
         }
     }
 
@@ -568,13 +570,13 @@ class AppViewModel @Inject constructor(
     fun getEpisodeDetailsById(seriesId: Int, seasonNumber: Int, episodeNumber: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _episodeDetails.value =
-                getEpisodeDetailsByIdUseCase(seriesId, seasonNumber, episodeNumber)
+                getEpisodeDetailsByIdUseCase(seriesId, seasonNumber, episodeNumber, defaultLanguage)
         }
     }
 
     fun getSeriesName(seriesId: Int): String {
         viewModelScope.launch(Dispatchers.IO) {
-            _seriesDetails.value = getSeriesDetailsByIdUseCase(seriesId)
+            _seriesDetails.value = getSeriesDetailsByIdUseCase(seriesId, defaultLanguage)
         }
         return _seriesDetails.value?.name.toString()
     }
@@ -583,19 +585,19 @@ class AppViewModel @Inject constructor(
 
     fun getPeopleDetailsById(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _peopleDetails.value = getPeopleDetailsByIdUseCase(personId)
+            _peopleDetails.value = getPeopleDetailsByIdUseCase(personId, defaultLanguage)
         }
     }
 
     fun getPeopleMovieInterpretationsById(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _peopleMovieInterpretations.value = getPeopleMovieInterpretationsByIdUseCase(personId)
+            _peopleMovieInterpretations.value = getPeopleMovieInterpretationsByIdUseCase(personId, defaultLanguage)
         }
     }
 
     fun getPeopleSeriesInterpretationsById(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _peopleSeriesInterpretations.value = getPeopleSeriesInterpretationsByIdUseCase(personId)
+            _peopleSeriesInterpretations.value = getPeopleSeriesInterpretationsByIdUseCase(personId, defaultLanguage)
         }
     }
 

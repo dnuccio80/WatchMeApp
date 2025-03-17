@@ -6,7 +6,7 @@
     <string name="top_rated">Mejor calificadas</string>
     <string name="upcoming">Proximamente</string>
     <string name="movies">Peliculas</string>
-    <string name="tv_series">TV Series</string>
+    <string name="tv_series">Series TV</string>
     <string name="episode_image">imagen de episodio</string>
     <string name="episodes">episodios</string>
     <string name="episode">Episodio</string>
@@ -133,4 +133,8 @@
     <string name="open_youtube">Tu aplicación de Youtube se abrirá</string>
     <string name="open_website">La aplicación abrirá tu buscador para ir a este sitio</string>
     <string name="change_language">Cambiar lenguaje</string>
+    <string name="collections">Colecciones</string>
+    <string name="people">Personas</string>
+    <string name="tv_episodes">Episodios TV</string>
+    <string name="username">Usuario</string>
 </resources>
