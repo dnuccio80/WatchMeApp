@@ -6,6 +6,7 @@
     <string name="upcoming">Upcoming</string>
     <string name="movies">Movies</string>
     <string name="tv_series">TV Series</string>
+    <string name="series">Series</string>
     <string name="episode_image">episode image</string>
     <string name="episodes">episodes</string>
     <string name="episode">Episode</string>
@@ -90,6 +91,8 @@
     <string name="try_type_something_search">Try typing something in the search bar</string>
     <string name="seasons">seasons</string>
     <string name="season">Season</string>
+    <string name="media">Media</string>
+    <string name="credits">Credits</string>
     <string name="cast">Cast</string>
     <string name="crew">Crew</string>
     <string name="character">Character:</string>
@@ -128,4 +131,5 @@
     <string name="confirm">Confirm</string>
     <string name="open_youtube">Your Youtube app will be open</string>
     <string name="open_website">App will open your browser to this website</string>
+    <string name="change_language">Change language</string>
 </resources>

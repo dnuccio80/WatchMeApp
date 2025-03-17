@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -53,6 +54,8 @@ fun AccountScreen(
 
     viewModel.getTotalRatingCount()
     viewModel.getFavoritesCount()
+
+    val context = LocalContext.current
 
     Box(
         Modifier
@@ -87,6 +90,11 @@ fun AccountScreen(
                     }
 
                 }
+//                Button(
+//                    onClick = { viewModel.changeLanguage(context,"es")}
+//                ) {
+//                    ThirdTitleTextItem(stringResource(R.string.change_language).uppercase())
+//                }
                 ListSection(
                     stringResource(R.string.my_favorites),
                     stringResource(R.string.see_favorites),

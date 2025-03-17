@@ -1,7 +1,10 @@
 package com.example.watchme
 
+import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -88,6 +91,7 @@ import com.example.watchme.app.ui.dataClasses.TotalRatedResultsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.app.ui.dataClasses.RequestResponseDataClass
 import com.example.watchme.core.Categories
+import com.example.watchme.core.LocaleHelper
 import com.example.watchme.ui.theme.IntermediateVoteColor
 import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.PositiveVoteColor
@@ -189,6 +193,8 @@ class AppViewModel @Inject constructor(
     private val clearListUseCase: ClearListUseCase,
 
     ) : ViewModel() {
+
+        private val localeHelper = LocaleHelper()
 
     // MOVIES
 
@@ -396,6 +402,10 @@ class AppViewModel @Inject constructor(
             _ratedSeries.value = getRatedSeriesUseCase(0)
         }
         observeSearchQuery()
+    }
+
+    fun changeLanguage(context:Context, language:String) {
+        val newContext = localeHelper.setLocale(context, language)
     }
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)

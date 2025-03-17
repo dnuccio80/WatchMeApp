@@ -103,10 +103,11 @@ fun SeriesDetailsScreen(
     val watchlistRequest by viewModel.watchListRequest.collectAsState()
     val ratedSeries by viewModel.ratedSeries.collectAsState()
 
+    val sectionInit = stringResource(Sections.Episodes.title)
+
     val verticalScrollState = rememberScrollState()
     var seasonSelected by rememberSaveable { mutableIntStateOf(1) }
-    var sectionSelected by rememberSaveable { mutableStateOf(Sections.Episodes.title) }
-
+    var sectionSelected by rememberSaveable { mutableStateOf(sectionInit) }
 
     var isFavorite by rememberSaveable { mutableStateOf(viewModel.seriesIsFavorite(seriesId)) }
     var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.seriesIsInWatchlist(seriesId)) }
@@ -156,11 +157,11 @@ fun SeriesDetailsScreen(
     }
 
     val sectionList = listOf(
-        Sections.Episodes.title,
-        Sections.Suggested.title,
-        Sections.Details.title,
-        Sections.Media.title,
-        Sections.Credits.title,
+        stringResource(Sections.Episodes.title),
+        stringResource(Sections.Suggested.title),
+        stringResource(Sections.Details.title),
+        stringResource(Sections.Media.title),
+        stringResource(Sections.Credits.title),
     )
 
     Box(
@@ -191,7 +192,7 @@ fun SeriesDetailsScreen(
             ) {
                 HeaderInfo(
                     seriesDetails?.genres?.map { it.name }.orEmpty(),
-                    "${seriesDetails?.numberOfSeasons} seasons",
+                    "${seriesDetails?.numberOfSeasons} ${stringResource(R.string.seasons)}",
                     Modifier.align(Alignment.CenterHorizontally)
                 )
                 seriesDetails?.name?.let { SecondTitleTextItem(it) }
@@ -234,7 +235,7 @@ fun SeriesDetailsScreen(
                     sectionSelected = newSectionSelected
                 }
                 when (sectionSelected.lowercase()) {
-                    Sections.Episodes.title -> seriesDetails?.seasons?.let {
+                    stringResource(Sections.Episodes.title).lowercase() -> seriesDetails?.seasons?.let {
                         EpisodesSection(
                             seasonDetails, it, seasonSelected,
                             onValueChange = { seasonNumber -> seasonSelected = seasonNumber },
@@ -250,15 +251,15 @@ fun SeriesDetailsScreen(
                         )
                     }
 
-                    Sections.Suggested.title -> SeriesRecommendationsSection(seriesRecommendations) {
+                    stringResource(Sections.Suggested.title).lowercase()-> SeriesRecommendationsSection(seriesRecommendations) {
                         navController.navigate(
                             Routes.SeriesDetails.createRoute(it)
                         )
                     }
 
-                    Sections.Details.title -> SeriesDetailsSection(seriesDetails)
-                    Sections.Media.title -> MediaSection(seriesImageList, seriesVideosList)
-                    Sections.Credits.title -> CreditsSection(seriesCredits) { personId ->
+                    stringResource(Sections.Details.title).lowercase() -> SeriesDetailsSection(seriesDetails)
+                    stringResource(Sections.Media.title).lowercase() -> MediaSection(seriesImageList, seriesVideosList)
+                    stringResource(Sections.Credits.title).lowercase() -> CreditsSection(seriesCredits) { personId ->
                         navController.navigate(
                             Routes.PeopleDetails.createRoute(personId)
                         )

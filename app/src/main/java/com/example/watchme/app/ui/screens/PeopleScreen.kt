@@ -64,8 +64,10 @@ fun PeopleDetailsScreen(
     personId: Int
 ) {
 
+    val sectionInit = stringResource(Sections.Biography.title)
+
     val scrollState = rememberScrollState()
-    var sectionSelected by rememberSaveable { mutableStateOf(Sections.Biography.title) }
+    var sectionSelected by rememberSaveable { mutableStateOf(sectionInit) }
 
     val peopleDetails by viewModel.peopleDetails.collectAsState()
     val movieInterpretations by viewModel.peopleMovieInterpretations.collectAsState()
@@ -78,9 +80,9 @@ fun PeopleDetailsScreen(
     viewModel.getPeopleMediaById(personId)
 
     val sectionList = listOf(
-        Sections.Biography.title,
-        Sections.Credits.title,
-        Sections.Media.title,
+        stringResource(Sections.Biography.title),
+        stringResource(Sections.Credits.title),
+        stringResource(Sections.Media.title),
     )
 
     Box(
@@ -105,9 +107,9 @@ fun PeopleDetailsScreen(
                 SectionSelectionItem(sectionList) { newSectionSelected ->
                     sectionSelected = newSectionSelected
                 }
-                when (sectionSelected) {
-                    Sections.Biography.title -> BiographySection(peopleDetails)
-                    Sections.Credits.title -> PeopleCreditsSection(
+                when (sectionSelected.lowercase()) {
+                    stringResource(Sections.Biography.title).lowercase() -> BiographySection(peopleDetails)
+                    stringResource(Sections.Credits.title).lowercase()  -> PeopleCreditsSection(
                         movieInterpretations,
                         seriesInterpretations,
                         onSeriesClicked = { seriesId ->
@@ -121,8 +123,7 @@ fun PeopleDetailsScreen(
                             navController.navigate(Routes.MovieDetails.createRoute(movieId))
                         }
                     )
-
-                    Sections.Media.title -> PeopleMediaSection(personMedia)
+                    stringResource(Sections.Media.title).lowercase() -> PeopleMediaSection(personMedia)
                 }
             }
         }

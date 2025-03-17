@@ -45,6 +45,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.navigation.NavHostController
@@ -103,9 +104,11 @@ fun MovieDetailsScreen(
     val watchlistRequest by viewModel.watchListRequest.collectAsState()
     val ratedMovies by viewModel.ratedMovies.collectAsState()
 
+    val sectionInit = stringResource(Sections.Suggested.title)
+
     val runTime = viewModel.getRunTimeInHours(movieDetails?.runtime ?: 0)
     val scrollState = rememberScrollState()
-    var sectionSelected by rememberSaveable { mutableStateOf(Sections.Suggested.title) }
+    var sectionSelected by rememberSaveable { mutableStateOf(sectionInit) }
 
     var isFavorite by rememberSaveable { mutableStateOf(viewModel.movieIsFavorite(movieId)) }
     var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.movieIsInWatchlist(movieId)) }
@@ -113,11 +116,13 @@ fun MovieDetailsScreen(
     var myRate by rememberSaveable { mutableFloatStateOf(viewModel.getMyMovieRate(movieId)) }
 
     val sectionList = listOf(
-        Sections.Details.title,
-        Sections.Suggested.title,
-        Sections.Media.title,
-        Sections.Credits.title,
+        stringResource(Sections.Details.title),
+        stringResource(Sections.Suggested.title),
+        stringResource(Sections.Media.title),
+        stringResource(Sections.Credits.title),
     )
+
+    Log.i("Damian", "section selected: $sectionSelected")
 
     val context = LocalContext.current
 
@@ -203,7 +208,7 @@ fun MovieDetailsScreen(
                     sectionSelected = newSectionSelected
                 }
                 when (sectionSelected.lowercase()) {
-                    Sections.Details.title -> OverviewSection(
+                    stringResource(Sections.Details.title).lowercase() -> OverviewSection(
                         movieDetails,
                         runTime,
                         viewModel
@@ -213,14 +218,14 @@ fun MovieDetailsScreen(
                         )
                     }
 
-                    Sections.Suggested.title -> MoviesRecommendationsSection(recommendations) { movieId ->
+                    stringResource(Sections.Suggested.title).lowercase() -> MoviesRecommendationsSection(recommendations) { movieId ->
                         navController.navigate(
                             Routes.MovieDetails.createRoute(movieId)
                         )
                     }
 
-                    Sections.Media.title -> MediaSection(movieListImages, videos)
-                    Sections.Credits.title -> CreditsSection(movieCredits) { personId ->
+                    stringResource(Sections.Media.title).lowercase()  -> MediaSection(movieListImages, videos)
+                    stringResource(Sections.Credits.title).lowercase() -> CreditsSection(movieCredits) { personId ->
                         navController.navigate(
                             Routes.PeopleDetails.createRoute(personId)
                         )
