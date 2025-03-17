@@ -194,7 +194,10 @@ class AppViewModel @Inject constructor(
 
     ) : ViewModel() {
 
-        private val localeHelper = LocaleHelper()
+        // GENERAL SETTINGS
+
+    private var defaultLanguage = Locale.getDefault().language
+    private var defaultCountry = Locale.getDefault().country
 
     // MOVIES
 
@@ -384,6 +387,7 @@ class AppViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
+            getDefaultLanguage()
             _popularMovies.value = getPopularMoviesUseCase()
             _nowPlayingMovies.value = getNowPlayingMoviesUseCase()
             _topRatedMovies.value = getTopRatedMoviesUseCase()
@@ -405,8 +409,8 @@ class AppViewModel @Inject constructor(
         observeSearchQuery()
     }
 
-    fun changeLanguage(context:Context, language:String) {
-        val newContext = localeHelper.setLocale(context, language)
+    private fun getDefaultLanguage() {
+        Log.i("Damian", "Language: $defaultLanguage, Country: $defaultCountry")
     }
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)

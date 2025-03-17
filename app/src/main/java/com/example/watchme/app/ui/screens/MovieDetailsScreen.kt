@@ -1,6 +1,6 @@
 package com.example.watchme.app.ui.screens
 
-import android.util.Log
+
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -122,7 +122,6 @@ fun MovieDetailsScreen(
         stringResource(Sections.Credits.title),
     )
 
-    Log.i("Damian", "section selected: $sectionSelected")
 
     val context = LocalContext.current
 
