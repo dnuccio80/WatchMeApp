@@ -1078,7 +1078,14 @@ fun RatingSectionWithLists(
 }
 
 @Composable
-fun SimpleRatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
+fun SimpleRatingSection(
+    mediaItem: MediaItem,
+    viewModel: AppViewModel,
+    isRated: Boolean,
+    myRate: Float,
+    onRatedButtonClicked: () -> Unit,
+    onDeleteRateButtonClicked: () -> Unit,
+) {
     val percentage = (mediaItem.voteAverage.times(10)).toInt()
     val context = LocalContext.current
 
@@ -1091,6 +1098,7 @@ fun SimpleRatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
                 Toast.makeText(context, it.statusMessage, Toast.LENGTH_SHORT).show()
                 viewModel.clearRatingResponse()
             }
+            viewModel.updateRatedEpisodes()
         }
     }
 
@@ -1111,16 +1119,26 @@ fun SimpleRatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
             )
             ThirdTitleTextItem(stringResource(R.string.user_score), hasMaxWidth = false)
         }
-        Button(
-            onClick = { showDialog = true },
-            elevation = ButtonDefaults.elevatedButtonElevation(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = CardContainerColor
-            ),
-            shape = RoundedCornerShape(8.dp)
-        ) {
-            BodyTextItem(stringResource(R.string.rate).uppercase())
+        Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Button(
+                onClick = { showDialog = true },
+                elevation = ButtonDefaults.elevatedButtonElevation(16.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (isRated) ThumbColor else ButtonContainerColor
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                BodyTextItem(if (isRated) stringResource(R.string.rated) else stringResource(R.string.rate).uppercase())
+            }
+            if (isRated) {
+                val intRate = (myRate * 10).toInt()
+                BodyTextItem(
+                    "${stringResource(R.string.your_rate)} $intRate%",
+                    color = ThumbColor
+                )
+            }
         }
+
     }
 
     RateDialog(
@@ -1128,8 +1146,8 @@ fun SimpleRatingSection(mediaItem: MediaItem, viewModel: AppViewModel) {
         percentage = percentage,
         viewModel = viewModel,
         mediaItem = mediaItem,
-        onRatedButtonClicked = {},
-        onDeleteRateButtonClicked = {},
+        onRatedButtonClicked = { onRatedButtonClicked() },
+        onDeleteRateButtonClicked = { onDeleteRateButtonClicked() },
         onDismiss = { showDialog = false },
     )
 

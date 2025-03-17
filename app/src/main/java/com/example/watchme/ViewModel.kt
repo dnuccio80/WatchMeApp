@@ -400,6 +400,7 @@ class AppViewModel @Inject constructor(
             _accountDetails.value = getAccountDetailsUseCase(0)
             _ratedMovies.value = getRatedMoviesUseCase(0)
             _ratedSeries.value = getRatedSeriesUseCase(0)
+            _ratedSeriesEpisodes.value = getRatedEpisodesUseCase(0)
         }
         observeSearchQuery()
     }
@@ -655,6 +656,10 @@ class AppViewModel @Inject constructor(
         return _ratedSeries.value?.any { it.id == seriesId } == true
     }
 
+    fun isEpisodeRated(seriesId: Int, episodeNumber: Int, seasonNumber: Int): Boolean {
+        return _ratedSeriesEpisodes.value?.any { it.showId == seriesId && it.episodeNumber == episodeNumber && it.seasonNumber == seasonNumber } == true
+    }
+
     fun updateRatedMovies() {
         getRatedMovies()
     }
@@ -663,12 +668,20 @@ class AppViewModel @Inject constructor(
         getRatedSeries()
     }
 
+    fun updateRatedEpisodes(){
+        getRatedSeriesEpisodes()
+    }
+
     fun getMyMovieRate(movieId: Int): Float {
         return _ratedMovies.value?.find { it.id == movieId }?.rating ?: 0f
     }
 
     fun getMySeriesRate(seriesId: Int): Float {
         return _ratedSeries.value?.find { it.id == seriesId }?.rating ?: 0f
+    }
+
+    fun getMyEpisodeRate(seriesId: Int, episodeNumber: Int, seasonNumber: Int): Float {
+        return _ratedSeriesEpisodes.value?.find { it.showId == seriesId && it.episodeNumber == episodeNumber && it.seasonNumber == seasonNumber }?.rating ?: 0f
     }
 
     fun getTotalRatingCount() {

@@ -51,7 +51,8 @@ fun EpisodesRatedResponse.toEpisodesRatedDataClass(): List<EpisodesRatedDataClas
             seasonNumber = it.seasonNumber,
             name =  it.name,
             episodeNumber = it.episodeNumber,
-            stillPath = it.stillPath
+            stillPath = it.stillPath,
+            rating = it.rating
         )
     }
 }
@@ -69,4 +70,6 @@ data class EpisodesRated(
     @SerializedName("season_number") val seasonNumber: Int,
     @SerializedName("episode_number") val episodeNumber: Int,
     @SerializedName("still_path") val stillPath: String,
+    @SerializedName("rating") val rating: Float,
+
 )

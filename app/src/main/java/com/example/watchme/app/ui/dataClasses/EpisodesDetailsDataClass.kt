@@ -25,6 +25,7 @@ data class EpisodesRatedDataClass(
     val seasonNumber: Int,
     val episodeNumber: Int,
     val stillPath: String?,
+    val rating: Float?,
 )
 
 data class TotalEpisodesRatedDataClass(

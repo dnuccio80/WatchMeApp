@@ -1,5 +1,6 @@
 package com.example.watchme.app.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -17,8 +18,13 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -51,13 +57,49 @@ fun EpisodesDetailsScreen(
 ) {
 
     val episodeDetails by viewModel.episodeDetails.collectAsState()
+    val ratedEpisodes by viewModel.ratedSeriesEpisodes.collectAsState()
+
+    viewModel.getRatedSeriesEpisodes()
+
+
     val seriesName = viewModel.getSeriesName(seriesId)
+    var isRated by rememberSaveable {
+        mutableStateOf(
+            viewModel.isEpisodeRated(
+                seriesId = seriesId,
+                episodeNumber = episodeNumber,
+                seasonNumber = seasonNumber
+            )
+        )
+    }
+    var myRate by rememberSaveable {
+        mutableFloatStateOf(
+            viewModel.getMyEpisodeRate(
+                seriesId = seriesId,
+                episodeNumber = episodeNumber,
+                seasonNumber = seasonNumber
+            )
+        )
+    }
 
     viewModel.getEpisodeDetailsById(seriesId, seasonNumber, episodeNumber)
 
     val runtime = episodeDetails?.runtime?.let { viewModel.getRunTimeInHours(it) }
 
     if (episodeDetails == null) return
+
+    LaunchedEffect(ratedEpisodes) {
+        isRated = viewModel.isEpisodeRated(
+            seriesId = seriesId,
+            episodeNumber = episodeNumber,
+            seasonNumber = seasonNumber
+        )
+        myRate = viewModel.getMyEpisodeRate(
+            seriesId = seriesId,
+            episodeNumber = episodeNumber,
+            seasonNumber = seasonNumber
+        )
+    }
 
     Box(
         Modifier
@@ -112,7 +154,11 @@ fun EpisodesDetailsScreen(
                         episodeNumber = episodeDetails!!.episodeNumber,
                         category = Categories.TvEpisodes
                     ),
-                    viewModel = viewModel
+                    viewModel = viewModel,
+                    isRated = isRated,
+                    myRate = myRate,
+                    onRatedButtonClicked = { isRated = true },
+                    onDeleteRateButtonClicked = { isRated = false },
                 )
 
                 if (episodeDetails?.overview.isNullOrEmpty() && episodeDetails?.guestStars?.isEmpty() == true && episodeDetails?.crew?.isEmpty() == true) {
