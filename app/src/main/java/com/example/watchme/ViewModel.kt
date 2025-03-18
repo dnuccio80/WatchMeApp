@@ -1,18 +1,9 @@
 package com.example.watchme
 
-import android.content.Context
 import android.util.Log
-import androidx.annotation.StringRes
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.watchme.app.data.network.responses.Dtos.DeleteItemFromListDto
-import com.example.watchme.app.data.network.responses.MovieProvidersResponse
-import com.example.watchme.app.data.network.responses.TypeProvider
 import com.example.watchme.app.domain.favorites.AddFavoriteUseCase
 import com.example.watchme.app.domain.lists.AddToWatchlistUseCase
 import com.example.watchme.app.domain.lists.CreateListUseCase
@@ -48,6 +39,7 @@ import com.example.watchme.app.domain.people.GetPeopleMovieInterpretationsByIdUs
 import com.example.watchme.app.domain.people.GetPeopleSeriesInterpretationsByIdUseCase
 import com.example.watchme.app.domain.providers.GetMovieProvidersByMovieIdUseCase
 import com.example.watchme.app.domain.providers.GetProvidersUseCase
+import com.example.watchme.app.domain.providers.GetSeriesProvidersBySeriesIdUseCase
 import com.example.watchme.app.domain.rating.DeleteRateMovieUseCase
 import com.example.watchme.app.domain.rating.DeleteRateSeriesEpisodeUseCase
 import com.example.watchme.app.domain.rating.DeleteRateSeriesUseCase
@@ -82,6 +74,7 @@ import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
 import com.example.watchme.app.ui.dataClasses.FavoriteDataClass
 import com.example.watchme.app.ui.dataClasses.ListDataClass
 import com.example.watchme.app.ui.dataClasses.ListDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.MediaProviderDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
@@ -95,8 +88,8 @@ import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.TotalRatedResultsDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.app.ui.dataClasses.RequestResponseDataClass
+import com.example.watchme.app.ui.dataClasses.TypeProviderDataClass
 import com.example.watchme.core.Categories
-import com.example.watchme.core.LocaleHelper
 import com.example.watchme.ui.theme.IntermediateVoteColor
 import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.PositiveVoteColor
@@ -200,10 +193,11 @@ class AppViewModel @Inject constructor(
     // PROVIDERS
 
     private val getMovieProvidersByMovieIdUseCase: GetMovieProvidersByMovieIdUseCase,
+    private val getSeriesProvidersBySeriesIdUseCase: GetSeriesProvidersBySeriesIdUseCase,
 
     ) : ViewModel() {
 
-        // GENERAL SETTINGS
+    // GENERAL SETTINGS
 
     private var defaultLanguage = Locale.getDefault().language
     private var defaultCountry = Locale.getDefault().country
@@ -396,8 +390,11 @@ class AppViewModel @Inject constructor(
 
     // PROVIDERS
 
-    private val _movieProviders = MutableStateFlow<MovieProvidersResponse?>(null)
-    val movieProviders: StateFlow<MovieProvidersResponse?> = _movieProviders
+    private val _movieProviders = MutableStateFlow<MediaProviderDataClass?>(null)
+    val movieProviders: StateFlow<MediaProviderDataClass?> = _movieProviders
+
+    private val _seriesProviders = MutableStateFlow<MediaProviderDataClass?>(null)
+    val seriesProviders: StateFlow<MediaProviderDataClass?> = _seriesProviders
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -431,9 +428,30 @@ class AppViewModel @Inject constructor(
     private fun observeSearchQuery() {
 
         val useCase: suspend (String) -> List<SearchDataClass> = when (_searchTypeSelected.value) {
-            Categories.Collections.title -> { query -> getSearchCollectionUseCase(query, defaultLanguage, defaultCountry) }
-            Categories.Movies.title -> { query -> getSearchMovieUseCase(query, defaultLanguage, defaultCountry) }
-            Categories.TvSeries.title -> { query -> getSearchSeriesUseCase(query, defaultLanguage, defaultCountry) }
+            Categories.Collections.title -> { query ->
+                getSearchCollectionUseCase(
+                    query,
+                    defaultLanguage,
+                    defaultCountry
+                )
+            }
+
+            Categories.Movies.title -> { query ->
+                getSearchMovieUseCase(
+                    query,
+                    defaultLanguage,
+                    defaultCountry
+                )
+            }
+
+            Categories.TvSeries.title -> { query ->
+                getSearchSeriesUseCase(
+                    query,
+                    defaultLanguage,
+                    defaultCountry
+                )
+            }
+
             else -> { query -> getSearchPeopleUseCase(query, defaultLanguage, defaultCountry) }
         }
 
@@ -497,7 +515,8 @@ class AppViewModel @Inject constructor(
 
     fun getMovieDetailsById(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _movieDetails.value = getMovieDetailsByIdUseCase(movieId, defaultLanguage, defaultCountry)
+            _movieDetails.value =
+                getMovieDetailsByIdUseCase(movieId, defaultLanguage, defaultCountry)
         }
     }
 
@@ -535,7 +554,8 @@ class AppViewModel @Inject constructor(
 
     fun getCollectionDetailsById(collectionId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _collectionDetails.value = getCollectionDetailsByIdUseCase(collectionId, defaultLanguage)
+            _collectionDetails.value =
+                getCollectionDetailsByIdUseCase(collectionId, defaultLanguage)
         }
     }
 
@@ -603,13 +623,15 @@ class AppViewModel @Inject constructor(
 
     fun getPeopleMovieInterpretationsById(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _peopleMovieInterpretations.value = getPeopleMovieInterpretationsByIdUseCase(personId, defaultLanguage)
+            _peopleMovieInterpretations.value =
+                getPeopleMovieInterpretationsByIdUseCase(personId, defaultLanguage)
         }
     }
 
     fun getPeopleSeriesInterpretationsById(personId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            _peopleSeriesInterpretations.value = getPeopleSeriesInterpretationsByIdUseCase(personId, defaultLanguage)
+            _peopleSeriesInterpretations.value =
+                getPeopleSeriesInterpretationsByIdUseCase(personId, defaultLanguage)
         }
     }
 
@@ -686,7 +708,7 @@ class AppViewModel @Inject constructor(
         getRatedSeries()
     }
 
-    fun updateRatedEpisodes(){
+    fun updateRatedEpisodes() {
         getRatedSeriesEpisodes()
     }
 
@@ -699,7 +721,8 @@ class AppViewModel @Inject constructor(
     }
 
     fun getMyEpisodeRate(seriesId: Int, episodeNumber: Int, seasonNumber: Int): Float {
-        return _ratedSeriesEpisodes.value?.find { it.showId == seriesId && it.episodeNumber == episodeNumber && it.seasonNumber == seasonNumber }?.rating ?: 0f
+        return _ratedSeriesEpisodes.value?.find { it.showId == seriesId && it.episodeNumber == episodeNumber && it.seasonNumber == seasonNumber }?.rating
+            ?: 0f
     }
 
     fun getTotalRatingCount() {
@@ -842,7 +865,7 @@ class AppViewModel @Inject constructor(
         }
     }
 
-    fun clearListRequest(){
+    fun clearListRequest() {
         _clearListRequest.value = null
     }
 
@@ -854,14 +877,24 @@ class AppViewModel @Inject constructor(
 
     // PROVIDERS
 
-    fun getMovieProvidersByMovieId(movieId:Int) {
+    fun getMovieProvidersByMovieId(movieId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _movieProviders.value = getMovieProvidersByMovieIdUseCase(movieId)
         }
     }
 
-    fun getMovieProvidersByRegion(): TypeProvider? {
+    fun getSeriesProvidersBySeriesId(seriesId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _seriesProviders.value = getSeriesProvidersBySeriesIdUseCase(seriesId)
+        }
+    }
+
+    fun getMovieProvidersByRegion(): TypeProviderDataClass? {
         return _movieProviders.value?.providers?.get(defaultCountry)
+    }
+
+    fun getSeriesProvidersByRegion(): TypeProviderDataClass? {
+        return _seriesProviders.value?.providers?.get(defaultCountry)
     }
 
 }

@@ -1,6 +1,5 @@
 package com.example.watchme.app.data.network
 
-import com.example.watchme.app.data.network.responses.MovieProvidersResponse
 import com.example.watchme.app.data.network.responses.toAccountDetailsDataClass
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
 import com.example.watchme.app.data.network.responses.toCollectionDataClass
@@ -13,6 +12,7 @@ import com.example.watchme.app.data.network.responses.toEpisodesRatedDataClass
 import com.example.watchme.app.data.network.responses.toFavoriteDataClass
 import com.example.watchme.app.data.network.responses.toListDataClass
 import com.example.watchme.app.data.network.responses.toListDetailsDataClass
+import com.example.watchme.app.data.network.responses.toMediaProviderDataClass
 import com.example.watchme.app.data.network.responses.toMovieDataClass
 import com.example.watchme.app.data.network.responses.toPeopleDetailsDataClass
 import com.example.watchme.app.data.network.responses.toPeopleMoviesInterpretationDataClass
@@ -41,6 +41,7 @@ import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
 import com.example.watchme.app.ui.dataClasses.FavoriteDataClass
 import com.example.watchme.app.ui.dataClasses.ListDataClass
 import com.example.watchme.app.ui.dataClasses.ListDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.MediaProviderDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.PeopleMovieInterpretationDataClass
@@ -367,8 +368,12 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     // PROVIDERS
 
-    suspend fun getMovieProvidersByMovieId(movieId: Int): MovieProvidersResponse {
-        return apiService.getMovieProvidersByMovieId(movieId)
+    suspend fun getMovieProvidersByMovieId(movieId: Int): MediaProviderDataClass {
+        return apiService.getMovieProvidersByMovieId(movieId).toMediaProviderDataClass()
+    }
+
+    suspend fun getSeriesProvidersBySeriesId(seriesId: Int): MediaProviderDataClass {
+        return apiService.getSeriesProvidersBySeriesId(seriesId).toMediaProviderDataClass()
     }
 
 }

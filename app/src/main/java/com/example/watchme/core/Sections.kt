@@ -13,4 +13,5 @@ sealed class Sections(@StringRes val title:Int){
     data object Biography: Sections(R.string.biography)
     data object Movies: Sections(R.string.movies)
     data object Series: Sections(R.string.tv_series)
+    data object Watch: Sections(R.string.watch)
 }

@@ -54,6 +54,7 @@ import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.NextPreviousButtonsRow
 import com.example.watchme.app.ui.ProvidersSection
@@ -70,6 +71,7 @@ import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.core.Categories
 import com.example.watchme.core.MediaItem
+import com.example.watchme.core.Routes
 import com.example.watchme.core.Sections
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.ButtonContainerColor
@@ -120,6 +122,7 @@ fun MovieDetailsScreen(
         stringResource(Sections.Suggested.title),
         stringResource(Sections.Media.title),
         stringResource(Sections.Credits.title),
+        stringResource(Sections.Watch.title),
     )
 
     val context = LocalContext.current
@@ -209,31 +212,31 @@ fun MovieDetailsScreen(
                 SectionSelectionItem(sectionList) { newSectionSelected ->
                     sectionSelected = newSectionSelected
                 }
-                ProvidersSection(title = movieDetails?.title.toString(), regionProvider)
-//                when (sectionSelected.lowercase()) {
-//                    stringResource(Sections.Details.title).lowercase() -> OverviewSection(
-//                        movieDetails,
-//                        runTime,
-//                        viewModel
-//                    ) { collectionId ->
-//                        navController.navigate(
-//                            Routes.CollectionDetails.createRoute(collectionId)
-//                        )
-//                    }
-//
-//                    stringResource(Sections.Suggested.title).lowercase() -> MoviesRecommendationsSection(recommendations) { movieId ->
-//                        navController.navigate(
-//                            Routes.MovieDetails.createRoute(movieId)
-//                        )
-//                    }
-//
-//                    stringResource(Sections.Media.title).lowercase()  -> MediaSection(movieListImages, videos)
-//                    stringResource(Sections.Credits.title).lowercase() -> CreditsSection(movieCredits) { personId ->
-//                        navController.navigate(
-//                            Routes.PeopleDetails.createRoute(personId)
-//                        )
-//                    }
-//                }
+                when (sectionSelected.lowercase()) {
+                    stringResource(Sections.Details.title).lowercase() -> OverviewSection(
+                        movieDetails,
+                        runTime,
+                        viewModel
+                    ) { collectionId ->
+                        navController.navigate(
+                            Routes.CollectionDetails.createRoute(collectionId)
+                        )
+                    }
+
+                    stringResource(Sections.Suggested.title).lowercase() -> MoviesRecommendationsSection(recommendations) { movieId ->
+                        navController.navigate(
+                            Routes.MovieDetails.createRoute(movieId)
+                        )
+                    }
+
+                    stringResource(Sections.Media.title).lowercase()  -> MediaSection(movieListImages, videos)
+                    stringResource(Sections.Credits.title).lowercase() -> CreditsSection(movieCredits) { personId ->
+                        navController.navigate(
+                            Routes.PeopleDetails.createRoute(personId)
+                        )
+                    }
+                    stringResource(Sections.Watch.title).lowercase() -> ProvidersSection(title = movieDetails?.title.toString(), regionProvider)
+                }
             }
         }
     }

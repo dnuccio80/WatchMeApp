@@ -16,7 +16,7 @@ import com.example.watchme.app.data.network.responses.FavoriteResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.ListDetailsResponse
 import com.example.watchme.app.data.network.responses.ListsResponse
-import com.example.watchme.app.data.network.responses.MovieProvidersResponse
+import com.example.watchme.app.data.network.responses.MediaProvidersResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.MovieSearchResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
@@ -976,11 +976,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
 
     // PROVIDERS
 
-    suspend fun getMovieProvidersByMovieId(movieId:Int): MovieProvidersResponse {
+    suspend fun getMovieProvidersByMovieId(movieId:Int): MediaProvidersResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .getMovieProvidersByMovieId(url = "movie/$movieId/watch/providers")
-            val body: MovieProvidersResponse? = response.body()
+            val body: MediaProvidersResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
                 body
@@ -993,6 +993,25 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             }
         }
     }
+
+    suspend fun getSeriesProvidersBySeriesId(seriesId:Int): MediaProvidersResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getSeriesProvidersBySeriesId(url = "tv/$seriesId/watch/providers")
+            val body: MediaProvidersResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get series providers: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
 
 
 }

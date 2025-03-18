@@ -225,7 +225,7 @@ class MainActivity : ComponentActivity() {
 //                            )
 //                        }
 //                    }
-                    MovieDetailsScreen(innerPadding, viewModel, navController, 15)
+                    SeriesDetailsScreen(innerPadding, viewModel, navController, 1434)
 
                 }
             }

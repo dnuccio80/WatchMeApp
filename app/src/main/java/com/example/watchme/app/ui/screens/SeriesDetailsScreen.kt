@@ -63,6 +63,7 @@ import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.ImageListItem
+import com.example.watchme.app.ui.ProvidersSection
 import com.example.watchme.app.ui.RatingSectionWithLists
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SectionSelectionItem
@@ -102,6 +103,8 @@ fun SeriesDetailsScreen(
     val addFavoritesRequest by viewModel.addFavoriteRequest.collectAsState()
     val watchlistRequest by viewModel.watchListRequest.collectAsState()
     val ratedSeries by viewModel.ratedSeries.collectAsState()
+    val seriesProviders by viewModel.seriesProviders.collectAsState()
+
 
     val sectionInit = stringResource(Sections.Episodes.title)
 
@@ -113,6 +116,8 @@ fun SeriesDetailsScreen(
     var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.seriesIsInWatchlist(seriesId)) }
     var isRated by rememberSaveable { mutableStateOf(viewModel.isSeriesRated(seriesId)) }
     var myRate by rememberSaveable { mutableFloatStateOf(viewModel.getMySeriesRate(seriesId)) }
+    var regionProvider by rememberSaveable { mutableStateOf(viewModel.getSeriesProvidersByRegion()) }
+
 
     viewModel.getSeriesDetailsById(seriesId)
     viewModel.getSeasonDetailsById(seriesId, seasonSelected)
@@ -120,8 +125,13 @@ fun SeriesDetailsScreen(
     viewModel.getSeriesImageListById(seriesId)
     viewModel.getSeriesVideosListById(seriesId)
     viewModel.getSeriesCreditsById(seriesId)
+    viewModel.getSeriesProvidersBySeriesId(seriesId)
 
     val context = LocalContext.current
+
+    LaunchedEffect(seriesProviders) {
+        regionProvider = viewModel.getSeriesProvidersByRegion()
+    }
 
     LaunchedEffect(ratedSeries) {
         isRated = viewModel.isSeriesRated(seriesId)
@@ -162,6 +172,7 @@ fun SeriesDetailsScreen(
         stringResource(Sections.Details.title),
         stringResource(Sections.Media.title),
         stringResource(Sections.Credits.title),
+        stringResource(Sections.Watch.title),
     )
 
     Box(
@@ -264,6 +275,7 @@ fun SeriesDetailsScreen(
                             Routes.PeopleDetails.createRoute(personId)
                         )
                     }
+                    stringResource(Sections.Watch.title).lowercase() -> ProvidersSection(title = seriesDetails?.name.toString(), regionProvider)
                 }
             }
         }

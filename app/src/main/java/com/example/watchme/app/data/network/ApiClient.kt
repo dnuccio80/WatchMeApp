@@ -16,7 +16,7 @@ import com.example.watchme.app.data.network.responses.FavoriteResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.ListDetailsResponse
 import com.example.watchme.app.data.network.responses.ListsResponse
-import com.example.watchme.app.data.network.responses.MovieProvidersResponse
+import com.example.watchme.app.data.network.responses.MediaProvidersResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.MovieSearchResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
@@ -291,7 +291,10 @@ interface ApiClient {
     // PROVIDERS
 
     @GET
-    suspend fun getMovieProvidersByMovieId(@Url url: String): Response<MovieProvidersResponse>
+    suspend fun getMovieProvidersByMovieId(@Url url: String): Response<MediaProvidersResponse>
+
+    @GET
+    suspend fun getSeriesProvidersBySeriesId(@Url url: String): Response<MediaProvidersResponse>
 
 }
 
