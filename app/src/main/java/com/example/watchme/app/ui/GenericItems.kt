@@ -76,11 +76,16 @@ import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
+import com.example.watchme.app.data.network.responses.TypeProvider
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
+import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.app.ui.screens.CastCreditsItem
 import com.example.watchme.app.ui.screens.CrewCreditsItem
+import com.example.watchme.app.ui.screens.ProviderCardItem
+import com.example.watchme.app.ui.screens.ProvidersLazyRow
+import com.example.watchme.app.ui.screens.RecommendationCardItem
 import com.example.watchme.core.Categories
 import com.example.watchme.core.MediaItem
 import com.example.watchme.core.constants.Constants
@@ -1225,3 +1230,55 @@ fun AccountHeader(viewModel: AppViewModel, onClick: () -> Unit) {
         }
     }
 }
+
+@Composable
+fun ProvidersSection(title: String, providers: TypeProvider?) {
+
+    if (title.isEmpty()) return
+
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(top = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        SecondTitleTextItem("${stringResource(R.string.watch_providers_title)} $title?")
+        if (!providers?.buy.isNullOrEmpty()) {
+            val providersList = providers?.buy?.map {
+                ProvidersDataClass(
+                    logo = it.logo,
+                    providerName = it.providerName,
+                    providerId = it.providerId
+                )
+            }
+            ThirdTitleTextItem(stringResource(R.string.for_buy), textAlign = TextAlign.Start)
+            if (providersList?.isNotEmpty() == true) FlowRowProviders(providersList)
+        }
+        if (!providers?.rent.isNullOrEmpty()) {
+            val providersList = providers?.rent?.map {
+                ProvidersDataClass(
+                    logo = it.logo,
+                    providerName = it.providerName,
+                    providerId = it.providerId
+                )
+            }
+            ThirdTitleTextItem(stringResource(R.string.for_rent), textAlign = TextAlign.Start)
+            if (providersList?.isNotEmpty() == true) FlowRowProviders(providersList)
+        }
+    }
+}
+
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun FlowRowProviders(providers:List<ProvidersDataClass>) {
+    FlowRow(
+        Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        providers.forEach {
+            ProviderCardItem(it)
+        }
+    }
+}
+

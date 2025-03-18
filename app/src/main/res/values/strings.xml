@@ -136,4 +136,8 @@
     <string name="people">People</string>
     <string name="tv_episodes">Tv Episodes</string>
     <string name="username">Username</string>
+    <string name="providers_by_country">Providers in your country</string>
+    <string name="watch_providers_title">Where can I watch</string>
+    <string name="for_rent">For Rent</string>
+    <string name="for_buy">For Buy</string>
 </resources>

@@ -1,6 +1,6 @@
 package com.example.watchme.app.data.network
 
-import android.graphics.Region
+import com.example.watchme.app.data.network.responses.MovieProvidersResponse
 import com.example.watchme.app.data.network.responses.toAccountDetailsDataClass
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
 import com.example.watchme.app.data.network.responses.toCollectionDataClass
@@ -363,6 +363,12 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     suspend fun clearList(listId: Int): RequestResponseDataClass {
         return apiService.clearList(listId).toRequestResponseDataClass()
+    }
+
+    // PROVIDERS
+
+    suspend fun getMovieProvidersByMovieId(movieId: Int): MovieProvidersResponse {
+        return apiService.getMovieProvidersByMovieId(movieId)
     }
 
 }

@@ -83,7 +83,7 @@ fun HomeScreen(
                     .fillMaxWidth()
                     .padding(16.dp)
             ) {
-                TitleTextItem(stringResource(R.string.providers))
+                TitleTextItem(stringResource(R.string.providers_by_country))
                 Spacer(Modifier.size(16.dp))
                 ProvidersLazyRow(providers)
                 Spacer(Modifier.size(32.dp))

@@ -16,6 +16,7 @@ import com.example.watchme.app.data.network.responses.FavoriteResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
 import com.example.watchme.app.data.network.responses.ListDetailsResponse
 import com.example.watchme.app.data.network.responses.ListsResponse
+import com.example.watchme.app.data.network.responses.MovieProvidersResponse
 import com.example.watchme.app.data.network.responses.MovieResponse
 import com.example.watchme.app.data.network.responses.MovieSearchResponse
 import com.example.watchme.app.data.network.responses.PeopleDetailsResponse
@@ -966,6 +967,26 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
             } else {
                 throw Exception(
                     "Failed to clear list: ${
+                        response.errorBody()?.string()
+                    }"
+                )
+            }
+        }
+    }
+
+    // PROVIDERS
+
+    suspend fun getMovieProvidersByMovieId(movieId:Int): MovieProvidersResponse {
+        return withContext(Dispatchers.IO) {
+            val response = retrofit.create(ApiClient::class.java)
+                .getMovieProvidersByMovieId(url = "movie/$movieId/watch/providers")
+            val body: MovieProvidersResponse? = response.body()
+
+            if (response.isSuccessful && body != null) {
+                body
+            } else {
+                throw Exception(
+                    "Failed to get movie providers: ${
                         response.errorBody()?.string()
                     }"
                 )

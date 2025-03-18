@@ -23,7 +23,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -45,7 +44,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.text.toLowerCase
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
 import androidx.navigation.NavHostController
@@ -56,9 +54,9 @@ import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
-import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.NextPreviousButtonsRow
+import com.example.watchme.app.ui.ProvidersSection
 import com.example.watchme.app.ui.RatingSectionWithLists
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SectionSelectionItem
@@ -72,7 +70,6 @@ import com.example.watchme.app.ui.dataClasses.MovieDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.core.Categories
 import com.example.watchme.core.MediaItem
-import com.example.watchme.core.Routes
 import com.example.watchme.core.Sections
 import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.ButtonContainerColor
@@ -93,6 +90,7 @@ fun MovieDetailsScreen(
     viewModel.getReviewsById(movieId)
     viewModel.getVideosById(movieId)
     viewModel.getRatedMovies()
+    viewModel.getMovieProvidersByMovieId(movieId)
 
     val movieDetails by viewModel.movieDetails.collectAsState()
     val movieCredits by viewModel.movieCredits.collectAsState()
@@ -103,6 +101,7 @@ fun MovieDetailsScreen(
     val addFavoritesRequest by viewModel.addFavoriteRequest.collectAsState()
     val watchlistRequest by viewModel.watchListRequest.collectAsState()
     val ratedMovies by viewModel.ratedMovies.collectAsState()
+    val movieProviders by viewModel.movieProviders.collectAsState()
 
     val sectionInit = stringResource(Sections.Suggested.title)
 
@@ -114,6 +113,7 @@ fun MovieDetailsScreen(
     var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.movieIsInWatchlist(movieId)) }
     var isRated by rememberSaveable { mutableStateOf(viewModel.isMovieRated(movieId)) }
     var myRate by rememberSaveable { mutableFloatStateOf(viewModel.getMyMovieRate(movieId)) }
+    var regionProvider by rememberSaveable { mutableStateOf(viewModel.getMovieProvidersByRegion()) }
 
     val sectionList = listOf(
         stringResource(Sections.Details.title),
@@ -122,8 +122,11 @@ fun MovieDetailsScreen(
         stringResource(Sections.Credits.title),
     )
 
-
     val context = LocalContext.current
+
+    LaunchedEffect(movieProviders) {
+        regionProvider = viewModel.getMovieProvidersByRegion()
+    }
 
     LaunchedEffect(ratedMovies) {
         isRated = viewModel.isMovieRated(movieId)
@@ -206,30 +209,31 @@ fun MovieDetailsScreen(
                 SectionSelectionItem(sectionList) { newSectionSelected ->
                     sectionSelected = newSectionSelected
                 }
-                when (sectionSelected.lowercase()) {
-                    stringResource(Sections.Details.title).lowercase() -> OverviewSection(
-                        movieDetails,
-                        runTime,
-                        viewModel
-                    ) { collectionId ->
-                        navController.navigate(
-                            Routes.CollectionDetails.createRoute(collectionId)
-                        )
-                    }
-
-                    stringResource(Sections.Suggested.title).lowercase() -> MoviesRecommendationsSection(recommendations) { movieId ->
-                        navController.navigate(
-                            Routes.MovieDetails.createRoute(movieId)
-                        )
-                    }
-
-                    stringResource(Sections.Media.title).lowercase()  -> MediaSection(movieListImages, videos)
-                    stringResource(Sections.Credits.title).lowercase() -> CreditsSection(movieCredits) { personId ->
-                        navController.navigate(
-                            Routes.PeopleDetails.createRoute(personId)
-                        )
-                    }
-                }
+                ProvidersSection(title = movieDetails?.title.toString(), regionProvider)
+//                when (sectionSelected.lowercase()) {
+//                    stringResource(Sections.Details.title).lowercase() -> OverviewSection(
+//                        movieDetails,
+//                        runTime,
+//                        viewModel
+//                    ) { collectionId ->
+//                        navController.navigate(
+//                            Routes.CollectionDetails.createRoute(collectionId)
+//                        )
+//                    }
+//
+//                    stringResource(Sections.Suggested.title).lowercase() -> MoviesRecommendationsSection(recommendations) { movieId ->
+//                        navController.navigate(
+//                            Routes.MovieDetails.createRoute(movieId)
+//                        )
+//                    }
+//
+//                    stringResource(Sections.Media.title).lowercase()  -> MediaSection(movieListImages, videos)
+//                    stringResource(Sections.Credits.title).lowercase() -> CreditsSection(movieCredits) { personId ->
+//                        navController.navigate(
+//                            Routes.PeopleDetails.createRoute(personId)
+//                        )
+//                    }
+//                }
             }
         }
     }

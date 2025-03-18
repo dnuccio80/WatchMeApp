@@ -11,6 +11,8 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.watchme.app.data.network.responses.Dtos.DeleteItemFromListDto
+import com.example.watchme.app.data.network.responses.MovieProvidersResponse
+import com.example.watchme.app.data.network.responses.TypeProvider
 import com.example.watchme.app.domain.favorites.AddFavoriteUseCase
 import com.example.watchme.app.domain.lists.AddToWatchlistUseCase
 import com.example.watchme.app.domain.lists.CreateListUseCase
@@ -44,6 +46,7 @@ import com.example.watchme.app.domain.people.GetPeopleDetailsByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleMediaByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleMovieInterpretationsByIdUseCase
 import com.example.watchme.app.domain.people.GetPeopleSeriesInterpretationsByIdUseCase
+import com.example.watchme.app.domain.providers.GetMovieProvidersByMovieIdUseCase
 import com.example.watchme.app.domain.providers.GetProvidersUseCase
 import com.example.watchme.app.domain.rating.DeleteRateMovieUseCase
 import com.example.watchme.app.domain.rating.DeleteRateSeriesEpisodeUseCase
@@ -193,6 +196,10 @@ class AppViewModel @Inject constructor(
     private val deleteListUseCase: DeleteListUseCase,
     private val deleteItemFromListUseCase: DeleteItemFromListUseCase,
     private val clearListUseCase: ClearListUseCase,
+
+    // PROVIDERS
+
+    private val getMovieProvidersByMovieIdUseCase: GetMovieProvidersByMovieIdUseCase,
 
     ) : ViewModel() {
 
@@ -386,6 +393,11 @@ class AppViewModel @Inject constructor(
 
     private val _clearListRequest = MutableStateFlow<RequestResponseDataClass?>(null)
     val clearListRequest: StateFlow<RequestResponseDataClass?> = _clearListRequest
+
+    // PROVIDERS
+
+    private val _movieProviders = MutableStateFlow<MovieProvidersResponse?>(null)
+    val movieProviders: StateFlow<MovieProvidersResponse?> = _movieProviders
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
@@ -838,6 +850,18 @@ class AppViewModel @Inject constructor(
         viewModelScope.launch(Dispatchers.IO) {
             _listDetails.value = getListDetailsUseCase(listId)
         }
+    }
+
+    // PROVIDERS
+
+    fun getMovieProvidersByMovieId(movieId:Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _movieProviders.value = getMovieProvidersByMovieIdUseCase(movieId)
+        }
+    }
+
+    fun getMovieProvidersByRegion(): TypeProvider? {
+        return _movieProviders.value?.providers?.get(defaultCountry)
     }
 
 }
