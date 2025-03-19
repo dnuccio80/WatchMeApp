@@ -398,7 +398,6 @@ class AppViewModel @Inject constructor(
 
     init {
         viewModelScope.launch(Dispatchers.IO) {
-            getDefaultLanguage()
             _popularMovies.value = getPopularMoviesUseCase(defaultLanguage, defaultCountry)
             _nowPlayingMovies.value = getNowPlayingMoviesUseCase(defaultLanguage, defaultCountry)
             _topRatedMovies.value = getTopRatedMoviesUseCase(defaultLanguage, defaultCountry)
@@ -418,10 +417,6 @@ class AppViewModel @Inject constructor(
             _ratedSeriesEpisodes.value = getRatedEpisodesUseCase(0)
         }
         observeSearchQuery()
-    }
-
-    private fun getDefaultLanguage() {
-        Log.i("Damian", "Language: $defaultLanguage, Country: $defaultCountry")
     }
 
     @OptIn(FlowPreview::class, ExperimentalCoroutinesApi::class)
