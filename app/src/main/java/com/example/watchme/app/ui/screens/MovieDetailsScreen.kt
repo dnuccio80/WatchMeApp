@@ -291,11 +291,15 @@ private fun OverviewSection(
             }
         )
     }
-    movieDetails?.genres?.map { it.nameGenre }?.let {
-        TitleSubtitleItem(
-            stringResource(R.string.genre),
-            it.joinToString(separator = ", ")
-        )
+    if(movieDetails?.genres.isNullOrEmpty()){
+        TitleSubtitleItem(stringResource(R.string.genre), stringResource(R.string.unknown))
+    } else {
+        movieDetails?.genres?.map { it.nameGenre }?.let {
+            TitleSubtitleItem(
+                stringResource(R.string.genre),
+                it.joinToString(separator = ", ")
+            )
+        }
     }
     TitleSubtitleItem("Runtime", if (runTime == "0m") stringResource(R.string.unknown) else runTime)
     movieDetails?.budget?.let { viewModel.formatPrice(it) }?.let {
