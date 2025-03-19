@@ -65,167 +65,166 @@ class MainActivity : ComponentActivity() {
                         }
                     }
                 ) { innerPadding ->
-//                    NavHost(navController,
-//                        startDestination = startDestination,
-//                        enterTransition = { slideInHorizontally { it } },
-//                        exitTransition = { slideOutHorizontally { it } }) {
-//                        composable(Routes.Home.route) {
-//                            HomeScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController
-//                            )
-//                        }
-//                        composable(
-//                            Routes.MovieDetails.route,
-//                            arguments = listOf(navArgument("movieId") {
-//                                type = NavType.IntType
-//                            }),
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }
-//                        ) { backStackEntry ->
-//                            MovieDetailsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController,
-//                                backStackEntry.arguments?.getInt("movieId") ?: 0
-//                            )
-//                        }
-//                        composable(
-//                            Routes.SeriesDetails.route,
-//                            arguments = listOf(navArgument("seriesId") {
-//                                type = NavType.IntType
-//                            }),
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }
-//                        ) { backStackEntry ->
-//                            SeriesDetailsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController,
-//                                backStackEntry.arguments?.getInt("seriesId") ?: 0
-//                            )
-//                        }
-//
-//                        composable(
-//                            Routes.PeopleDetails.route,
-//                            arguments = listOf(navArgument("personId") {
-//                                type = NavType.IntType
-//                            }),
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }
-//                        ) { backStackEntry ->
-//                            PeopleDetailsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController,
-//                                backStackEntry.arguments?.getInt("personId") ?: 0
-//                            )
-//                        }
-//
-//                        composable(
-//                            Routes.EpisodeDetails.route,
-//                            arguments = listOf(
-//                                navArgument("seriesId") { type = NavType.IntType },
-//                                navArgument("episodeId") { type = NavType.IntType },
-//                                navArgument("seasonNumber") { type = NavType.IntType }),
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }
-//                        ) { backStackEntry ->
-//                            EpisodesDetailsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController,
-//                                backStackEntry.arguments?.getInt("seriesId") ?: 0,
-//                                backStackEntry.arguments?.getInt("episodeId") ?: 0,
-//                                backStackEntry.arguments?.getInt("seasonNumber") ?: 0
-//                            )
-//                        }
-//
-//                        composable(
-//                            Routes.CollectionDetails.route,
-//                            arguments = listOf(navArgument("collectionId") {
-//                                type = NavType.IntType
-//                            }),
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }
-//                        ) { backStackEntry ->
-//                            CollectionDetailsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController,
-//                                backStackEntry.arguments?.getInt("collectionId") ?: 0
-//                            )
-//                        }
-//                        composable(
-//                            Routes.Search.route,
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }
-//                        ) {
-//                            SearchScreen(innerPadding, viewModel, navController)
-//                        }
-//                        composable(Routes.Profile.route,
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }) {
-//                            AccountScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController
-//                            )
-//                        }
-//                        composable(Routes.Ratings.route,
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }) {
-//                            RatingScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController
-//                            )
-//                        }
-//                        composable(Routes.Lists.route,
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }) {
-//                            ListsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController
-//                            )
-//                        }
-//                        composable(Routes.WatchList.route,
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }) {
-//                            WatchListScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController
-//                            )
-//                        }
-//                        composable(
-//                            Routes.ListDetails.route,
-//                            arguments = listOf(navArgument("listId") {
-//                                type = NavType.IntType
-//                            }),
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }
-//                        ) {
-//                            ListDetailsScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                it.arguments?.getInt("listId") ?: 0,
-//                                navController
-//                            )
-//                        }
-//                        composable(Routes.Favorites.route,
-//                            enterTransition = { slideInHorizontally { it } },
-//                            exitTransition = { slideOutHorizontally { it } }) {
-//                            FavoritesScreen(
-//                                innerPadding,
-//                                viewModel,
-//                                navController
-//                            )
-//                        }
-//                    }
-                    SeriesDetailsScreen(innerPadding, viewModel, navController, 1434)
+                    NavHost(navController,
+                        startDestination = startDestination,
+                        enterTransition = { slideInHorizontally { it } },
+                        exitTransition = { slideOutHorizontally { it } }) {
+                        composable(Routes.Home.route) {
+                            HomeScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(
+                            Routes.MovieDetails.route,
+                            arguments = listOf(navArgument("movieId") {
+                                type = NavType.IntType
+                            }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
+                        ) { backStackEntry ->
+                            MovieDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("movieId") ?: 0
+                            )
+                        }
+                        composable(
+                            Routes.SeriesDetails.route,
+                            arguments = listOf(navArgument("seriesId") {
+                                type = NavType.IntType
+                            }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
+                        ) { backStackEntry ->
+                            SeriesDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("seriesId") ?: 0
+                            )
+                        }
+
+                        composable(
+                            Routes.PeopleDetails.route,
+                            arguments = listOf(navArgument("personId") {
+                                type = NavType.IntType
+                            }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
+                        ) { backStackEntry ->
+                            PeopleDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("personId") ?: 0
+                            )
+                        }
+
+                        composable(
+                            Routes.EpisodeDetails.route,
+                            arguments = listOf(
+                                navArgument("seriesId") { type = NavType.IntType },
+                                navArgument("episodeId") { type = NavType.IntType },
+                                navArgument("seasonNumber") { type = NavType.IntType }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
+                        ) { backStackEntry ->
+                            EpisodesDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("seriesId") ?: 0,
+                                backStackEntry.arguments?.getInt("episodeId") ?: 0,
+                                backStackEntry.arguments?.getInt("seasonNumber") ?: 0
+                            )
+                        }
+
+                        composable(
+                            Routes.CollectionDetails.route,
+                            arguments = listOf(navArgument("collectionId") {
+                                type = NavType.IntType
+                            }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
+                        ) { backStackEntry ->
+                            CollectionDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController,
+                                backStackEntry.arguments?.getInt("collectionId") ?: 0
+                            )
+                        }
+                        composable(
+                            Routes.Search.route,
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
+                        ) {
+                            SearchScreen(innerPadding, viewModel, navController)
+                        }
+                        composable(Routes.Profile.route,
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }) {
+                            AccountScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(Routes.Ratings.route,
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }) {
+                            RatingScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(Routes.Lists.route,
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }) {
+                            ListsScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(Routes.WatchList.route,
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }) {
+                            WatchListScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                        composable(
+                            Routes.ListDetails.route,
+                            arguments = listOf(navArgument("listId") {
+                                type = NavType.IntType
+                            }),
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }
+                        ) {
+                            ListDetailsScreen(
+                                innerPadding,
+                                viewModel,
+                                it.arguments?.getInt("listId") ?: 0,
+                                navController
+                            )
+                        }
+                        composable(Routes.Favorites.route,
+                            enterTransition = { slideInHorizontally { it } },
+                            exitTransition = { slideOutHorizontally { it } }) {
+                            FavoritesScreen(
+                                innerPadding,
+                                viewModel,
+                                navController
+                            )
+                        }
+                    }
 
                 }
             }

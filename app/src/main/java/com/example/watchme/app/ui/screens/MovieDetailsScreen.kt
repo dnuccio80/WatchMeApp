@@ -33,6 +33,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -68,7 +70,9 @@ import com.example.watchme.app.ui.dataClasses.CollectionDataClass
 import com.example.watchme.app.ui.dataClasses.CrewCreditDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
+import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
+import com.example.watchme.app.ui.dataClasses.TypeProviderDataClass
 import com.example.watchme.core.Categories
 import com.example.watchme.core.MediaItem
 import com.example.watchme.core.Routes
@@ -115,7 +119,20 @@ fun MovieDetailsScreen(
     var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.movieIsInWatchlist(movieId)) }
     var isRated by rememberSaveable { mutableStateOf(viewModel.isMovieRated(movieId)) }
     var myRate by rememberSaveable { mutableFloatStateOf(viewModel.getMyMovieRate(movieId)) }
-    var regionProvider by rememberSaveable { mutableStateOf(viewModel.getMovieProvidersByRegion()) }
+
+    val typeProviderDataClassSaver: Saver<TypeProviderDataClass?, Any> = listSaver(
+        save = { listOf(it?.buy, it?.rent) },
+        restore = {
+            TypeProviderDataClass(
+                buy = it[0] as List<ProvidersDataClass>,
+                rent = it[1] as List<ProvidersDataClass>
+            )
+        }
+    )
+
+    var typeProviderState by rememberSaveable(stateSaver = typeProviderDataClassSaver) {
+        mutableStateOf(TypeProviderDataClass(emptyList(), emptyList()))
+    }
 
     val sectionList = listOf(
         stringResource(Sections.Details.title),
@@ -128,7 +145,7 @@ fun MovieDetailsScreen(
     val context = LocalContext.current
 
     LaunchedEffect(movieProviders) {
-        regionProvider = viewModel.getMovieProvidersByRegion()
+        typeProviderState = viewModel.getMovieProvidersByRegion()
     }
 
     LaunchedEffect(ratedMovies) {
@@ -169,7 +186,7 @@ fun MovieDetailsScreen(
                     .fillMaxWidth()
                     .height(300.dp)
             ) {
-                movieDetails?.backdropImage?.let { BackdropImageItem(it) }
+                BackdropImageItem(movieDetails?.backdropImage.orEmpty())
                 BackButton() { navController.popBackStack() }
             }
             Column(
@@ -235,7 +252,7 @@ fun MovieDetailsScreen(
                             Routes.PeopleDetails.createRoute(personId)
                         )
                     }
-                    stringResource(Sections.Watch.title).lowercase() -> ProvidersSection(title = movieDetails?.title.toString(), regionProvider)
+                    stringResource(Sections.Watch.title).lowercase() -> ProvidersSection(title = movieDetails?.title.toString(), typeProviderState)
                 }
             }
         }
