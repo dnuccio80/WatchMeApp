@@ -5,6 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
+import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.fillMaxSize
@@ -67,8 +71,14 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     NavHost(navController,
                         startDestination = startDestination,
-                        enterTransition = { slideInHorizontally { it } },
-                        exitTransition = { slideOutHorizontally { it } }) {
+                        popEnterTransition = { slideIntoContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Right,
+                            tween(300)
+                        ) + fadeIn() },
+                        exitTransition = { slideOutOfContainer(
+                            AnimatedContentTransitionScope.SlideDirection.Left,
+                            tween(300)
+                        ) + fadeOut() }) {
                         composable(Routes.Home.route) {
                             HomeScreen(
                                 innerPadding,
@@ -81,8 +91,7 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("movieId") {
                                 type = NavType.IntType
                             }),
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }
+
                         ) { backStackEntry ->
                             MovieDetailsScreen(
                                 innerPadding,
@@ -96,8 +105,7 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("seriesId") {
                                 type = NavType.IntType
                             }),
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }
+
                         ) { backStackEntry ->
                             SeriesDetailsScreen(
                                 innerPadding,
@@ -112,8 +120,7 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("personId") {
                                 type = NavType.IntType
                             }),
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }
+
                         ) { backStackEntry ->
                             PeopleDetailsScreen(
                                 innerPadding,
@@ -129,8 +136,7 @@ class MainActivity : ComponentActivity() {
                                 navArgument("seriesId") { type = NavType.IntType },
                                 navArgument("episodeId") { type = NavType.IntType },
                                 navArgument("seasonNumber") { type = NavType.IntType }),
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }
+
                         ) { backStackEntry ->
                             EpisodesDetailsScreen(
                                 innerPadding,
@@ -147,8 +153,7 @@ class MainActivity : ComponentActivity() {
                             arguments = listOf(navArgument("collectionId") {
                                 type = NavType.IntType
                             }),
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }
+
                         ) { backStackEntry ->
                             CollectionDetailsScreen(
                                 innerPadding,
@@ -159,41 +164,32 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(
                             Routes.Search.route,
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }
+
                         ) {
                             SearchScreen(innerPadding, viewModel, navController)
                         }
-                        composable(Routes.Profile.route,
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }) {
+                        composable(Routes.Profile.route) {
                             AccountScreen(
                                 innerPadding,
                                 viewModel,
                                 navController
                             )
                         }
-                        composable(Routes.Ratings.route,
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }) {
+                        composable(Routes.Ratings.route) {
                             RatingScreen(
                                 innerPadding,
                                 viewModel,
                                 navController
                             )
                         }
-                        composable(Routes.Lists.route,
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }) {
+                        composable(Routes.Lists.route) {
                             ListsScreen(
                                 innerPadding,
                                 viewModel,
                                 navController
                             )
                         }
-                        composable(Routes.WatchList.route,
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }) {
+                        composable(Routes.WatchList.route) {
                             WatchListScreen(
                                 innerPadding,
                                 viewModel,
@@ -204,9 +200,7 @@ class MainActivity : ComponentActivity() {
                             Routes.ListDetails.route,
                             arguments = listOf(navArgument("listId") {
                                 type = NavType.IntType
-                            }),
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }
+                            })
                         ) {
                             ListDetailsScreen(
                                 innerPadding,
@@ -215,9 +209,7 @@ class MainActivity : ComponentActivity() {
                                 navController
                             )
                         }
-                        composable(Routes.Favorites.route,
-                            enterTransition = { slideInHorizontally { it } },
-                            exitTransition = { slideOutHorizontally { it } }) {
+                        composable(Routes.Favorites.route) {
                             FavoritesScreen(
                                 innerPadding,
                                 viewModel,

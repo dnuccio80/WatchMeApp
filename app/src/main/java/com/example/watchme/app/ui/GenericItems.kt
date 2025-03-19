@@ -1245,6 +1245,7 @@ fun ProvidersSection(title: String, providers: TypeProviderDataClass?) {
         SecondTitleTextItem("${stringResource(R.string.watch_providers_title)} $title?")
         if(providers?.buy.isNullOrEmpty() && providers?.rent.isNullOrEmpty()){
             BodyTextItem(stringResource(R.string.no_results_found))
+            Spacer(Modifier.size(64.dp))
             return
         }
         if (!providers?.buy.isNullOrEmpty()) {
