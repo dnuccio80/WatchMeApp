@@ -2,6 +2,7 @@ package com.example.watchme.app.ui
 
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
@@ -1241,7 +1242,7 @@ fun ProvidersSection(title: String, providers: TypeProviderDataClass?) {
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
         SecondTitleTextItem("${stringResource(R.string.watch_providers_title)} $title?")
-        if(providers?.buy?.isEmpty() == true && providers.rent?.isEmpty() == true){
+        if(providers?.buy.isNullOrEmpty() && providers?.rent.isNullOrEmpty()){
             BodyTextItem(stringResource(R.string.no_results_found))
             return
         }
