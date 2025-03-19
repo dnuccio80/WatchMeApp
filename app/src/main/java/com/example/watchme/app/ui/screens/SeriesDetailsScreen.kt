@@ -40,6 +40,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -73,9 +75,11 @@ import com.example.watchme.app.ui.TitleSubtitleItemWithNullability
 import com.example.watchme.app.ui.VideosSection
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.app.ui.dataClasses.SeasonDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
+import com.example.watchme.app.ui.dataClasses.TypeProviderDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
 import com.example.watchme.core.Categories
 import com.example.watchme.core.MediaItem
@@ -116,8 +120,20 @@ fun SeriesDetailsScreen(
     var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.seriesIsInWatchlist(seriesId)) }
     var isRated by rememberSaveable { mutableStateOf(viewModel.isSeriesRated(seriesId)) }
     var myRate by rememberSaveable { mutableFloatStateOf(viewModel.getMySeriesRate(seriesId)) }
-    var regionProvider by rememberSaveable { mutableStateOf(viewModel.getSeriesProvidersByRegion()) }
 
+    val typeProviderDataClassSaver: Saver<TypeProviderDataClass?, Any> = listSaver(
+        save = { listOf(it?.buy, it?.rent) },
+        restore = {
+            TypeProviderDataClass(
+                buy = it[0] as List<ProvidersDataClass>,
+                rent = it[1] as List<ProvidersDataClass>
+            )
+        }
+    )
+
+    var typeProviderState by rememberSaveable(stateSaver = typeProviderDataClassSaver) {
+        mutableStateOf(TypeProviderDataClass(emptyList(), emptyList()))
+    }
 
     viewModel.getSeriesDetailsById(seriesId)
     viewModel.getSeasonDetailsById(seriesId, seasonSelected)
@@ -130,7 +146,7 @@ fun SeriesDetailsScreen(
     val context = LocalContext.current
 
     LaunchedEffect(seriesProviders) {
-        regionProvider = viewModel.getSeriesProvidersByRegion()
+        typeProviderState = viewModel.getSeriesProvidersByRegion()
     }
 
     LaunchedEffect(ratedSeries) {
@@ -275,7 +291,7 @@ fun SeriesDetailsScreen(
                             Routes.PeopleDetails.createRoute(personId)
                         )
                     }
-                    stringResource(Sections.Watch.title).lowercase() -> ProvidersSection(title = seriesDetails?.name.toString(), regionProvider)
+                    stringResource(Sections.Watch.title).lowercase() -> ProvidersSection(title = seriesDetails?.name.toString(), typeProviderState)
                 }
             }
         }
