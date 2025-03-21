@@ -1,5 +1,6 @@
 package com.example.watchme.app.data.network
 
+import com.example.watchme.app.data.network.responses.ItemOnListResponse
 import com.example.watchme.app.data.network.responses.toAccountDetailsDataClass
 import com.example.watchme.app.data.network.responses.toBackdropImageDataClass
 import com.example.watchme.app.data.network.responses.toCollectionDataClass
@@ -10,6 +11,7 @@ import com.example.watchme.app.data.network.responses.toCreditsDataClass
 import com.example.watchme.app.data.network.responses.toEpisodesDetailsDataClass
 import com.example.watchme.app.data.network.responses.toEpisodesRatedDataClass
 import com.example.watchme.app.data.network.responses.toFavoriteDataClass
+import com.example.watchme.app.data.network.responses.toItemOnListDataClass
 import com.example.watchme.app.data.network.responses.toListDataClass
 import com.example.watchme.app.data.network.responses.toListDetailsDataClass
 import com.example.watchme.app.data.network.responses.toMediaProviderDataClass
@@ -39,6 +41,7 @@ import com.example.watchme.app.ui.dataClasses.CreditsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
 import com.example.watchme.app.ui.dataClasses.FavoriteDataClass
+import com.example.watchme.app.ui.dataClasses.ItemOnListDataClass
 import com.example.watchme.app.ui.dataClasses.ListDataClass
 import com.example.watchme.app.ui.dataClasses.ListDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.MediaProviderDataClass
@@ -375,8 +378,8 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.addMovieToList(listId = listId, mediaId = mediaId).toRequestResponseDataClass()
     }
 
-    suspend fun checkMovieOnList(listId: Int, mediaId: Int): RequestResponseDataClass {
-        return apiService.checkMovieOnList(listId = listId, mediaId = mediaId).toRequestResponseDataClass()
+    suspend fun checkMovieOnList(listId: Int, mediaId: Int): ItemOnListDataClass {
+        return apiService.checkMovieOnList(listId = listId, mediaId = mediaId).toItemOnListDataClass()
     }
 
     suspend fun deleteList(listId: Int): RequestResponseDataClass {

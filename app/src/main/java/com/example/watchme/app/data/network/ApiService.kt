@@ -14,6 +14,7 @@ import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.FavoriteRequestDto
 import com.example.watchme.app.data.network.responses.FavoriteResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
+import com.example.watchme.app.data.network.responses.ItemOnListResponse
 import com.example.watchme.app.data.network.responses.ListDetailsResponse
 import com.example.watchme.app.data.network.responses.ListsResponse
 import com.example.watchme.app.data.network.responses.MediaProvidersResponse
@@ -941,11 +942,11 @@ class ApiService @Inject constructor(private val retrofit: Retrofit) {
         }
     }
 
-    suspend fun checkMovieOnList(listId: Int, mediaId:Int): RequestResponse {
+    suspend fun checkMovieOnList(listId: Int, mediaId:Int): ItemOnListResponse {
         return withContext(Dispatchers.IO) {
             val response = retrofit.create(ApiClient::class.java)
                 .checkMovieOnList("list/$listId/item_status", mediaId )
-            val body: RequestResponse? = response.body()
+            val body: ItemOnListResponse? = response.body()
 
             if (response.isSuccessful && body != null) {
                 body

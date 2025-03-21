@@ -14,6 +14,7 @@ import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.FavoriteRequestDto
 import com.example.watchme.app.data.network.responses.FavoriteResponse
 import com.example.watchme.app.data.network.responses.ImagePeopleResponse
+import com.example.watchme.app.data.network.responses.ItemOnListResponse
 import com.example.watchme.app.data.network.responses.ListDetailsResponse
 import com.example.watchme.app.data.network.responses.ListsResponse
 import com.example.watchme.app.data.network.responses.MediaProvidersResponse
@@ -277,7 +278,7 @@ interface ApiClient {
     ): Response<RequestResponse>
 
     @GET
-    suspend fun checkMovieOnList(@Url url: String, @Query("movie_id") movieId: Int) : Response<RequestResponse>
+    suspend fun checkMovieOnList(@Url url: String, @Query("movie_id") movieId: Int) : Response<ItemOnListResponse>
 
     @DELETE
     suspend fun deleteList(@Url url: String): Response<RequestResponse>

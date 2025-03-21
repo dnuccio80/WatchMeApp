@@ -74,6 +74,7 @@ import com.example.watchme.app.ui.dataClasses.CreditsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodesRatedDataClass
 import com.example.watchme.app.ui.dataClasses.FavoriteDataClass
+import com.example.watchme.app.ui.dataClasses.ItemOnListDataClass
 import com.example.watchme.app.ui.dataClasses.ListDataClass
 import com.example.watchme.app.ui.dataClasses.ListDetailsDataClass
 import com.example.watchme.app.ui.dataClasses.MediaProviderDataClass
@@ -380,8 +381,8 @@ class AppViewModel @Inject constructor(
     private val _addMovieToListRequest = MutableStateFlow<RequestResponseDataClass?>(null)
     val addMovieToListRequest: StateFlow<RequestResponseDataClass?> = _addMovieToListRequest
 
-    private val _checkMovieOnListRequest = MutableStateFlow<RequestResponseDataClass?>(null)
-    val checkMovieOnListRequest: StateFlow<RequestResponseDataClass?> = _checkMovieOnListRequest
+    private val _checkMovieOnListRequest = MutableStateFlow<ItemOnListDataClass?>(null)
+    val checkMovieOnListRequest: StateFlow<ItemOnListDataClass?> = _checkMovieOnListRequest
 
     private val _listDetails = MutableStateFlow<ListDetailsDataClass?>(null)
     val listDetails: StateFlow<ListDetailsDataClass?> = _listDetails
