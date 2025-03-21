@@ -231,7 +231,8 @@ fun MovieDetailsScreen(
                             viewModel.onAddToWatchlist(mediaId = movieId, mediaType = Categories.Movies.mediaType, watchList = isInWatchlist)
                         },
                         onRatedButtonClicked = { isRated = true },
-                        onDeleteRateButtonClicked = { isRated = false }
+                        onDeleteRateButtonClicked = { isRated = false },
+                        onAddToListButtonClicked = { }
                     )
                 }
                 Spacer(Modifier.size(0.dp))

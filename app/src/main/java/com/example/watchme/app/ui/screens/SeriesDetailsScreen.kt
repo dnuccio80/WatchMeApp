@@ -1,6 +1,5 @@
 package com.example.watchme.app.ui.screens
 
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -75,7 +74,6 @@ import com.example.watchme.app.ui.TitleSubtitleItemWithNullability
 import com.example.watchme.app.ui.VideosSection
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.EpisodeDetailsDataClass
-import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.app.ui.dataClasses.SeasonDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDataClass
 import com.example.watchme.app.ui.dataClasses.SeriesDetailsDataClass
@@ -253,7 +251,8 @@ fun SeriesDetailsScreen(
                             )
                         },
                         onRatedButtonClicked = { isRated = true },
-                        onDeleteRateButtonClicked = { isRated = false }
+                        onDeleteRateButtonClicked = { isRated = false },
+                        onAddToListButtonClicked = { Toast.makeText(context, context.getString(R.string.add_list_series_warning), Toast.LENGTH_SHORT).show() }
                     )
                 }
                 SeriesOverviewSection(seriesDetails)

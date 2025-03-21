@@ -95,6 +95,7 @@ import com.example.watchme.ui.theme.DialogContainerColor
 import com.example.watchme.ui.theme.LightBlueColor
 import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.Pink40
+import com.example.watchme.ui.theme.PositiveVoteColor
 import com.example.watchme.ui.theme.ThumbColor
 
 @Composable
@@ -992,6 +993,7 @@ fun RatingSectionWithLists(
     onWatchlistButtonClicked: () -> Unit,
     onRatedButtonClicked: () -> Unit,
     onDeleteRateButtonClicked: () -> Unit,
+    onAddToListButtonClicked:() -> Unit
 ) {
 
     val percentage = (mediaItem.voteAverage.times(10)).toInt()
@@ -1059,7 +1061,9 @@ fun RatingSectionWithLists(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            CircularButtonIcon(Icons.AutoMirrored.Filled.List, Color.White) { }
+            CircularButtonIcon(Icons.AutoMirrored.Filled.List, Color.White) {
+                onAddToListButtonClicked()
+            }
             CircularButtonIcon(
                 Icons.Filled.Favorite,
                 if (addedToFavorites) Color.Red else Color.White
