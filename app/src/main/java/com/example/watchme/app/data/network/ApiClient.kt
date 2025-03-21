@@ -8,7 +8,7 @@ import com.example.watchme.app.data.network.responses.CreateListResponse
 import com.example.watchme.app.data.network.responses.DetailsMovieResponse
 import com.example.watchme.app.data.network.responses.ImageBackdrop
 import com.example.watchme.app.data.network.responses.CreditsResponse
-import com.example.watchme.app.data.network.responses.Dtos.DeleteItemFromListDto
+import com.example.watchme.app.data.network.responses.Dtos.ItemListDto
 import com.example.watchme.app.data.network.responses.EpisodeResponse
 import com.example.watchme.app.data.network.responses.EpisodesRatedResponse
 import com.example.watchme.app.data.network.responses.FavoriteRequestDto
@@ -270,13 +270,22 @@ interface ApiClient {
     @POST("list")
     suspend fun createList(@Body createListDto: CreateListDto): Response<CreateListResponse>
 
+    @POST
+    suspend fun addMovieToList(
+        @Url url: String,
+        @Body itemListDto: ItemListDto
+    ): Response<RequestResponse>
+
+    @GET
+    suspend fun checkMovieOnList(@Url url: String, @Query("movie_id") movieId: Int) : Response<RequestResponse>
+
     @DELETE
     suspend fun deleteList(@Url url: String): Response<RequestResponse>
 
     @POST
     suspend fun deleteItemFromList(
         @Url url: String,
-        @Body deleteItemFromList: DeleteItemFromListDto
+        @Body deleteItemFromList: ItemListDto
     ): Response<RequestResponse>
 
     @POST
@@ -295,6 +304,7 @@ interface ApiClient {
 
     @GET
     suspend fun getSeriesProvidersBySeriesId(@Url url: String): Response<MediaProvidersResponse>
+
 
 }
 

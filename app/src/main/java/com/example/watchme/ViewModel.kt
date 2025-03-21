@@ -20,6 +20,8 @@ import com.example.watchme.app.domain.lists.GetWatchlistMoviesUseCase
 import com.example.watchme.app.domain.lists.GetWatchlistSeriesUseCase
 import com.example.watchme.app.domain.collections.GetCollectionDetailsByIdUseCase
 import com.example.watchme.app.domain.episodes.GetEpisodeDetailsByIdUseCase
+import com.example.watchme.app.domain.lists.AddMovieToListUseCase
+import com.example.watchme.app.domain.lists.CheckIfMovieIsOnListUseCase
 import com.example.watchme.app.domain.lists.ClearListUseCase
 import com.example.watchme.app.domain.lists.DeleteItemFromListUseCase
 import com.example.watchme.app.domain.lists.DeleteListUseCase
@@ -189,6 +191,8 @@ class AppViewModel @Inject constructor(
     private val deleteListUseCase: DeleteListUseCase,
     private val deleteItemFromListUseCase: DeleteItemFromListUseCase,
     private val clearListUseCase: ClearListUseCase,
+    private val addMovieToListUseCase: AddMovieToListUseCase,
+    private val checkIfMovieIsOnListUseCase: CheckIfMovieIsOnListUseCase,
 
     // PROVIDERS
 
@@ -372,6 +376,12 @@ class AppViewModel @Inject constructor(
 
     private val _createListRequest = MutableStateFlow<CreateListDataClass?>(null)
     val createListRequest: StateFlow<CreateListDataClass?> = _createListRequest
+
+    private val _addMovieToListRequest = MutableStateFlow<RequestResponseDataClass?>(null)
+    val addMovieToListRequest: StateFlow<RequestResponseDataClass?> = _addMovieToListRequest
+
+    private val _checkMovieOnListRequest = MutableStateFlow<RequestResponseDataClass?>(null)
+    val checkMovieOnListRequest: StateFlow<RequestResponseDataClass?> = _checkMovieOnListRequest
 
     private val _listDetails = MutableStateFlow<ListDetailsDataClass?>(null)
     val listDetails: StateFlow<ListDetailsDataClass?> = _listDetails
@@ -831,6 +841,23 @@ class AppViewModel @Inject constructor(
 
     fun clearCreateListRequest() {
         _createListRequest.value = null
+    }
+
+    fun addMovieToList(listId: Int, mediaId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _addMovieToListRequest.value = addMovieToListUseCase(listId, mediaId)
+
+        }
+    }
+
+    fun clearAddMovieToListRequest() {
+        _addMovieToListRequest.value = null
+    }
+
+    fun checkMovieOnList(listId: Int, mediaId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _checkMovieOnListRequest.value = checkIfMovieIsOnListUseCase(listId, mediaId)
+        }
     }
 
     fun deleteList(listId: Int) {

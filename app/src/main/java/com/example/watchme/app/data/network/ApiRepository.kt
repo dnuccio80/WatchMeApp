@@ -172,12 +172,18 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
         return apiService.getPeopleDetails(personId, language).toPeopleDetailsDataClass()
     }
 
-    suspend fun getPeopleMovieInterpretationsById(personId: Int, language: String): PeopleMovieInterpretationDataClass {
+    suspend fun getPeopleMovieInterpretationsById(
+        personId: Int,
+        language: String
+    ): PeopleMovieInterpretationDataClass {
         return apiService.getPeopleMovieInterpretationsById(personId, language)
             .toPeopleMoviesInterpretationDataClass()
     }
 
-    suspend fun getPeopleSeriesInterpretationsById(personId: Int, language: String): PeopleSeriesInterpretationDataClass {
+    suspend fun getPeopleSeriesInterpretationsById(
+        personId: Int,
+        language: String
+    ): PeopleSeriesInterpretationDataClass {
         return apiService.getPeopleSeriesInterpretationsById(personId, language)
             .toPeopleSeriesInterpretationDataClass()
     }
@@ -198,19 +204,35 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
 
     // SEARCHES
 
-    suspend fun getSearchCollection(query: String, language: String, region: String): List<SearchDataClass> {
+    suspend fun getSearchCollection(
+        query: String,
+        language: String,
+        region: String
+    ): List<SearchDataClass> {
         return apiService.getSearchCollection(query, language, region).toSearchDataClass()
     }
 
-    suspend fun getSearchMovies(query: String, language: String, region: String): List<SearchDataClass> {
+    suspend fun getSearchMovies(
+        query: String,
+        language: String,
+        region: String
+    ): List<SearchDataClass> {
         return apiService.getSearchMovies(query, language, region).toSearchDataClass()
     }
 
-    suspend fun getSearchSeries(query: String, language: String, region: String): List<SearchDataClass> {
+    suspend fun getSearchSeries(
+        query: String,
+        language: String,
+        region: String
+    ): List<SearchDataClass> {
         return apiService.getSearchSeries(query, language, region).toSearchDataClass()
     }
 
-    suspend fun getSearchPeople(query: String, language: String, region: String): List<SearchDataClass> {
+    suspend fun getSearchPeople(
+        query: String,
+        language: String,
+        region: String
+    ): List<SearchDataClass> {
         return apiService.getSearchPeople(query, language, region).toSearchDataClass()
     }
 
@@ -347,6 +369,14 @@ class ApiRepository @Inject constructor(private val apiService: ApiService) {
             description = description,
             language = language
         ).toCreateListDataClass()
+    }
+
+    suspend fun addMovieToList(listId: Int, mediaId: Int): RequestResponseDataClass {
+        return apiService.addMovieToList(listId = listId, mediaId = mediaId).toRequestResponseDataClass()
+    }
+
+    suspend fun checkMovieOnList(listId: Int, mediaId: Int): RequestResponseDataClass {
+        return apiService.checkMovieOnList(listId = listId, mediaId = mediaId).toRequestResponseDataClass()
     }
 
     suspend fun deleteList(listId: Int): RequestResponseDataClass {

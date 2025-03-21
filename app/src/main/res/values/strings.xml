@@ -141,4 +141,5 @@
     <string name="watch_providers_title">Where can I watch</string>
     <string name="for_rent">For Rent</string>
     <string name="for_buy">For Buy</string>
+    <string name="movie_added_list">The movie have been added to the list</string>
 </resources>

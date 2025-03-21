@@ -108,6 +108,7 @@ fun MovieDetailsScreen(
     val watchlistRequest by viewModel.watchListRequest.collectAsState()
     val ratedMovies by viewModel.ratedMovies.collectAsState()
     val movieProviders by viewModel.movieProviders.collectAsState()
+    val addMovieToListRequest by viewModel.addMovieToListRequest.collectAsState()
 
     val sectionInit = stringResource(Sections.Suggested.title)
 
@@ -143,6 +144,13 @@ fun MovieDetailsScreen(
     )
 
     val context = LocalContext.current
+
+    LaunchedEffect(addMovieToListRequest) {
+        if(addMovieToListRequest != null && addMovieToListRequest?.success == true) {
+            Toast.makeText(context, context.getString(R.string.movie_added_list), Toast.LENGTH_SHORT).show()
+            viewModel.clearAddMovieToListRequest()
+        }
+    }
 
     LaunchedEffect(movieProviders) {
         typeProviderState = viewModel.getMovieProvidersByRegion()

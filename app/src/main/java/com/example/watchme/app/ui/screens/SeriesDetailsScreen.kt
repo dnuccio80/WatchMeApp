@@ -194,13 +194,13 @@ fun SeriesDetailsScreen(
     Box(
         Modifier
             .fillMaxSize()
-            .verticalScroll(verticalScrollState)
             .background(AppBackground)
             .padding(innerPadding)
     ) {
         Column(
             Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .verticalScroll(verticalScrollState),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             Box(
@@ -278,20 +278,35 @@ fun SeriesDetailsScreen(
                         )
                     }
 
-                    stringResource(Sections.Suggested.title).lowercase()-> SeriesRecommendationsSection(seriesRecommendations) {
+                    stringResource(Sections.Suggested.title).lowercase() -> SeriesRecommendationsSection(
+                        seriesRecommendations
+                    ) {
                         navController.navigate(
                             Routes.SeriesDetails.createRoute(it)
                         )
                     }
 
-                    stringResource(Sections.Details.title).lowercase() -> SeriesDetailsSection(seriesDetails)
-                    stringResource(Sections.Media.title).lowercase() -> MediaSection(seriesImageList, seriesVideosList)
-                    stringResource(Sections.Credits.title).lowercase() -> CreditsSection(seriesCredits) { personId ->
+                    stringResource(Sections.Details.title).lowercase() -> SeriesDetailsSection(
+                        seriesDetails
+                    )
+
+                    stringResource(Sections.Media.title).lowercase() -> MediaSection(
+                        seriesImageList,
+                        seriesVideosList
+                    )
+
+                    stringResource(Sections.Credits.title).lowercase() -> CreditsSection(
+                        seriesCredits
+                    ) { personId ->
                         navController.navigate(
                             Routes.PeopleDetails.createRoute(personId)
                         )
                     }
-                    stringResource(Sections.Watch.title).lowercase() -> ProvidersSection(title = seriesDetails?.name.toString(), typeProviderState)
+
+                    stringResource(Sections.Watch.title).lowercase() -> ProvidersSection(
+                        title = seriesDetails?.name.toString(),
+                        typeProviderState
+                    )
                 }
             }
         }
