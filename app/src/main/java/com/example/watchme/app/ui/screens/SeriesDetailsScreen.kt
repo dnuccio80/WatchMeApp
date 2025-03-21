@@ -122,11 +122,11 @@ fun SeriesDetailsScreen(
     var myRate by rememberSaveable { mutableFloatStateOf(viewModel.getMySeriesRate(seriesId)) }
 
     val typeProviderDataClassSaver: Saver<TypeProviderDataClass?, Any> = listSaver(
-        save = { listOf(it?.buy, it?.rent) },
+        save = { listOf(it?.buy ?: emptyList(), it?.rent ?: emptyList()) },
         restore = {
             TypeProviderDataClass(
-                buy = it[0] as List<ProvidersDataClass>,
-                rent = it[1] as List<ProvidersDataClass>
+                buy = it[0],
+                rent = it[1]
             )
         }
     )

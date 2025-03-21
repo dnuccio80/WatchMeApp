@@ -121,12 +121,13 @@ fun MovieDetailsScreen(
     var isRated by rememberSaveable { mutableStateOf(viewModel.isMovieRated(movieId)) }
     var myRate by rememberSaveable { mutableFloatStateOf(viewModel.getMyMovieRate(movieId)) }
 
-    val typeProviderDataClassSaver: Saver<TypeProviderDataClass?, Any> = listSaver(
-        save = { listOf(it?.buy, it?.rent) },
+    val typeProviderDataClassSaver: Saver<TypeProviderDataClass?, Any> =
+        listSaver(
+        save = { listOf(it?.buy ?: emptyList(), it?.rent ?: emptyList()) },
         restore = {
             TypeProviderDataClass(
-                buy = it[0] as List<ProvidersDataClass>,
-                rent = it[1] as List<ProvidersDataClass>
+                buy = it[0],
+                rent = it[1]
             )
         }
     )
