@@ -143,4 +143,6 @@
     <string name="for_buy">For Buy</string>
     <string name="movie_added_list">The movie have been added to the list</string>
     <string name="add_list_series_warning">This function is only available for movies at the moment</string>
+    <string name="movie_already_on_list">The movie is already on list</string>
+    <string name="movie_added_to_list">The Movie have been added to the list</string>
 </resources>

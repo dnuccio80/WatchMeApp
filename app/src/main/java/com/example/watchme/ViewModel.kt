@@ -847,7 +847,6 @@ class AppViewModel @Inject constructor(
     fun addMovieToList(listId: Int, mediaId: Int) {
         viewModelScope.launch(Dispatchers.IO) {
             _addMovieToListRequest.value = addMovieToListUseCase(listId, mediaId)
-
         }
     }
 
@@ -855,10 +854,15 @@ class AppViewModel @Inject constructor(
         _addMovieToListRequest.value = null
     }
 
-    fun checkMovieOnList(listId: Int, mediaId: Int) {
+    fun checkMovieOnList(listId: Int, mediaId: Int): Boolean {
         viewModelScope.launch(Dispatchers.IO) {
             _checkMovieOnListRequest.value = checkIfMovieIsOnListUseCase(listId, mediaId)
         }
+        return _checkMovieOnListRequest.value?.itemPresent == true
+    }
+
+    fun clearCheckMovieOnListRequest(){
+        _checkMovieOnListRequest.value = null
     }
 
     fun deleteList(listId: Int) {

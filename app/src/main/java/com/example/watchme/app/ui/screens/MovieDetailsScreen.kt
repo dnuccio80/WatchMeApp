@@ -70,7 +70,6 @@ import com.example.watchme.app.ui.dataClasses.CollectionDataClass
 import com.example.watchme.app.ui.dataClasses.CrewCreditDataClass
 import com.example.watchme.app.ui.dataClasses.DetailsMovieDataClass
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
-import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.app.ui.dataClasses.ReviewDataClass
 import com.example.watchme.app.ui.dataClasses.TypeProviderDataClass
 import com.example.watchme.core.Categories
@@ -97,6 +96,7 @@ fun MovieDetailsScreen(
     viewModel.getVideosById(movieId)
     viewModel.getRatedMovies()
     viewModel.getMovieProvidersByMovieId(movieId)
+    viewModel.getMyLists()
 
     val movieDetails by viewModel.movieDetails.collectAsState()
     val movieCredits by viewModel.movieCredits.collectAsState()
@@ -109,28 +109,30 @@ fun MovieDetailsScreen(
     val ratedMovies by viewModel.ratedMovies.collectAsState()
     val movieProviders by viewModel.movieProviders.collectAsState()
     val addMovieToListRequest by viewModel.addMovieToListRequest.collectAsState()
+    val myLists by viewModel.myLists.collectAsState()
+    val checkMovieOnListRequest by viewModel.checkMovieOnListRequest.collectAsState()
 
     val sectionInit = stringResource(Sections.Suggested.title)
 
     val runTime = viewModel.getRunTimeInHours(movieDetails?.runtime ?: 0)
     val scrollState = rememberScrollState()
     var sectionSelected by rememberSaveable { mutableStateOf(sectionInit) }
-
     var isFavorite by rememberSaveable { mutableStateOf(viewModel.movieIsFavorite(movieId)) }
     var isInWatchlist by rememberSaveable { mutableStateOf(viewModel.movieIsInWatchlist(movieId)) }
     var isRated by rememberSaveable { mutableStateOf(viewModel.isMovieRated(movieId)) }
     var myRate by rememberSaveable { mutableFloatStateOf(viewModel.getMyMovieRate(movieId)) }
+    var showListsMenu by rememberSaveable { mutableStateOf(false) }
 
     val typeProviderDataClassSaver: Saver<TypeProviderDataClass?, Any> =
         listSaver(
-        save = { listOf(it?.buy ?: emptyList(), it?.rent ?: emptyList()) },
-        restore = {
-            TypeProviderDataClass(
-                buy = it[0],
-                rent = it[1]
-            )
-        }
-    )
+            save = { listOf(it?.buy ?: emptyList(), it?.rent ?: emptyList()) },
+            restore = {
+                TypeProviderDataClass(
+                    buy = it[0],
+                    rent = it[1]
+                )
+            }
+        )
 
     var typeProviderState by rememberSaveable(stateSaver = typeProviderDataClassSaver) {
         mutableStateOf(TypeProviderDataClass(emptyList(), emptyList()))
@@ -146,9 +148,30 @@ fun MovieDetailsScreen(
 
     val context = LocalContext.current
 
+    LaunchedEffect(checkMovieOnListRequest) {
+
+        if (checkMovieOnListRequest == null) return@LaunchedEffect
+
+        if (checkMovieOnListRequest?.itemPresent == false) {
+            viewModel.addMovieToList(mediaId = movieId, listId = checkMovieOnListRequest!!.idList)
+        } else {
+            Toast.makeText(
+                context,
+                context.getString(R.string.movie_already_on_list),
+                Toast.LENGTH_SHORT
+            ).show()
+        }
+
+        viewModel.clearCheckMovieOnListRequest()
+    }
+
     LaunchedEffect(addMovieToListRequest) {
-        if(addMovieToListRequest != null && addMovieToListRequest?.success == true) {
-            Toast.makeText(context, context.getString(R.string.movie_added_list), Toast.LENGTH_SHORT).show()
+        if (addMovieToListRequest != null && addMovieToListRequest?.success == true) {
+            Toast.makeText(
+                context,
+                context.getString(R.string.movie_added_list),
+                Toast.LENGTH_SHORT
+            ).show()
             viewModel.clearAddMovieToListRequest()
         }
     }
@@ -163,16 +186,28 @@ fun MovieDetailsScreen(
     }
 
     LaunchedEffect(addFavoritesRequest) {
-        if(addFavoritesRequest != null && addFavoritesRequest?.success == true) {
-            Toast.makeText(context, if(isFavorite) context.getString(R.string.movie_added_favorites) else context.getString(R.string.movie_removed_favorites), Toast.LENGTH_SHORT).show()
+        if (addFavoritesRequest != null && addFavoritesRequest?.success == true) {
+            Toast.makeText(
+                context,
+                if (isFavorite) context.getString(R.string.movie_added_favorites) else context.getString(
+                    R.string.movie_removed_favorites
+                ),
+                Toast.LENGTH_SHORT
+            ).show()
             viewModel.clearFavoriteRequest()
             viewModel.updateFavoritesMovies()
         }
     }
 
     LaunchedEffect(watchlistRequest) {
-        if(watchlistRequest != null && watchlistRequest?.success == true) {
-            Toast.makeText(context, if(isInWatchlist) context.getString(R.string.movie_added_watchlist) else context.getString(R.string.movie_removed_watchlist), Toast.LENGTH_SHORT).show()
+        if (watchlistRequest != null && watchlistRequest?.success == true) {
+            Toast.makeText(
+                context,
+                if (isInWatchlist) context.getString(R.string.movie_added_watchlist) else context.getString(
+                    R.string.movie_removed_watchlist
+                ),
+                Toast.LENGTH_SHORT
+            ).show()
             viewModel.clearWatchlistRequest()
             viewModel.getWatchlistMovies()
         }
@@ -220,19 +255,34 @@ fun MovieDetailsScreen(
                         ), viewModel,
                         isRated = isRated,
                         myRate = myRate,
+                        lists = myLists.orEmpty(),
                         addedToFavorites = isFavorite,
                         addedToWatchLater = isInWatchlist,
                         onFavoriteButtonClicked = {
                             isFavorite = !isFavorite
-                            viewModel.onAddFavorite(mediaId = movieId, mediaType = Categories.Movies.mediaType, favorite = isFavorite)
+                            viewModel.onAddFavorite(
+                                mediaId = movieId,
+                                mediaType = Categories.Movies.mediaType,
+                                favorite = isFavorite
+                            )
                         },
                         onWatchlistButtonClicked = {
                             isInWatchlist = !isInWatchlist
-                            viewModel.onAddToWatchlist(mediaId = movieId, mediaType = Categories.Movies.mediaType, watchList = isInWatchlist)
+                            viewModel.onAddToWatchlist(
+                                mediaId = movieId,
+                                mediaType = Categories.Movies.mediaType,
+                                watchList = isInWatchlist
+                            )
                         },
                         onRatedButtonClicked = { isRated = true },
                         onDeleteRateButtonClicked = { isRated = false },
-                        onAddToListButtonClicked = { }
+                        onAddToListButtonClicked = { showListsMenu = true },
+                        onItemAddedToAList = { listId ->
+                            viewModel.checkMovieOnList(
+                                mediaId = movieId,
+                                listId = listId
+                            )
+                        }
                     )
                 }
                 Spacer(Modifier.size(0.dp))
@@ -250,26 +300,36 @@ fun MovieDetailsScreen(
                         )
                     }
 
-                    stringResource(Sections.Suggested.title).lowercase() -> MoviesRecommendationsSection(recommendations) { movieId ->
+                    stringResource(Sections.Suggested.title).lowercase() -> MoviesRecommendationsSection(
+                        recommendations
+                    ) { movieId ->
                         navController.navigate(
                             Routes.MovieDetails.createRoute(movieId)
                         )
                     }
 
-                    stringResource(Sections.Media.title).lowercase()  -> MediaSection(movieListImages, videos)
-                    stringResource(Sections.Credits.title).lowercase() -> CreditsSection(movieCredits) { personId ->
+                    stringResource(Sections.Media.title).lowercase() -> MediaSection(
+                        movieListImages,
+                        videos
+                    )
+
+                    stringResource(Sections.Credits.title).lowercase() -> CreditsSection(
+                        movieCredits
+                    ) { personId ->
                         navController.navigate(
                             Routes.PeopleDetails.createRoute(personId)
                         )
                     }
-                    stringResource(Sections.Watch.title).lowercase() -> ProvidersSection(title = movieDetails?.title.toString(), typeProviderState)
+
+                    stringResource(Sections.Watch.title).lowercase() -> ProvidersSection(
+                        title = movieDetails?.title.toString(),
+                        typeProviderState
+                    )
                 }
             }
         }
     }
 }
-
-
 
 
 @Composable
@@ -301,7 +361,7 @@ private fun OverviewSection(
             }
         )
     }
-    if(movieDetails?.genres.isNullOrEmpty()){
+    if (movieDetails?.genres.isNullOrEmpty()) {
         TitleSubtitleItem(stringResource(R.string.genre), stringResource(R.string.unknown))
     } else {
         movieDetails?.genres?.map { it.nameGenre }?.let {

@@ -2,11 +2,11 @@ package com.example.watchme.app.ui
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -40,6 +40,8 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -71,7 +73,9 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.max
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import coil.compose.AsyncImage
@@ -79,6 +83,7 @@ import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.dataClasses.BackdropImageDataClass
 import com.example.watchme.app.ui.dataClasses.CreditsDataClass
+import com.example.watchme.app.ui.dataClasses.ListDataClass
 import com.example.watchme.app.ui.dataClasses.ProvidersDataClass
 import com.example.watchme.app.ui.dataClasses.TypeProviderDataClass
 import com.example.watchme.app.ui.dataClasses.VideoDataClass
@@ -95,7 +100,6 @@ import com.example.watchme.ui.theme.DialogContainerColor
 import com.example.watchme.ui.theme.LightBlueColor
 import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.Pink40
-import com.example.watchme.ui.theme.PositiveVoteColor
 import com.example.watchme.ui.theme.ThumbColor
 
 @Composable
@@ -987,13 +991,15 @@ fun RatingSectionWithLists(
     viewModel: AppViewModel,
     isRated: Boolean,
     myRate: Float,
+    lists: List<ListDataClass> = emptyList(),
     addedToFavorites: Boolean,
     addedToWatchLater: Boolean,
     onFavoriteButtonClicked: () -> Unit,
     onWatchlistButtonClicked: () -> Unit,
     onRatedButtonClicked: () -> Unit,
     onDeleteRateButtonClicked: () -> Unit,
-    onAddToListButtonClicked:() -> Unit
+    onAddToListButtonClicked:() -> Unit,
+    onItemAddedToAList:(Int) -> Unit
 ) {
 
     val percentage = (mediaItem.voteAverage.times(10)).toInt()
@@ -1001,6 +1007,7 @@ fun RatingSectionWithLists(
 
     var showDialog by rememberSaveable { mutableStateOf(false) }
     val ratingResponse by viewModel.rating.collectAsState()
+    var showListsMenu by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(ratingResponse) {
         viewModel.updateRatedMovies()
@@ -1055,14 +1062,29 @@ fun RatingSectionWithLists(
                     )
                 }
             }
-
         }
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
-            CircularButtonIcon(Icons.AutoMirrored.Filled.List, Color.White) {
-                onAddToListButtonClicked()
+            if(mediaItem.category == Categories.Movies) {
+                Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                    CircularButtonIcon(Icons.AutoMirrored.Filled.List, Color.White) {
+                        showListsMenu = true
+                    }
+                    ListsMenu(
+                        lists = lists,
+                        show = showListsMenu,
+                        onDismiss = { showListsMenu = false },
+                        onItemClicked = { listId ->
+                            onItemAddedToAList(listId)
+                        }
+                    )
+                }
+            } else{
+                CircularButtonIcon(Icons.AutoMirrored.Filled.List, Color.White) {
+                    onAddToListButtonClicked()
+                }
             }
             CircularButtonIcon(
                 Icons.Filled.Favorite,
@@ -1083,6 +1105,26 @@ fun RatingSectionWithLists(
             onDeleteRateButtonClicked = { onDeleteRateButtonClicked() },
             onDismiss = { showDialog = false },
         )
+    }
+}
+
+@Composable
+fun ListsMenu(lists: List<ListDataClass>, show: Boolean, onDismiss: () -> Unit, onItemClicked: (Int) -> Unit) {
+    DropdownMenu(
+        expanded = show,
+        offset = DpOffset((-24).dp, 0.dp),
+        onDismissRequest = { onDismiss() },
+        modifier = Modifier.background(ButtonContainerColor).width(max(180.dp, 180.dp))
+    ) {
+        lists.forEach {
+            DropdownMenuItem(
+                text = { BodyTextItem(it.name.toString(), maxLines = 2, overflow = TextOverflow.Ellipsis) },
+                onClick = {
+                    onDismiss()
+                    onItemClicked(it.id)
+                }
+            )
+        }
     }
 }
 

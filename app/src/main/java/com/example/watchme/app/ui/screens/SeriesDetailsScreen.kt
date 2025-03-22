@@ -252,7 +252,8 @@ fun SeriesDetailsScreen(
                         },
                         onRatedButtonClicked = { isRated = true },
                         onDeleteRateButtonClicked = { isRated = false },
-                        onAddToListButtonClicked = { Toast.makeText(context, context.getString(R.string.add_list_series_warning), Toast.LENGTH_SHORT).show() }
+                        onAddToListButtonClicked = { Toast.makeText(context, context.getString(R.string.add_list_series_warning), Toast.LENGTH_SHORT).show() },
+                        onItemAddedToAList = { }
                     )
                 }
                 SeriesOverviewSection(seriesDetails)
