@@ -34,6 +34,7 @@ import androidx.navigation.NavHostController
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.AccountHeader
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SubtitleBigBodyTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
@@ -51,11 +52,9 @@ fun AccountScreen(
 
     val ratingCount by viewModel.totalRatingCount.collectAsState()
     val favoritesCount by viewModel.favoritesCount.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    viewModel.getTotalRatingCount()
-    viewModel.getFavoritesCount()
-
-    val context = LocalContext.current
+    viewModel.getAccountScreen()
 
     Box(
         Modifier
@@ -63,6 +62,9 @@ fun AccountScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+
+        LoadingDialog(isLoading)
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -94,25 +96,37 @@ fun AccountScreen(
                     stringResource(R.string.my_favorites),
                     stringResource(R.string.see_favorites),
                     painterResource(R.drawable.favorite_background),
-                    onClick = { navController.navigate(Routes.Favorites.route) }
+                    onClick = {
+                        viewModel.changeLoadingState(true)
+                        navController.navigate(Routes.Favorites.route)
+                    }
                 )
                 ListSection(
                     stringResource(R.string.watchlist),
                     stringResource(R.string.see_watchlist),
                     painterResource(R.drawable.watchlist_background),
-                    onClick = { navController.navigate(Routes.WatchList.route) }
+                    onClick = {
+                        viewModel.changeLoadingState(true)
+                        navController.navigate(Routes.WatchList.route)
+                    }
                 )
                 ListSection(
                     stringResource(R.string.my_lists),
                     stringResource(R.string.see_lists),
                     painterResource(R.drawable.lists_background),
-                    onClick = { navController.navigate(Routes.Lists.route) }
+                    onClick = {
+                        viewModel.changeLoadingState(true)
+                        navController.navigate(Routes.Lists.route)
+                    }
                 )
                 ListSection(
                     stringResource(R.string.my_ratings),
                     stringResource(R.string.see_ratings),
                     painterResource(R.drawable.ratings_background),
-                    onClick = { navController.navigate(Routes.Ratings.route) }
+                    onClick = {
+                        viewModel.changeLoadingState(true)
+                        navController.navigate(Routes.Ratings.route)
+                    }
                 )
             }
         }

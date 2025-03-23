@@ -40,6 +40,7 @@ import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.ImageListItem
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SectionSelectionItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
@@ -73,11 +74,9 @@ fun PeopleDetailsScreen(
     val movieInterpretations by viewModel.peopleMovieInterpretations.collectAsState()
     val seriesInterpretations by viewModel.peopleSeriesInterpretations.collectAsState()
     val personMedia by viewModel.peopleMediaImages.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    viewModel.getPeopleDetailsById(personId)
-    viewModel.getPeopleMovieInterpretationsById(personId)
-    viewModel.getPeopleSeriesInterpretationsById(personId)
-    viewModel.getPeopleMediaById(personId)
+    viewModel.getPeopleScreen(personId)
 
     val sectionList = listOf(
         stringResource(Sections.Biography.title),
@@ -97,6 +96,8 @@ fun PeopleDetailsScreen(
                 .verticalScroll(scrollState),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            LoadingDialog(isLoading)
+
             PeopleHeader(peopleDetails)
             Column(
                 Modifier
@@ -113,6 +114,7 @@ fun PeopleDetailsScreen(
                         movieInterpretations,
                         seriesInterpretations,
                         onSeriesClicked = { seriesId ->
+                            viewModel.changeLoadingState(true)
                             navController.navigate(
                                 Routes.SeriesDetails.createRoute(
                                     seriesId
@@ -120,6 +122,7 @@ fun PeopleDetailsScreen(
                             )
                         },
                         onMovieClicked = { movieId ->
+                            viewModel.changeLoadingState(true)
                             navController.navigate(Routes.MovieDetails.createRoute(movieId))
                         }
                     )

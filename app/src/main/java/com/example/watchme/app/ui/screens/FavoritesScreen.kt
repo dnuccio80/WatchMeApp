@@ -39,6 +39,7 @@ import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.AccountHeader
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.core.Categories
 import com.example.watchme.core.RatedItem
@@ -54,14 +55,16 @@ fun FavoritesScreen(
     navController: NavHostController
 ) {
 
-
     val favoritesMovies by viewModel.favoritesMovies.collectAsState()
     val favoritesSeries by viewModel.favoritesSeries.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     val rateList = listOf(
         stringResource(Categories.Movies.title),
         stringResource(Categories.TvSeries.title),
     )
+
+    viewModel.getFavoritesScreen()
 
     var selectedOption by rememberSaveable { mutableStateOf(rateList[0]) }
     var showDropdownMenu by rememberSaveable { mutableStateOf(false) }
@@ -72,6 +75,8 @@ fun FavoritesScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+        LoadingDialog(isLoading)
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -143,6 +148,7 @@ fun FavoritesScreen(
                                     RatingCardItem(
                                         ratedItem = RatedItem(it.id, it.posterPath.orEmpty()),
                                         onClick = { seriesId ->
+                                            viewModel.changeLoadingState(true)
                                             navController.navigate(
                                                 Routes.SeriesDetails.createRoute(
                                                     seriesId
@@ -165,6 +171,7 @@ fun FavoritesScreen(
                                             posterPath = it.posterPath.orEmpty()
                                         ),
                                         onClick = { moviesId ->
+                                            viewModel.changeLoadingState(true)
                                             navController.navigate(
                                                 Routes.MovieDetails.createRoute(
                                                     moviesId

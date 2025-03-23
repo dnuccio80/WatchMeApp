@@ -26,6 +26,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -58,6 +59,7 @@ import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.NextPreviousButtonsRow
 import com.example.watchme.app.ui.ProvidersSection
 import com.example.watchme.app.ui.RatingSectionWithLists
@@ -88,15 +90,8 @@ fun MovieDetailsScreen(
     navController: NavHostController,
     movieId: Int
 ) {
-    viewModel.getMovieDetailsById(movieId)
-    viewModel.getMovieCreditsById(movieId)
-    viewModel.getMovieImageListById(movieId)
-    viewModel.getRecommendationsById(movieId)
-    viewModel.getReviewsById(movieId)
-    viewModel.getVideosById(movieId)
-    viewModel.getRatedMovies()
-    viewModel.getMovieProvidersByMovieId(movieId)
-    viewModel.getMyLists()
+
+    viewModel.getMovieDetailsScreen(movieId)
 
     val movieDetails by viewModel.movieDetails.collectAsState()
     val movieCredits by viewModel.movieCredits.collectAsState()
@@ -111,6 +106,7 @@ fun MovieDetailsScreen(
     val addMovieToListRequest by viewModel.addMovieToListRequest.collectAsState()
     val myLists by viewModel.myLists.collectAsState()
     val checkMovieOnListRequest by viewModel.checkMovieOnListRequest.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     val sectionInit = stringResource(Sections.Suggested.title)
 
@@ -219,6 +215,9 @@ fun MovieDetailsScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+
+        LoadingDialog(isLoading)
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -295,6 +294,7 @@ fun MovieDetailsScreen(
                         runTime,
                         viewModel
                     ) { collectionId ->
+                        viewModel.changeLoadingState(true)
                         navController.navigate(
                             Routes.CollectionDetails.createRoute(collectionId)
                         )
@@ -303,6 +303,7 @@ fun MovieDetailsScreen(
                     stringResource(Sections.Suggested.title).lowercase() -> MoviesRecommendationsSection(
                         recommendations
                     ) { movieId ->
+                        viewModel.changeLoadingState(true)
                         navController.navigate(
                             Routes.MovieDetails.createRoute(movieId)
                         )
@@ -316,6 +317,7 @@ fun MovieDetailsScreen(
                     stringResource(Sections.Credits.title).lowercase() -> CreditsSection(
                         movieCredits
                     ) { personId ->
+                        viewModel.changeLoadingState(true)
                         navController.navigate(
                             Routes.PeopleDetails.createRoute(personId)
                         )

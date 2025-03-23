@@ -1,5 +1,6 @@
 package com.example.watchme.app.ui.screens
 
+import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -24,6 +25,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -37,6 +39,7 @@ import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.LabelSmallItem
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.PercentageVisualItem
 import com.example.watchme.app.ui.TitleTextItem
 import com.example.watchme.app.ui.dataClasses.MovieDataClass
@@ -62,6 +65,11 @@ fun HomeScreen(
     val airingSeriesToday by viewModel.airingSeriesToday.collectAsState()
     val onTheAirSeries by viewModel.onTheAirSeries.collectAsState()
     val getTopRatedSeries by viewModel.topRatedSeries.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
+
+    LaunchedEffect(isLoading) {
+        Log.i("Damian", isLoading.toString())
+    }
 
     Box(
         Modifier
@@ -69,12 +77,16 @@ fun HomeScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+
+        LoadingDialog(isLoading)
+
         Column(
             Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
         ) {
             PopularMoviesLazyRow(popularMovies) {
+                viewModel.changeLoadingState(true)
                 navController.navigate(Routes.MovieDetails.createRoute(it))
             }
             Spacer(Modifier.size(16.dp))
@@ -92,9 +104,13 @@ fun HomeScreen(
                     viewModel,
                     topRatedMovies,
                     upcomingMovies
-                ) { movieId -> navController.navigate(Routes.MovieDetails.createRoute(movieId)) }
+                ) { movieId ->
+                    viewModel.changeLoadingState(true)
+                    navController.navigate(Routes.MovieDetails.createRoute(movieId)) }
                 Spacer(Modifier.size(32.dp))
-                TvSeriesSection(popularSeries, airingSeriesToday, onTheAirSeries, getTopRatedSeries) { seriesId -> navController.navigate(Routes.SeriesDetails.createRoute(seriesId)) }
+                TvSeriesSection(popularSeries, airingSeriesToday, onTheAirSeries, getTopRatedSeries) { seriesId ->
+                    viewModel.changeLoadingState(true)
+                    navController.navigate(Routes.SeriesDetails.createRoute(seriesId)) }
             }
         }
 

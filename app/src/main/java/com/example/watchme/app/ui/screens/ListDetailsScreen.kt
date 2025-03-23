@@ -56,6 +56,7 @@ import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.RoundedButtonWithText
 import com.example.watchme.app.ui.ConfirmDeclineDialog
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.RedCloseButton
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
@@ -79,8 +80,9 @@ fun ListDetailsScreen(
     val listDetails by viewModel.listDetails.collectAsState()
     val deleteItemFromListRequest by viewModel.deleteItemFromListRequest.collectAsState()
     val clearListRequest by viewModel.clearListRequest.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    viewModel.getListDetails(listId)
+    viewModel.getListsDetailsScreen(listId)
 
     val context = LocalContext.current
 
@@ -114,6 +116,8 @@ fun ListDetailsScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+        LoadingDialog(isLoading)
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -180,8 +184,10 @@ fun ListDetailsScreen(
                         listDetails?.items?.forEach {
                             ListDetailCardItem(it, onClick = { id, mediaType ->
                                 if (mediaType == Categories.Movies.mediaType) {
+                                    viewModel.changeLoadingState(true)
                                     navController.navigate(Routes.MovieDetails.createRoute(id))
                                 } else if (mediaType == Categories.TvSeries.mediaType) {
+                                    viewModel.changeLoadingState(true)
                                     navController.navigate(Routes.SeriesDetails.createRoute(id))
                                 }
                             }, onDeleteButtonClicked = { itemId ->

@@ -56,6 +56,7 @@ import com.example.watchme.R
 import com.example.watchme.app.ui.AccountHeader
 import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.ConfirmDeclineDialog
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.RedCloseButton
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.ThirdTitleTextItem
@@ -65,7 +66,6 @@ import com.example.watchme.core.constants.Constants
 import com.example.watchme.ui.theme.AlphaContrastColor
 import com.example.watchme.ui.theme.AppBackground
 import com.example.watchme.ui.theme.CardContainerColor
-import com.example.watchme.ui.theme.NegativeVoteColor
 import com.example.watchme.ui.theme.ThumbColor
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -79,13 +79,14 @@ fun ListsScreen(
     val lists by viewModel.myLists.collectAsState()
     val listRequest by viewModel.createListRequest.collectAsState()
     val deleteListRequest by viewModel.deleteListRequest.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     var showDialog by rememberSaveable { mutableStateOf(false) }
 
     var listName by rememberSaveable { mutableStateOf("") }
     var listDescription by rememberSaveable { mutableStateOf("") }
 
-    viewModel.getMyLists()
+    viewModel.getListsScreen()
     val context = LocalContext.current
 
     LaunchedEffect(listRequest) {
@@ -116,6 +117,8 @@ fun ListsScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+        LoadingDialog(isLoading)
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -167,6 +170,7 @@ fun ListsScreen(
                             ListsCardItem(
                                 it,
                                 onClickList = { listId ->
+                                    viewModel.changeLoadingState(true)
                                     navController.navigate(
                                         Routes.ListDetails.createRoute(
                                             listId
@@ -303,6 +307,7 @@ fun ListsCardItem(
 
     var showConfirmDialog by rememberSaveable { mutableStateOf(false) }
 
+
     Card(
         modifier = Modifier
             .width(120.dp)
@@ -344,7 +349,6 @@ fun ListsCardItem(
                 )
             }
         }
-
         ConfirmDeclineDialog(
             show = showConfirmDialog,
             text = stringResource(R.string.delete_list),

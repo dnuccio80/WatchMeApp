@@ -36,6 +36,7 @@ import com.example.watchme.R
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.RatingSectionWithLists
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.SimpleRatingSection
@@ -58,9 +59,9 @@ fun EpisodesDetailsScreen(
 
     val episodeDetails by viewModel.episodeDetails.collectAsState()
     val ratedEpisodes by viewModel.ratedSeriesEpisodes.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    viewModel.getRatedSeriesEpisodes()
-
+    viewModel.getEpisodesDetailsScreen()
 
     val seriesName = viewModel.getSeriesName(seriesId)
     var isRated by rememberSaveable {
@@ -107,6 +108,8 @@ fun EpisodesDetailsScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+        LoadingDialog(isLoading)
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -142,6 +145,7 @@ fun EpisodesDetailsScreen(
                     textAlign = TextAlign.Center,
                     color = Color.Gray,
                     modifier = Modifier.clickable {
+                        viewModel.changeLoadingState(true)
                         navController.navigate(Routes.SeriesDetails.createRoute(seriesId))
                     })
                 Spacer(Modifier.size(0.dp)) // Gives me an extra 16.dp vertical space
@@ -180,6 +184,7 @@ fun EpisodesDetailsScreen(
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
                         items(episodeDetails!!.guestStars) { castItem ->
                             CastCreditsItem(castItem) { personId ->
+                                viewModel.changeLoadingState(true)
                                 navController.navigate(
                                     Routes.PeopleDetails.createRoute(
                                         personId
@@ -197,6 +202,7 @@ fun EpisodesDetailsScreen(
                     episodeDetails?.let {
                         items(it.crew) { crewItem ->
                             CrewCreditsItem(crewItem) { personId ->
+                                viewModel.changeLoadingState(true)
                                 navController.navigate(
                                     Routes.PeopleDetails.createRoute(
                                         personId

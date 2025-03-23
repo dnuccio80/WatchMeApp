@@ -64,6 +64,7 @@ import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.ImageListItem
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.ProvidersSection
 import com.example.watchme.app.ui.RatingSectionWithLists
 import com.example.watchme.app.ui.SecondTitleTextItem
@@ -106,6 +107,7 @@ fun SeriesDetailsScreen(
     val watchlistRequest by viewModel.watchListRequest.collectAsState()
     val ratedSeries by viewModel.ratedSeries.collectAsState()
     val seriesProviders by viewModel.seriesProviders.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
 
     val sectionInit = stringResource(Sections.Episodes.title)
@@ -133,13 +135,7 @@ fun SeriesDetailsScreen(
         mutableStateOf(TypeProviderDataClass(emptyList(), emptyList()))
     }
 
-    viewModel.getSeriesDetailsById(seriesId)
-    viewModel.getSeasonDetailsById(seriesId, seasonSelected)
-    viewModel.getSeriesRecommendationsById(seriesId)
-    viewModel.getSeriesImageListById(seriesId)
-    viewModel.getSeriesVideosListById(seriesId)
-    viewModel.getSeriesCreditsById(seriesId)
-    viewModel.getSeriesProvidersBySeriesId(seriesId)
+    viewModel.getSeriesDetailsScreen(seriesId, seasonSelected = seasonSelected)
 
     val context = LocalContext.current
 
@@ -195,6 +191,9 @@ fun SeriesDetailsScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+
+        LoadingDialog(isLoading)
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -267,6 +266,7 @@ fun SeriesDetailsScreen(
                             seasonDetails, it, seasonSelected,
                             onValueChange = { seasonNumber -> seasonSelected = seasonNumber },
                             onEpisodeClicked = { episodeId, seasonNumber ->
+                                viewModel.changeLoadingState(true)
                                 navController.navigate(
                                     Routes.EpisodeDetails.createRoute(
                                         seriesId,
@@ -281,6 +281,7 @@ fun SeriesDetailsScreen(
                     stringResource(Sections.Suggested.title).lowercase() -> SeriesRecommendationsSection(
                         seriesRecommendations
                     ) {
+                        viewModel.changeLoadingState(true)
                         navController.navigate(
                             Routes.SeriesDetails.createRoute(it)
                         )
@@ -298,6 +299,7 @@ fun SeriesDetailsScreen(
                     stringResource(Sections.Credits.title).lowercase() -> CreditsSection(
                         seriesCredits
                     ) { personId ->
+                        viewModel.changeLoadingState(true)
                         navController.navigate(
                             Routes.PeopleDetails.createRoute(personId)
                         )

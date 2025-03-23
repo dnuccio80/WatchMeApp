@@ -49,6 +49,7 @@ import coil.compose.AsyncImage
 import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.ThirdTitleTextItem
 import com.example.watchme.app.ui.dataClasses.SearchDataClass
 import com.example.watchme.core.Routes
@@ -71,6 +72,7 @@ fun SearchScreen(
     val searchSeries by viewModel.searchSeries.collectAsState()
     val searchPeople by viewModel.searchPeople.collectAsState()
     val searchTypeSelected by viewModel.searchTypeSelected.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
     val searchList = listOf(
         Categories.Collections,
@@ -79,7 +81,7 @@ fun SearchScreen(
         Categories.People,
     )
 
-    val context = LocalContext.current
+    viewModel.getSearchScreen()
 
     Box(
         Modifier
@@ -87,6 +89,8 @@ fun SearchScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+        LoadingDialog(isLoading)
+
         Column(
             Modifier
                 .fillMaxWidth(),
@@ -125,22 +129,34 @@ fun SearchScreen(
                 stringResource(Categories.Collections.title) -> SearchSection(
                     searchCollection,
                     stringResource(searchTypeSelected)
-                ) { id -> navController.navigate(Routes.CollectionDetails.createRoute(id)) }
+                ) { id ->
+                    viewModel.changeLoadingState(true)
+                    navController.navigate(Routes.CollectionDetails.createRoute(id))
+                }
 
                 stringResource(Categories.TvSeries.title) -> SearchSection(
                     searchSeries,
                     stringResource(searchTypeSelected)
-                ) { id -> navController.navigate(Routes.SeriesDetails.createRoute(id)) }
+                ) { id ->
+                    viewModel.changeLoadingState(true)
+                    navController.navigate(Routes.SeriesDetails.createRoute(id))
+                }
 
                 stringResource(Categories.Movies.title) -> SearchSection(
                     searchMovie,
                     stringResource(searchTypeSelected)
-                ) { id -> navController.navigate(Routes.MovieDetails.createRoute(id)) }
+                ) { id ->
+                    viewModel.changeLoadingState(true)
+                    navController.navigate(Routes.MovieDetails.createRoute(id))
+                }
 
                 stringResource(Categories.People.title) -> SearchSection(
                     searchPeople,
                     stringResource(searchTypeSelected)
-                ) { id -> navController.navigate(Routes.PeopleDetails.createRoute(id)) }
+                ) { id ->
+                    viewModel.changeLoadingState(true)
+                    navController.navigate(Routes.PeopleDetails.createRoute(id))
+                }
             }
         }
     }

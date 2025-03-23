@@ -39,6 +39,7 @@ import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.AccountHeader
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.core.Categories
 import com.example.watchme.core.RatedItem
@@ -57,9 +58,9 @@ fun WatchListScreen(
 
     val watchListMovies by viewModel.watchlistMovies.collectAsState()
     val watchListSeries by viewModel.watchlistSeries.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    viewModel.getWatchlistMovies()
-    viewModel.getWatchlistSeries()
+    viewModel.getWatchListScreen()
 
     val watchListOptions = listOf(
         stringResource(Categories.Movies.title),
@@ -75,6 +76,8 @@ fun WatchListScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+        LoadingDialog(isLoading)
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -146,6 +149,7 @@ fun WatchListScreen(
                                     RatingCardItem(
                                         ratedItem = RatedItem(it.id, it.posterPath.orEmpty()),
                                         onClick = { seriesId ->
+                                            viewModel.changeLoadingState(true)
                                             navController.navigate(
                                                 Routes.SeriesDetails.createRoute(
                                                     seriesId
@@ -168,6 +172,7 @@ fun WatchListScreen(
                                             posterPath = it.posterPath.orEmpty()
                                         ),
                                         onClick = { moviesId ->
+                                            viewModel.changeLoadingState(true)
                                             navController.navigate(
                                                 Routes.MovieDetails.createRoute(
                                                     moviesId

@@ -46,6 +46,7 @@ import com.example.watchme.AppViewModel
 import com.example.watchme.R
 import com.example.watchme.app.ui.AccountHeader
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.core.Categories
 import com.example.watchme.core.RatedItem
@@ -65,10 +66,9 @@ fun RatingScreen(
     val ratedMovies by viewModel.ratedMovies.collectAsState()
     val ratedSeries by viewModel.ratedSeries.collectAsState()
     val ratedEpisodes by viewModel.ratedSeriesEpisodes.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    viewModel.getRatedSeries()
-    viewModel.getRatedMovies()
-    viewModel.getRatedSeriesEpisodes()
+    viewModel.getRatingScreen()
 
     val rateList = listOf(
         stringResource(Categories.Movies.title),
@@ -85,6 +85,7 @@ fun RatingScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+        LoadingDialog(isLoading)
         Column(
             Modifier
                 .fillMaxWidth()
@@ -157,6 +158,7 @@ fun RatingScreen(
                                     RatingCardItem(
                                         ratedItem = RatedItem(it.id, it.posterPath.orEmpty()),
                                         onClick = { seriesId ->
+                                            viewModel.changeLoadingState(true)
                                             navController.navigate(
                                                 Routes.SeriesDetails.createRoute(
                                                     seriesId
@@ -179,6 +181,7 @@ fun RatingScreen(
                                             posterPath = it.posterPath.orEmpty()
                                         ),
                                         onClick = { moviesId ->
+                                            viewModel.changeLoadingState(true)
                                             navController.navigate(
                                                 Routes.MovieDetails.createRoute(
                                                     moviesId
@@ -202,6 +205,7 @@ fun RatingScreen(
                                             seasonNumber = it.seasonNumber
                                         )
                                     ) { seriesId, episodeNumber, seasonNumber ->
+                                        viewModel.changeLoadingState(true)
                                         navController.navigate(
                                             Routes.EpisodeDetails.createRoute(
                                                 seriesId = seriesId,

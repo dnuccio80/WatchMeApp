@@ -1,6 +1,5 @@
 package com.example.watchme
 
-import android.util.Log
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -206,6 +205,9 @@ class AppViewModel @Inject constructor(
 
     private var defaultLanguage = Locale.getDefault().language
     private var defaultCountry = Locale.getDefault().country
+
+    private var _isLoading: MutableStateFlow<Boolean> = MutableStateFlow(false)
+    val isLoading: StateFlow<Boolean> = _isLoading
 
     // MOVIES
 
@@ -923,6 +925,114 @@ class AppViewModel @Inject constructor(
     fun getSeriesProvidersByRegion(): TypeProviderDataClass? {
         return _seriesProviders.value?.providers?.get(defaultCountry)
     }
+
+    // USES FOR SCREENS
+
+    fun getMovieDetailsScreen(movieId: Int, accountId: Int = 0) {
+
+        viewModelScope.launch(Dispatchers.IO) {
+            _movieDetails.value = getMovieDetailsByIdUseCase(movieId, defaultLanguage, defaultCountry)
+            _movieCredits.value = getMovieCreditsByIdUseCase(movieId)
+            _movieImageList.value = getMovieImageListByIdUseCase(movieId)
+            _movieRecommendations.value = getRecommendationsByIdUseCase(movieId, defaultLanguage)
+            _reviews.value = getReviewsByIdUseCase(movieId)
+            _movieVideos.value = getVideosByIdUseCase(movieId, defaultLanguage)
+            _ratedMovies.value = getRatedMoviesUseCase()
+            _movieProviders.value = getMovieProvidersByMovieIdUseCase(movieId)
+            _myLists.value = getMyListsUseCase(accountId)
+        }
+        changeLoadingState(false)
+    }
+
+    fun getSeriesDetailsScreen(seriesId:Int, seasonSelected:Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _seriesDetails.value = getSeriesDetailsByIdUseCase(seriesId, defaultLanguage)
+            _seasonsDetails.value = getSeasonDetailsUseCase(seriesId, seasonSelected, defaultLanguage)
+            _seriesRecommendations.value = getSeriesRecommendationsByIdUseCase(seriesId)
+            _seriesImageList.value = getSeriesImageListByIdUseCase(seriesId)
+            _seriesVideos.value = getSeriesVideosByIdUseCase(seriesId, defaultLanguage)
+            _seriesCredits.value = getSeriesCreditsByIdUseCase(seriesId)
+            _seriesProviders.value = getSeriesProvidersBySeriesIdUseCase(seriesId)
+        }
+        changeLoadingState(false)
+    }
+
+    fun getCollectionDetailsScreen(collectionId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _collectionDetails.value =
+                getCollectionDetailsByIdUseCase(collectionId, defaultLanguage)
+        }
+        changeLoadingState(false)
+    }
+
+    fun getAccountScreen(accountId: Int = 0) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _totalRatingCount.value = getRatedCountUseCase()
+            _favoritesCount.value = getFavoritesCountUseCase(accountId)
+        }
+        changeLoadingState(false)
+    }
+
+    fun getEpisodesDetailsScreen(accountId: Int = 0){
+        viewModelScope.launch(Dispatchers.IO) {
+            _ratedSeriesEpisodes.value = getRatedEpisodesUseCase(accountId)
+        }
+        changeLoadingState(false)
+    }
+
+    fun getFavoritesScreen() {
+        changeLoadingState(false)
+    }
+
+    fun getListsDetailsScreen(listId: Int) {
+        viewModelScope.launch(Dispatchers.IO) {
+            _listDetails.value = getListDetailsUseCase(listId)
+        }
+        changeLoadingState(false)
+    }
+
+    fun getListsScreen(accountId: Int = 0){
+        viewModelScope.launch(Dispatchers.IO) {
+            _myLists.value = getMyListsUseCase(accountId)
+        }
+        changeLoadingState(false)
+    }
+
+    fun getPeopleScreen(personId: Int){
+        viewModelScope.launch(Dispatchers.IO) {
+            _peopleDetails.value = getPeopleDetailsByIdUseCase(personId, defaultLanguage)
+            _peopleMovieInterpretations.value = getPeopleMovieInterpretationsByIdUseCase(personId, defaultLanguage)
+            _peopleSeriesInterpretations.value = getPeopleSeriesInterpretationsByIdUseCase(personId, defaultLanguage)
+            _peopleMediaImages.value = getPeopleMediaByIdUseCase(personId)
+        }
+        changeLoadingState(false)
+    }
+
+    fun getRatingScreen(accountId: Int = 0){
+        viewModelScope.launch(Dispatchers.IO) {
+            _ratedSeries.value = getRatedSeriesUseCase(accountId)
+            _ratedMovies.value = getRatedMoviesUseCase()
+            _ratedSeriesEpisodes.value = getRatedEpisodesUseCase(accountId)
+        }
+        changeLoadingState(false)
+    }
+
+    fun getSearchScreen() {
+        changeLoadingState(false)
+    }
+
+    fun getWatchListScreen(){
+        viewModelScope.launch(Dispatchers.IO) {
+            _watchlistSeries.value = getWatchlistSeriesUseCase(0)
+            _watchlistMovies.value = getWatchlistMoviesUseCase(0)
+        }
+    }
+
+    fun changeLoadingState(state:Boolean){
+        _isLoading.value = state
+    }
+
+
 
 }
 

@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -27,9 +26,9 @@ import com.example.watchme.R
 import com.example.watchme.app.ui.BackButton
 import com.example.watchme.app.ui.BackdropImageItem
 import com.example.watchme.app.ui.BodyTextItem
+import com.example.watchme.app.ui.LoadingDialog
 import com.example.watchme.app.ui.SecondTitleTextItem
 import com.example.watchme.app.ui.TitleTextItem
-import com.example.watchme.app.ui.dataClasses.CollectionDetailsDataClass
 import com.example.watchme.core.Routes
 import com.example.watchme.ui.theme.AppBackground
 
@@ -41,11 +40,12 @@ fun CollectionDetailsScreen(
     collectionId: Int
 ) {
 
-    viewModel.getCollectionDetailsById(collectionId)
+    viewModel.getCollectionDetailsScreen(collectionId)
 
     val collectionDetails by viewModel.collectionDetails.collectAsState()
+    val isLoading by viewModel.isLoading.collectAsState()
 
-    if(collectionDetails == null) return
+    if (collectionDetails == null) return
 
     Box(
         Modifier
@@ -53,6 +53,9 @@ fun CollectionDetailsScreen(
             .background(AppBackground)
             .padding(innerPadding)
     ) {
+
+        LoadingDialog(isLoading)
+
         Column(
             Modifier
                 .fillMaxWidth()
@@ -77,9 +80,13 @@ fun CollectionDetailsScreen(
                 collectionDetails?.name?.let { TitleTextItem(it) }
                 collectionDetails?.overview?.let { BodyTextItem(it) }
                 Spacer(Modifier.size(0.dp)) // It gives an extra 16.dp spacer at the top
-                SecondTitleTextItem(stringResource(R.string.full_collection), textAlign = TextAlign.Center)
-                if(collectionDetails!!.parts.isNotEmpty()) {
+                SecondTitleTextItem(
+                    stringResource(R.string.full_collection),
+                    textAlign = TextAlign.Center
+                )
+                if (collectionDetails!!.parts.isNotEmpty()) {
                     MoviesRecommendationsSection(collectionDetails!!.parts) { movieId ->
+                        viewModel.changeLoadingState(true)
                         navController.navigate(Routes.MovieDetails.createRoute(movieId))
                     }
                 }
