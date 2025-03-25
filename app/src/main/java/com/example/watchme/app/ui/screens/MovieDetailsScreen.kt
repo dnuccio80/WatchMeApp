@@ -60,6 +60,7 @@ import com.example.watchme.app.ui.BodyTextItem
 import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.LoadingDialog
+import com.example.watchme.app.ui.MediaSection
 import com.example.watchme.app.ui.NextPreviousButtonsRow
 import com.example.watchme.app.ui.ProvidersSection
 import com.example.watchme.app.ui.RatingSectionWithLists
@@ -373,7 +374,7 @@ private fun OverviewSection(
             )
         }
     }
-    TitleSubtitleItem("Runtime", if (runTime == "0m") stringResource(R.string.unknown) else runTime)
+    TitleSubtitleItem(stringResource(R.string.runtime), if (runTime == "0m") stringResource(R.string.unknown) else runTime)
     movieDetails?.budget?.let { viewModel.formatPrice(it) }?.let {
         val budget = if (it == "0") stringResource(R.string.unknown) else "$$it"
         TitleSubtitleItem(

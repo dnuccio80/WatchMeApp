@@ -56,6 +56,7 @@ dependencies {
 
     // Dagger Hilt
     implementation(libs.hilt.android)
+    implementation(libs.androidx.ui.test.junit4.android)
     kapt(libs.hilt.android.compiler)
 
     // Coil

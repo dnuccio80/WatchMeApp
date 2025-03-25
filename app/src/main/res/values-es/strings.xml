@@ -146,4 +146,5 @@
     <string name="add_list_series_warning">Esta función está disponible solo para películas por el momento</string>
     <string name="movie_already_on_list">La película ya está en la lista</string>
     <string name="movie_added_to_list">La película ha sido añadida a la lista</string>
+    <string name="runtime">Duración</string>
 </resources>

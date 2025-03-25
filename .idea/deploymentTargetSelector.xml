@@ -13,6 +13,37 @@
         </DropdownSelection>
         <DialogSelection />
       </SelectionState>
+      <SelectionState runConfigName="ifSeriesOverviewSectionGetEmptyOverview_ThenShowNoOverviewText()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="ifSeriesOverviewSectionGetEmptyOrNullOverview_ThenShowNoOverviewText()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="ifSeriesRecommendationsSectionGetEmptyOrNullRecommendationsList_thenShowNoResultsFoundText()">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-03-25T17:31:45.728663900Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Administrador\.android\avd\My_phone_new.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="ifMediaSectionGetEmptyOrNullImageListAndSeriesVideosList_thenShowNoResultsFoundText()">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
+      <SelectionState runConfigName="ifMediaSectionGetEmptyOrNullImageListButASeriesVideosList_thenShowOnlySeriesVideoList()">
+        <option name="selectionMode" value="DROPDOWN" />
+        <DropdownSelection timestamp="2025-03-25T17:49:01.968379600Z">
+          <Target type="DEFAULT_BOOT">
+            <handle>
+              <DeviceId pluginId="LocalEmulator" identifier="path=C:\Users\Administrador\.android\avd\My_phone_new.avd" />
+            </handle>
+          </Target>
+        </DropdownSelection>
+        <DialogSelection />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>

@@ -65,8 +65,10 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
+import androidx.compose.ui.modifier.modifierLocalMapOf
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -203,6 +205,28 @@ fun LazyRowItemText(
                 onClick(text, textWidth, xPos)
             }
     )
+}
+
+@Composable
+fun MediaSection(
+    imagesList: List<BackdropImageDataClass>?,
+    seriesVideosList: List<VideoDataClass>?
+) {
+
+    if (imagesList.isNullOrEmpty() && seriesVideosList.isNullOrEmpty()) {
+        BodyTextItem(stringResource(R.string.no_results_found), modifier = Modifier.testTag("MediaSectionNoResultsFoundBodyText"))
+        return
+    }
+
+    Column(Modifier.fillMaxWidth().testTag("MediaSectionImageAndVideosColumn"), verticalArrangement = Arrangement.spacedBy(16.dp)) {
+        ImageListItem(imagesList)
+        seriesVideosList?.let {
+            VideosSection(
+                it,
+                imagesList = imagesList
+            )
+        }
+    }
 }
 
 @Composable

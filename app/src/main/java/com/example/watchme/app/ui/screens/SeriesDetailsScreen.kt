@@ -48,6 +48,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -65,6 +66,7 @@ import com.example.watchme.app.ui.CreditsSection
 import com.example.watchme.app.ui.HeaderInfo
 import com.example.watchme.app.ui.ImageListItem
 import com.example.watchme.app.ui.LoadingDialog
+import com.example.watchme.app.ui.MediaSection
 import com.example.watchme.app.ui.ProvidersSection
 import com.example.watchme.app.ui.RatingSectionWithLists
 import com.example.watchme.app.ui.SecondTitleTextItem
@@ -251,7 +253,13 @@ fun SeriesDetailsScreen(
                         },
                         onRatedButtonClicked = { isRated = true },
                         onDeleteRateButtonClicked = { isRated = false },
-                        onAddToListButtonClicked = { Toast.makeText(context, context.getString(R.string.add_list_series_warning), Toast.LENGTH_SHORT).show() },
+                        onAddToListButtonClicked = {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.add_list_series_warning),
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
                         onItemAddedToAList = { }
                     )
                 }
@@ -408,27 +416,7 @@ fun EpisodesSection(
 
 }
 
-@Composable
-fun MediaSection(
-    imagesList: List<BackdropImageDataClass>?,
-    seriesVideosList: List<VideoDataClass>?
-) {
 
-    if (imagesList.isNullOrEmpty() && seriesVideosList.isNullOrEmpty()) {
-        BodyTextItem(stringResource(R.string.no_results_found))
-        return
-    }
-
-    Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(16.dp)) {
-        ImageListItem(imagesList)
-        seriesVideosList?.let {
-            VideosSection(
-                it,
-                imagesList = imagesList
-            )
-        }
-    }
-}
 
 @Composable
 fun SeriesDetailsSection(seriesDetails: SeriesDetailsDataClass?) {
@@ -492,7 +480,7 @@ fun SeriesRecommendationsSection(
 ) {
 
     if (seriesRecommendations.isNullOrEmpty()) {
-        BodyTextItem(stringResource(R.string.no_results_found))
+        BodyTextItem(stringResource(R.string.no_results_found), modifier = Modifier.testTag("SeriesRecommendationsBodyText"))
         return
     }
 
@@ -538,7 +526,10 @@ fun RecommendationCardItem(series: SeriesDataClass, onClick: (Int) -> Unit) {
 
 @Composable
 fun SeriesOverviewSection(seriesDetails: SeriesDetailsDataClass?) {
-    seriesDetails?.overview?.let { BodyTextItem(it) }
+    BodyTextItem(
+        if (seriesDetails?.overview.isNullOrEmpty()) stringResource(R.string.no_overview_available) else seriesDetails?.overview.toString(),
+        modifier = Modifier.testTag("OverviewSeriesDetails")
+    )
 }
 
 @Composable
